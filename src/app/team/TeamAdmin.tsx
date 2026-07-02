@@ -10,33 +10,29 @@ import type { TeamMember, TeamProfileWithMember } from '@/types/team';
 const FN_URL = 'https://irhbkkfvcawklbahivii.supabase.co/functions/v1';
 
 async function apiPost(name: string, body: unknown, accessToken: string) {
-  console.log(`apiPost: starting ${name}`);
+	  const controller = new AbortController();
+	  const timeoutId = setTimeout(() => {
+	    console.warn(`apiPost: aborting ${name} after 20s`);
+	    controller.abort();
+	  }, 20000);
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    console.warn(`apiPost: aborting ${name} after 20s`);
-    controller.abort();
-  }, 20000);
+	  try {
+	    const res = await fetch(`${FN_URL}/${name}`, {
+	      method: 'POST',
+	      headers: {
+	        'Content-Type': 'application/json',
+	        Authorization: `Bearer ${accessToken}`,
+	      },
+	      body: JSON.stringify(body),
+	      signal: controller.signal,
+	    });
+	    clearTimeout(timeoutId);
 
-  try {
-    const res = await fetch(`${FN_URL}/${name}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-    console.log(`apiPost: got response ${res.status} for ${name}`);
-
-    if (!res.ok) {
-      console.error(`apiPost: HTTP ${res.status} for ${name}`);
-    }
-    const text = await res.text();
-    console.log(`apiPost: body length ${text.length} for ${name}`);
-    try {
+	    if (!res.ok) {
+	      console.error(`apiPost: HTTP ${res.status} for ${name}`);
+	    }
+	    const text = await res.text();
+	    try {
       return JSON.parse(text);
     } catch {
       console.error('apiPost: invalid JSON response', text.slice(0, 300));

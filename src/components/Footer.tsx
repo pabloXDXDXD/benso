@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 
 export function Footer() {
@@ -19,18 +18,7 @@ export function Footer() {
             <p>Consultoría y Soluciones Digitales para la Rentabilidad Sostenible.</p>
           </div>
 
-          <div className="footer-section footer-links-block">
-            <h4>Enlaces</h4>
-            <ul>
-              <li><Link href="/">Inicio</Link></li>
-              <li><Link href="/servicios">Servicios</Link></li>
-              <li><Link href="/productos">Productos</Link></li>
-              <li><Link href="/eventos">Eventos</Link></li>
-              <li><Link href="/nosotros">Nosotros</Link></li>
-              <li><Link href="/contacto">Contacto</Link></li>
-            </ul>
-          </div>
-
+          <div className="footer-right-blocks">
           <div className="footer-section footer-contact-block">
             <h4>Contacto</h4>
             <div className="footer-contact-details">
@@ -68,6 +56,7 @@ export function Footer() {
                 </svg>
               </a>
             </div>
+          </div>
           </div>
         </div>
 

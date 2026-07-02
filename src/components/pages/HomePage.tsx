@@ -163,6 +163,8 @@ export function HomePage() {
       </ScrollReveal>
       */}
 
+      <div className="home-content">
+
       {/* Services Preview Section */}
       <ScrollReveal>
         <div className="container">
@@ -319,7 +321,7 @@ export function HomePage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title-center">
-            <h2 style={{ margin: 0, color: 'var(--primary)' }}>
+            <h2 style={{ margin: 0 }}>
               Preguntas Frecuentes
             </h2>
           </div>
@@ -346,6 +348,7 @@ export function HomePage() {
           </button>
         </div>
       </ScrollReveal>
+      </div>
 
       <RequestModal
         item={requestItem}

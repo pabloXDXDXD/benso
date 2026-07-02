@@ -151,7 +151,7 @@ export function EventsPage() {
       {timelineEvents.length > 0 && (
       <ScrollReveal>
         <div className="container">
-          <div className="section-title">
+          <div className="section-title-center">
             <h2>Línea del tiempo</h2>
           </div>
           <div className="timeline">

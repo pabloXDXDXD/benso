@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { motion } from 'motion/react';
 import AppSidebar, { AdminTab } from './AppSidebar';
+import { BensoLogo } from '@/components/BensoLogo';
+
+const FN_URL = 'https://irhbkkfvcawklbahivii.supabase.co/functions/v1';
 import { 
   Search, Plus, CheckCheck, X,
   Edit2, Save, Trash2, Copy, Loader,
@@ -62,7 +65,6 @@ interface Cita {
   fecha_creacion: string;
 }
 
-const ADMIN_PASSWORD = 'benso-admin-2024';
 const PRODUCT_CATEGORIES = ['pegatinas', 'posters', 'cuadros', 'tarjetas', 'lonas', 'otros'];
 const SERVICE_CATEGORIES = ['consultoria', 'herramientas', 'capacitacion'];
 
@@ -102,7 +104,7 @@ export default function AdminPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [citas, setCitas] = useState<Cita[]>([]);
-  const [loading, setLoading] = useState(false);
+  // loading is derived from queries below — kept as var name for JSX compatibility
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -111,6 +113,7 @@ export default function AdminPage() {
   const [createData, setCreateData] = useState({title: '', description: '', price: '', category: '', icon: '', popular: false, whatsapp_link: '', date: '', status: 'Proximamente'});
   const [categoryFilter, setCategoryFilter] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<{ table: string; id: number; label: string } | null>(null);
   const [expandedCells, setExpandedCells] = useState<Record<string, boolean>>({});
   const [colWidths, setColWidths] = useState<Record<string, number>>({});
   const resizeRef = useRef<{ col: string; startX: number; startW: number } | null>(null);
@@ -118,6 +121,105 @@ export default function AdminPage() {
   const mouseUpRef = useRef<((ev: MouseEvent) => void) | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // ── Admin API helper ──
+  async function adminFetch(action: string, payload: Record<string, any> = {}): Promise<any> {
+    const token = sessionStorage.getItem('admin-token');
+    if (!token) {
+      setIsAuthenticated(false);
+      return { error: 'Sesión expirada' };
+    }
+
+    const res = await fetch(`${FN_URL}/admin-query`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action, ...payload }),
+    });
+
+    if (res.status === 401) {
+      setIsAuthenticated(false);
+      sessionStorage.removeItem('admin-token');
+      toast.error('Sesión expirada. Ingresa de nuevo.');
+      return { error: 'Sesión expirada' };
+    }
+
+    return res.json();
+  }
+
+  // ── React Query ──
+  const queryClient = useQueryClient();
+  const authEnabled = isAuthenticated;
+  const [pedidosPage, setPedidosPage] = useState(1);
+
+  const productosQuery = useQuery({
+    queryKey: ['admin', 'productos'],
+    queryFn: () => adminFetch('select', { table: 'productos', orderBy: 'id', ascending: true }),
+    enabled: authEnabled,
+  });
+
+  const serviciosQuery = useQuery({
+    queryKey: ['admin', 'servicios'],
+    queryFn: () => adminFetch('select', { table: 'servicios', orderBy: 'id', ascending: true }),
+    enabled: authEnabled,
+  });
+
+  const eventosQuery = useQuery({
+    queryKey: ['admin', 'eventos'],
+    queryFn: () => adminFetch('select', { table: 'eventos', orderBy: 'id', ascending: true }),
+    enabled: authEnabled,
+  });
+
+  const pedidosQuery = useQuery({
+    queryKey: ['admin', 'pedidos', pedidosPage],
+    queryFn: () => adminFetch('select', {
+      table: 'pedidos',
+      orderBy: 'created_at',
+      ascending: false,
+      page: pedidosPage,
+      pageSize: 50,
+    }),
+    enabled: authEnabled,
+  });
+
+  const citasQuery = useQuery({
+    queryKey: ['admin', 'citas'],
+    queryFn: () => adminFetch('select', { table: 'citas', orderBy: 'fecha_creacion', ascending: false }),
+    enabled: authEnabled,
+  });
+
+  // Sync React Query → local state
+  useEffect(() => {
+    if (productosQuery.data?.data) setProductos(productosQuery.data.data);
+  }, [productosQuery.data]);
+  useEffect(() => {
+    if (serviciosQuery.data?.data) setServicios(serviciosQuery.data.data);
+  }, [serviciosQuery.data]);
+  useEffect(() => {
+    if (eventosQuery.data?.data) setEventos(eventosQuery.data.data);
+  }, [eventosQuery.data]);
+  useEffect(() => {
+    if (pedidosQuery.data?.data?.rows) setPedidos(pedidosQuery.data.data.rows);
+  }, [pedidosQuery.data]);
+  useEffect(() => {
+    if (citasQuery.data?.data) setCitas(citasQuery.data.data);
+  }, [citasQuery.data]);
+
+  // Refetch all on auth
+  useEffect(() => {
+    if (isAuthenticated) {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+    } else {
+      setPedidosPage(1);
+    }
+  }, [isAuthenticated, queryClient]);
+
+  const loading = isAuthenticated
+    ? productosQuery.isLoading || serviciosQuery.isLoading
+      || eventosQuery.isLoading || pedidosQuery.isLoading || citasQuery.isLoading
+    : false;
 
   function handleColResizeStart(col: string, e: React.MouseEvent) {
     e.preventDefault();
@@ -185,10 +287,6 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (isAuthenticated) loadData();
-  }, [isAuthenticated]);
-
-  useEffect(() => {
     const mql = window.matchMedia('(max-width: 767px)');
     const handler = (e: MediaQueryListEvent | MediaQueryList) => {
       setIsMobile(e.matches);
@@ -199,27 +297,19 @@ export default function AdminPage() {
     return () => mql.removeEventListener('change', handler);
   }, []);
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const [prod, serv, evt, ped, cit] = await Promise.all([
-        supabase.from('productos').select('*').order('id'),
-        supabase.from('servicios').select('*').order('id'),
-        supabase.from('eventos').select('*').order('id'),
-        supabase.from('pedidos').select('*').order('created_at', { ascending: false }),
-        supabase.from('citas').select('*').order('fecha_creacion', { ascending: false })
-      ]);
-      if (prod.data) setProductos(prod.data);
-      if (serv.data) setServicios(serv.data);
-      if (evt.data) setEventos(evt.data);
-      if (ped.data) setPedidos(ped.data);
-      if (cit.data) setCitas(cit.data);
-    } catch (e) { console.error('Error loading:', e); }
-    setLoading(false);
-  }
-
-  function handleLogin() {
-    if (password === ADMIN_PASSWORD) setIsAuthenticated(true);
+  async function handleLogin() {
+    const res = await fetch(`${FN_URL}/admin-auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    const json = await res.json();
+    if (json.token) {
+      sessionStorage.setItem('admin-token', json.token);
+      setIsAuthenticated(true);
+    } else {
+      toast.error('Contraseña inválida');
+    }
   }
 
   function handleLogout() {
@@ -230,11 +320,11 @@ export default function AdminPage() {
   async function updateStatus(id: number, newStatus: string) {
     setPedidos(prev => prev.map(p => p.id === id ? { ...p, status: newStatus } : p));
     toast.success(`Estado actualizado a ${newStatus}`);
-    const { error } = await supabase.from('pedidos').update({ status: newStatus }).eq('id', id);
-    if (error) {
-      toast.error('Error al actualizar: ' + error.message);
-      loadData();
+    const json = await adminFetch('update', { table: 'pedidos', id, data: { status: newStatus } });
+    if (json.error) {
+      toast.error('Error al actualizar: ' + json.error);
     }
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
 
   async function saveEdit(table: string) {
@@ -251,11 +341,11 @@ export default function AdminPage() {
     toast.success('Guardado');
 
     // Background sync
-    const { error } = await supabase.from(table).update(updateData).eq('id', editingId);
-    if (error) {
-      toast.error('Error: ' + error.message);
-      loadData(); // Revert by reloading
+    const json = await adminFetch('update', { table, id: editingId, data: updateData });
+    if (json.error) {
+      toast.error('Error: ' + json.error);
     }
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
 
   function startEdit(item: any, table: string) {
@@ -268,23 +358,28 @@ export default function AdminPage() {
     setEditData(null);
   }
 
-  async function handleDelete(table: string, id: number) {
+  function handleDeleteClick(table: string, id: number) {
     const label = table === 'productos' ? 'Producto' : table === 'servicios' ? 'Servicio' : 'Evento';
+    setConfirmDelete({ table, id, label });
+  }
 
-    if (!confirm(`¿Eliminar ${label} #${id}? Esta acción no se puede deshacer.`)) return;
+  async function handleConfirmDelete() {
+    if (!confirmDelete) return;
+    const { table, id, label } = confirmDelete;
 
     const setter = table === 'productos' ? setProductos : table === 'servicios' ? setServicios : setEventos;
 
     // Optimistic: remove from local state immediately
     setter((prev: any[]) => prev.filter(item => item.id !== id));
     toast.success(`${label} eliminado`);
+    setConfirmDelete(null);
 
-    // Background sync
-    const { error } = await supabase.from(table).delete().eq('id', id);
-    if (error) {
-      toast.error('Error al eliminar: ' + error.message);
-      loadData(); // Revert by reloading
+    // Background sync via API
+    const json = await adminFetch('delete', { table, id });
+    if (json.error) {
+      toast.error('Error al eliminar: ' + json.error);
     }
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
 
   async function handleCreate() {
@@ -309,12 +404,12 @@ export default function AdminPage() {
       data.status = createData.status || 'Proximamente';
     }
     try {
-      const { error } = await supabase.from(createTable).insert(data);
-      if (error) { toast.error('Error: ' + error.message); return; }
+      const json = await adminFetch('insert', { table: createTable, data });
+      if (json.error) { toast.error('Error: ' + json.error); return; }
       toast.success('Creado');
       setShowCreateModal(false);
       setCreateData({title: '', description: '', price: '', category: '', icon: '', popular: false, whatsapp_link: '', date: '', status: 'Proximamente'});
-      loadData();
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
     } catch (e) {
       toast.error('Error al guardar');
     }
@@ -394,10 +489,7 @@ export default function AdminPage() {
         <div className="login-screen">
           <div className="login-card">
             <div className="login-logo">
-              <svg viewBox="0 0 580.12 383.73" className="login-logo-svg" aria-hidden="true" focusable="false">
-                <path d="M552.34,96C534.17,66.73,509.17,43.25,478,26.19S412.07.5,374.64.5a222.84,222.84,0,0,0-50.37,5.67c33.81,19.08,61.1,45,81,77.09.28.45.54.92.82,1.37a117.55,117.55,0,0,1,27,10.66,111.26,111.26,0,0,1,42,40.17c10.28,17,15.47,36,15.47,56.72a106.46,106.46,0,0,1-15.5,56.28,110.93,110.93,0,0,1-42,40,117.42,117.42,0,0,1-42.89,13.72A130,130,0,0,1,375,303c-21.21,0-40.89-4.93-58.48-14.62a111.23,111.23,0,0,1-42-40A106.51,106.51,0,0,1,259,192.18a107.79,107.79,0,0,1,15.24-56.31,85.31,85.31,0,0,0-23.63-18.94,89.75,89.75,0,0,0-32.18-10.46,101.21,101.21,0,0,0-27.33.22A181.34,181.34,0,0,0,170,192.83a178.08,178.08,0,0,0,27.12,95.54,193.66,193.66,0,0,0,30.1,37.24,205.7,205.7,0,0,0,80.06,47.65,218.56,218.56,0,0,0,66.33,10c37.5,0,72.41-8.6,103.8-25.57s56.55-40.29,74.82-69.32a176.93,176.93,0,0,0,27.41-95.51C579.62,157.75,570.45,125.17,552.34,96Z" fill="var(--primary)"/>
-                <path d="M174.65,301.13c-.46-.73-.88-1.48-1.32-2.21A116.71,116.71,0,0,1,147,288.41a110.93,110.93,0,0,1-42-40,106.54,106.54,0,0,1-15.49-56.28A108.13,108.13,0,0,1,105,135.46a110.64,110.64,0,0,1,42-40.13A119.8,119.8,0,0,1,205.48,80.7a126.85,126.85,0,0,1,22.73,2,117.29,117.29,0,0,1,35.42,12.56,111,111,0,0,1,42,40.17c10.28,17,15.47,36,15.47,56.72A106.52,106.52,0,0,1,305.92,248a86,86,0,0,0,23.59,18.8c13.77,7.57,28.65,11.28,45.46,11.28a100.45,100.45,0,0,0,14.26-1,176.43,176.43,0,0,0,20.91-84.23c0-35.08-9.17-67.66-27.28-96.85s-43.17-52.73-74.33-69.79a206.56,206.56,0,0,0-27.06-12.34A217.56,217.56,0,0,0,205.16.5c-37.23,0-71.92,8.64-103,25.69S46,66.73,27.78,96,.5,157.75.5,192.83a178.34,178.34,0,0,0,27.12,95.54c18,29.07,42.87,52.39,73.81,69.32s65.48,25.54,102.72,25.54a226.06,226.06,0,0,0,50.77-5.66C221.46,358.61,194.41,332.94,174.65,301.13Z" fill="var(--primary)"/>
-              </svg>
+              <BensoLogo height={48} className="login-logo-svg" />
             </div>
             <h1>Admin</h1>
             <p className="login-subtitle">Acceso restringido</p>
@@ -432,7 +524,7 @@ export default function AdminPage() {
             counts={counts}
             isCollapsed={isCollapsed}
             onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-            onRefresh={loadData}
+            onRefresh={() => queryClient.invalidateQueries({ queryKey: ['admin'] })}
             loading={loading}
             onLogout={handleLogout}
             isMobile={isMobile}
@@ -634,6 +726,47 @@ export default function AdminPage() {
                         ))}
                       </tbody>
                     </table>
+                    {/* Paginación pedidos */}
+                    {(() => {
+                      const total = pedidosQuery.data?.data?.total;
+                      if (!total) return null;
+                      const totalPages = Math.ceil(total / 50);
+                      if (totalPages <= 1) return null;
+                      return (
+                        <div style={{
+                          display: 'flex', justifyContent: 'space-between',
+                          alignItems: 'center', padding: '0.75rem 1rem',
+                          borderTop: '1px solid #f0f0f0', fontSize: '0.85rem', color: '#666'
+                        }}>
+                          <span>{total} pedidos en total</span>
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <button
+                              onClick={() => setPedidosPage(p => Math.max(1, p - 1))}
+                              disabled={pedidosPage <= 1}
+                              style={{
+                                padding: '0.35rem 0.75rem', border: '1px solid #ddd',
+                                borderRadius: '6px', background: '#fff', cursor: 'pointer',
+                                opacity: pedidosPage <= 1 ? 0.4 : 1,
+                              }}
+                            >
+                              ← Anterior
+                            </button>
+                            <span>Pág. {pedidosPage} de {totalPages}</span>
+                            <button
+                              onClick={() => setPedidosPage(p => Math.min(totalPages, p + 1))}
+                              disabled={pedidosPage >= totalPages}
+                              style={{
+                                padding: '0.35rem 0.75rem', border: '1px solid #ddd',
+                                borderRadius: '6px', background: '#fff', cursor: 'pointer',
+                                opacity: pedidosPage >= totalPages ? 0.4 : 1,
+                              }}
+                            >
+                              Siguiente →
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
 
@@ -758,7 +891,7 @@ export default function AdminPage() {
                                     <button onClick={() => startEdit(p, 'productos')} className="btn-icon-sm" title="Editar">
                                       <Edit2 size={14} />
                                     </button>
-                                    <button onClick={() => handleDelete('productos', p.id)} className="btn-icon-sm danger" title="Eliminar">
+                                    <button onClick={() => handleDeleteClick('productos', p.id)} className="btn-icon-sm danger" title="Eliminar">
                                       <Trash2 size={14} />
                                     </button>
                                   </>
@@ -843,7 +976,7 @@ export default function AdminPage() {
                                     <button onClick={() => startEdit(s, 'servicios')} className="btn-icon-sm" title="Editar">
                                       <Edit2 size={14} />
                                     </button>
-                                    <button onClick={() => handleDelete('servicios', s.id)} className="btn-icon-sm danger" title="Eliminar">
+                                    <button onClick={() => handleDeleteClick('servicios', s.id)} className="btn-icon-sm danger" title="Eliminar">
                                       <Trash2 size={14} />
                                     </button>
                                   </>
@@ -945,7 +1078,7 @@ export default function AdminPage() {
                                     <button onClick={() => startEdit(e, 'eventos')} className="btn-icon-sm" title="Editar">
                                       <Edit2 size={14} />
                                     </button>
-                                    <button onClick={() => handleDelete('eventos', e.id)} className="btn-icon-sm danger" title="Eliminar">
+                                    <button onClick={() => handleDeleteClick('eventos', e.id)} className="btn-icon-sm danger" title="Eliminar">
                                       <Trash2 size={14} />
                                     </button>
                                   </>
@@ -1017,6 +1150,38 @@ export default function AdminPage() {
             <div className="modal-footer">
               <button onClick={() => setShowCreateModal(false)} className="btn-cancel">Cancelar</button>
               <button onClick={handleCreate} className="btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Confirm Delete Modal ── */}
+      {confirmDelete !== null && (
+        <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+          <div
+            className="modal-content"
+            style={{ maxWidth: '400px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Eliminar {confirmDelete.label}</h2>
+              <button onClick={() => setConfirmDelete(null)} className="btn-close">&times;</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ margin: 0, color: '#555', fontSize: '0.95rem' }}>
+                ¿Estás seguro de que deseas eliminar {confirmDelete.label.toLowerCase()} #{confirmDelete.id}?
+                Esta acción no se puede deshacer.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button onClick={() => setConfirmDelete(null)} className="btn-cancel">Cancelar</button>
+              <button
+                onClick={handleConfirmDelete}
+                className="btn-primary"
+                style={{ background: '#c62828' }}
+              >
+                Eliminar
+              </button>
             </div>
           </div>
         </div>
