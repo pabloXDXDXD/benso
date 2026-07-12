@@ -3,10 +3,10 @@ import { AboutPage } from '@/components/pages/AboutPage';
 
 export const metadata: Metadata = {
   title: 'Nosotros | BENSO',
-  description: 'Conoce el Proyecto Benso: nuestra misión, visión y compromiso con la rentabilidad sostenible de emprendimientos en Cuba. Consultoría, herramientas y capacitación estratégica.',
+  description: 'Descubre por qué elegir BENSO para impulsar tu emprendimiento: inversión accesible, atención personalizada y resultados medibles. Galería de nuestro trabajo.',
   openGraph: {
     title: 'Nosotros | BENSO',
-    description: 'Conoce el Proyecto Benso: nuestra misión y compromiso con tu emprendimiento.',
+    description: 'Descubre por qué elegir BENSO para impulsar tu emprendimiento.',
   },
 };
 

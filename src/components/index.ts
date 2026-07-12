@@ -1,4 +1,5 @@
 export { Background } from './Background';
+export { ImageGallery } from './ImageGallery';
 export { EventRegistrationForm } from './EventRegistrationForm';
 export { BentoCard } from './BentoCard';
 export { CalendarIcon } from './CalendarIcon';
