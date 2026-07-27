@@ -7,10 +7,10 @@ export type Currency = 'CUP' | 'USD' | 'EUR';
  */
 export const RATES: Record<Currency, { symbol: string; code: string; rate: number }> = {
   CUP: { symbol: '$', code: 'CUP', rate: 1 },
-  // 1 USD ≈ 120 CUP → 1 CUP ≈ 0.00833 USD (rounded)
-  USD: { symbol: '$', code: 'USD', rate: 1 / 120 },
-  // 1 EUR ≈ 130 CUP → 1 CUP ≈ 0.00769 EUR (rounded)
-  EUR: { symbol: '€', code: 'EUR', rate: 1 / 130 },
+  // 1 USD ≈ 675 CUP → 1 CUP ≈ 0.00148 USD
+  USD: { symbol: '$', code: 'USD', rate: 1 / 675 },
+  // 1 EUR ≈ 790 CUP → 1 CUP ≈ 0.00127 EUR
+  EUR: { symbol: '€', code: 'EUR', rate: 1 / 790 },
 };
 
 export function convertPrice(priceNum: number, from: Currency, to: Currency): number {
