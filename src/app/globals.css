@@ -3928,7 +3928,7 @@ footer {
 
 .footer-section p {
     color: #cccccc;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;
 }
@@ -3936,7 +3936,7 @@ footer {
 .footer-section h4 {
     color: #ffffff;
     margin: 0 0 0.6rem;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -3971,14 +3971,14 @@ footer {
 .footer-contact-item {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     color: #d0d0d0;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
 }
 
 .footer-contact-item svg {
-    width: 11px;
-    height: 11px;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
     fill: #d0d0d0;
 }
@@ -4028,7 +4028,7 @@ footer {
 
 .footer-copyright {
     color: #d0d0d0;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     margin: 0;
     text-align: left;
 }
