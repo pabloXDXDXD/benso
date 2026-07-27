@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { ScrollReveal, AnimatedCard, BentoCard, Icon, ImageGallery, RequestModal } from '@/components';
+import Grainient from '@/components/Grainient';
 
 interface RequestItem {
   title: string;
@@ -79,19 +80,24 @@ export function AboutPage() {
         <ImageGallery />
       </section>
 
-      <div className="container section-cta after-gallery">
-        <h2>¿Listo para transformar tu negocio?</h2>
-        <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-        <button
-          className="cta-button"
-          onClick={() => {
-            setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-            setIsRequestOpen(true);
-          }}
-        >
-          <Calendar size={18} />
-          Agendar cita
-        </button>
+      <div className="cta-card">
+        <div className="cta-card-grainient">
+          <Grainient className="absolute inset-0" />
+        </div>
+        <div className="container section-cta after-gallery cta-card-content">
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <button
+            className="cta-button cta-button--light"
+            onClick={() => {
+              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setIsRequestOpen(true);
+            }}
+          >
+            <Calendar size={18} />
+            Agendar cita gratis
+          </button>
+        </div>
       </div>
 
       <RequestModal

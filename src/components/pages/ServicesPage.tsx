@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Send, Calendar, Search } from 'lucide-react';
 import { BentoCard, Icon, ScrollReveal, AnimatedCard, PriceDisplay, ServicesGridSkeleton, RequestModal, ShinyText } from '@/components';
+import Grainient from '@/components/Grainient';
 import { useCart } from '@/hooks/useCart';
 import { useServicios, type Servicio } from '@/hooks/useData';
 
@@ -117,19 +118,24 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
         </div>
       </ScrollReveal>
 
-      <div className="container section-cta">
-        <h2>¿Listo para transformar tu negocio?</h2>
-        <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-        <button
-          className="cta-button"
-          onClick={() => {
-            setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-            setIsRequestOpen(true);
-          }}
-        >
-          <Calendar size={18} />
-          Agendar cita
-        </button>
+      <div className="cta-card">
+        <div className="cta-card-grainient">
+          <Grainient className="absolute inset-0" />
+        </div>
+        <div className="container section-cta cta-card-content">
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <button
+            className="cta-button cta-button--light"
+            onClick={() => {
+              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setIsRequestOpen(true);
+            }}
+          >
+            <Calendar size={18} />
+            Agendar cita gratis
+          </button>
+        </div>
       </div>
 
       <RequestModal
