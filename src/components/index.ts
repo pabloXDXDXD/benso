@@ -17,6 +17,7 @@ export { PromoBanner } from './PromoBanner';
 export { RequestModal } from './RequestModal';
 export { ScrollReveal, AnimatedCard, AnimatedSection } from './ScrollReveal';
 export { default as ShinyText } from './ShinyText';
+export { default as SplitText } from './SplitText';
 export { StatusIcon } from './StatusIcon';
 export { TextType } from './TextType';
 export { VariantSelectionDialog } from './VariantSelectionDialog';

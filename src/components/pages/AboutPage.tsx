@@ -79,22 +79,20 @@ export function AboutPage() {
         <ImageGallery />
       </section>
 
-      <ScrollReveal>
-        <div className="container section-cta after-gallery">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-          <button
-            className="cta-button"
-            onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
-            <Calendar size={18} />
-            Agendar cita
-          </button>
-        </div>
-      </ScrollReveal>
+      <div className="container section-cta after-gallery">
+        <h2>¿Listo para transformar tu negocio?</h2>
+        <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+        <button
+          className="cta-button"
+          onClick={() => {
+            setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+            setIsRequestOpen(true);
+          }}
+        >
+          <Calendar size={18} />
+          Agendar cita
+        </button>
+      </div>
 
       <RequestModal
         item={requestItem}

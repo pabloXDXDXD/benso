@@ -11,8 +11,12 @@
     "test:e2e:ui": "cross-env PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 playwright test --ui"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@radix-ui/react-avatar": "^1.2.2",
     "@supabase/supabase-js": "^2.103.0",
     "@tanstack/react-query": "^5.101.2",
+    "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
     "jose": "^6.2.3",
     "lucide-react": "^1.8.0",
     "motion": "^12.38.0",
@@ -21,18 +25,22 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hot-toast": "^2.4.1",
-    "swr": "^2.4.2"
+    "swr": "^2.4.2",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.5.2",
     "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "pg": "^8.20.0",
     "playwright": "^1.59.1",
+    "postcss": "^8.5.19",
+    "tailwindcss": "^3.4.19",
     "ttf2woff2": "^8.0.1",
     "typescript": "^5"
   }

@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { User } from 'lucide-react';
 
 interface TestimonialItem {
   quote: string;
@@ -14,6 +16,8 @@ interface TestimonialsLoopProps {
   direction?: 'left' | 'right';
   className?: string;
 }
+
+
 
 export default function TestimonialsLoop({
   testimonials,
@@ -95,7 +99,7 @@ export default function TestimonialsLoop({
         .testimonial-card-loop {
           flex-shrink: 0;
           width: 360px;
-          padding: 1.25rem 1.5rem;
+          padding: 1rem 1.5rem;
           background: white;
           border-radius: 10px;
           margin-right: 2rem;
@@ -104,26 +108,50 @@ export default function TestimonialsLoop({
           text-align: left;
         }
 
-        .testimonial-card-loop .testimonial-name {
+        .testimonial-author-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.6rem;
+          margin-bottom: 1rem;
+        }
+
+        .testimonial-avatar > span {
+          background: #e8e8e8;
+          color: #aaa;
+        }
+
+        .testimonial-avatar svg {
           display: block;
+          width: 24px;
+          height: 24px;
+          stroke: #aaa;
+        }
+
+        .testimonial-author-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          line-height: 1;
+        }
+
+        .testimonial-card-loop .testimonial-name {
           color: #002c6a;
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 700;
-          margin-bottom: 0.2rem;
+          line-height: 1.35;
         }
 
         .testimonial-card-loop .testimonial-sector {
+          color: #555;
+          font-size: 0.9rem;
+          line-height: 1.35;
           display: block;
-          color: #333;
-          opacity: 0.55;
-          font-size: 0.85rem;
-          margin-bottom: 0.75rem;
         }
 
         .testimonial-card-loop .testimonial-text {
           font-size: 0.95rem;
           line-height: 1.5;
-          color: #333;
+          color: #6b6b6b;
           margin: 0;
         }
 
@@ -135,6 +163,17 @@ export default function TestimonialsLoop({
             margin-right: 1rem;
           }
           
+          .testimonial-author-row {
+            margin-bottom: 0.5rem;
+            gap: 0.6rem;
+          }
+
+          .testimonial-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.8rem;
+          }
+
           .testimonial-card-loop .testimonial-name {
             font-size: 1rem;
           }
@@ -152,6 +191,12 @@ export default function TestimonialsLoop({
             margin-right: 0.75rem;
           }
           
+          .testimonial-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.75rem;
+          }
+
           .testimonial-card-loop .testimonial-name {
             font-size: 0.95rem;
           }
@@ -169,8 +214,17 @@ export default function TestimonialsLoop({
       <div className={`testimonials-loop-track ${animationClass}`}>
         {duplicatedTestimonials.map((testimonial, index) => (
           <div key={index} className="testimonial-card-loop">
-            <strong className="testimonial-name">{formatName(testimonial.author)}</strong>
-            <span className="testimonial-sector">{testimonial.position}</span>
+            <div className="testimonial-author-row">
+              <Avatar className="testimonial-avatar">
+                <AvatarFallback>
+                  <User size={26} />
+                </AvatarFallback>
+              </Avatar>
+              <div className="testimonial-author-info">
+                <strong className="testimonial-name">{formatName(testimonial.author)}</strong>
+                <span className="testimonial-sector">{testimonial.position}</span>
+              </div>
+            </div>
             <p className="testimonial-text">{testimonial.quote}</p>
           </div>
         ))}
