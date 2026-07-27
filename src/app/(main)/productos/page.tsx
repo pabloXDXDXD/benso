@@ -24,5 +24,37 @@ export default async function Page() {
     .eq('is_active', true)
     .order('popular', { ascending: false });
 
-  return <ProductsPage initialProductos={(productos || []) as Producto[]} />;
+  const items = (productos || []) as Producto[];
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Product',
+        name: item.title,
+        description: item.description,
+        image: item.image ? `https://bensofcg.com${item.image}` : undefined,
+        category: item.category,
+        offers: {
+          '@type': 'Offer',
+          price: item.price_num,
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+        },
+      },
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <ProductsPage initialProductos={items} />
+    </>
+  );
 }

@@ -24,5 +24,33 @@ export default async function Page() {
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  return <EventsPage initialEventos={(eventos || []) as Evento[]} />;
+  const items = (eventos || []) as Evento[];
+
+  const eventJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Event',
+        name: item.title,
+        description: item.description,
+        eventStatus: item.status === 'En Curso'
+          ? 'https://schema.org/EventScheduled'
+          : 'https://schema.org/EventScheduled',
+        startDate: item.date,
+      },
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+      />
+      <EventsPage initialEventos={items} />
+    </>
+  );
 }

@@ -23,5 +23,39 @@ export default async function Page() {
     .select('*')
     .eq('is_active', true);
 
-  return <ServicesPage initialServicios={(servicios || []) as Servicio[]} />;
+  const items = (servicios || []) as Servicio[];
+
+  const serviceJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Service',
+        name: item.title,
+        description: item.description,
+        provider: {
+          '@type': 'Organization',
+          name: 'BENSO',
+        },
+        offers: {
+          '@type': 'Offer',
+          price: item.price_num,
+          priceCurrency: 'USD',
+        },
+        category: item.category,
+      },
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+      <ServicesPage initialServicios={items} />
+    </>
+  );
 }

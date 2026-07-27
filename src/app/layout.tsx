@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { cocogoose, ttCommons } from './fonts';
 import './globals.css';
+import faqItems from '@/data/faqs.json';
 
 const SITE_URL = 'https://bensofcg.com';
 const SITE_NAME = 'BENSO';
@@ -71,6 +72,25 @@ export default function RootLayout({
                 '@type': 'PostalAddress',
                 addressCountry: 'CU',
               },
+            }),
+          }}
+        />
+
+        {/* FAQ Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: faqItems.map((item: { question: string; answer: string }) => ({
+                '@type': 'Question',
+                name: item.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: item.answer,
+                },
+              })),
             }),
           }}
         />
