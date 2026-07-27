@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://benso.com/sitemap.xml
+Sitemap: https://bensofcg.com/sitemap.xml
