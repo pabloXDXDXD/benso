@@ -3234,6 +3234,12 @@ footer {
         margin-bottom: 1.25rem;
     }
 
+    .home-content .section-title-home h2 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0;
+    }
+
     .section-title-home h2::before {
         width: 80px;
     }
@@ -3467,6 +3473,12 @@ footer {
         line-height: 1.25;
     }
 
+    .home-content .section-title-home h2 {
+        font-size: 1.6rem;
+        flex-direction: column;
+        gap: 0;
+    }
+
     .bento-card {
         padding: 1.25rem;
     }
@@ -3542,6 +3554,12 @@ footer {
 
     .section-title h2 {
         font-size: 1.5rem;
+    }
+
+    .home-content .section-title-home h2 {
+        font-size: 1.4rem;
+        flex-direction: column;
+        gap: 0;
     }
 
     .section-title p {
