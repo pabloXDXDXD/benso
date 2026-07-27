@@ -169,7 +169,7 @@ export function HomePage() {
           <div className="bento-grid bento-grid-center">
             {servicios.slice(0, 3).map((service, index) => (
               <AnimatedCard key={service.id} index={index}>
-                <BentoCard className="interactive-card service-card">
+                <BentoCard className="interactive-card service-card toned-card">
                   <div className="service-card-header">
                     <Icon name={service.icon} />
                     <h3>{service.title}</h3>
@@ -272,7 +272,7 @@ export function HomePage() {
           <div className="bento-grid-events">
             {upcomingEvents.map((event, index) => (
               <AnimatedCard key={event.id} index={index}>
-                <BentoCard className="interactive-card">
+                <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
                     <span className="event-status-tag"><StatusIcon status={event.status} />{event.status}</span>

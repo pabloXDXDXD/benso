@@ -104,7 +104,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
           <div className="bento-grid-events">
             {currentEvents.map((event, index) => (
               <AnimatedCard key={event.id} index={index}>
-                <BentoCard className="interactive-card">
+                <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
                     <span className="event-status-tag"><StatusIcon status={event.status} />{event.status}</span>
@@ -147,7 +147,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
           <div className="bento-grid-events">
             {upcomingEvents.map((event, index) => (
               <AnimatedCard key={event.id} index={index}>
-                <BentoCard className="interactive-card">
+                <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
                     <span className="event-status-tag"><StatusIcon status={event.status} />{event.status}</span>

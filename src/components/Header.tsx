@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { CurrencySelector } from '@/components/CurrencySelector';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,6 +76,8 @@ export function Header() {
         <Link href="/" className="logo" onClick={handleLogoClick}>
           <img src="/assets/logos/Isotipo Benso Claro.svg" alt="BENSO" className="logo-img" fetchPriority="high" />
         </Link>
+
+        <CurrencySelector />
 
         <button
           className={`menu-toggle${isMenuOpen ? ' open' : ''}`}

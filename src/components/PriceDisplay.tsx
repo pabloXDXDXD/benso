@@ -1,4 +1,8 @@
-import { formatPrice, extractNumberFromPrice } from '@/lib/priceUtils';
+'use client';
+
+import { useCurrency } from '@/context/CurrencyContext';
+import { extractNumberFromPrice } from '@/lib/priceUtils';
+import { formatPriceInCurrency } from '@/lib/currencyUtils';
 
 interface PriceDisplayProps {
   price: string;
@@ -7,19 +11,17 @@ interface PriceDisplayProps {
 }
 
 export function PriceDisplay({ price, priceNum, className }: PriceDisplayProps) {
-  // If the price field contains "Desde", reformat the number part properly
+  const { currency } = useCurrency();
+  const num = priceNum ?? extractNumberFromPrice(price);
+
   if (price && price.toLowerCase().includes('desde')) {
-    const num = priceNum ?? extractNumberFromPrice(price);
-    const formatted = formatPrice(num);
-    // Don't show "Desde Gratis" - just show "Gratis"
+    const formatted = formatPriceInCurrency(num, currency);
     if (formatted === 'Gratis') {
       return <span className={className}>Gratis</span>;
     }
     return <span className={className}>Desde {formatted}</span>;
   }
 
-  // For numeric prices, format with $ and proper separators
-  const num = priceNum ?? extractNumberFromPrice(price);
-  const formatted = formatPrice(num);
+  const formatted = formatPriceInCurrency(num, currency);
   return <span className={className}>{formatted}</span>;
 }

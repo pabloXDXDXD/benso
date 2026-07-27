@@ -3,9 +3,12 @@
 import { useState } from 'react';
 import { CheckCircle2, Clipboard, AlertCircle, CreditCard } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceInCurrency } from '@/lib/currencyUtils';
 
 export function CheckoutModal() {
   const { items, totalPrice, isCheckoutOpen, setIsCheckoutOpen, saveOrder } = useCart();
+  const { currency } = useCurrency();
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -16,10 +19,6 @@ export function CheckoutModal() {
   const [error, setError] = useState<string | null>(null);
 
   if (!isCheckoutOpen) return null;
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('es', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
 
   const handleClose = () => {
     setIsCheckoutOpen(false);
@@ -164,13 +163,13 @@ export function CheckoutModal() {
                           <span className="item-name">{item.productTitle} — {item.variant}</span>
                           <span className="item-qty">x{item.quantity}</span>
                         </div>
-                        <span className="item-price">{formatPrice(item.priceNum * item.quantity)} CUP</span>
+                        <span className="item-price">{formatPriceInCurrency(item.priceNum * item.quantity, currency)}</span>
                       </div>
                     ))}
                   </div>
                   <div className="order-total">
                     <span>Total:</span>
-                    <span className="total-amount">{formatPrice(totalPrice)} CUP</span>
+                    <span className="total-amount">{formatPriceInCurrency(totalPrice, currency)}</span>
                   </div>
                 </div>
 

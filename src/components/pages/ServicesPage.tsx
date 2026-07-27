@@ -92,7 +92,7 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
             {filteredServices.map((service, idx) => (
               <AnimatedCard key={`${activeFilter}-${service.id}`} index={idx}>
                 <BentoCard 
-                  className="interactive-card service-card"
+                  className="interactive-card service-card toned-card"
                   dataCategory={service.category}
                 >
                   <div className="service-card-header">

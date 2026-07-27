@@ -5,17 +5,16 @@ import { CheckoutModal } from './CheckoutModal';
 import { ShoppingCart, X, Plus, Minus, Trash2, ArrowRight, Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceInCurrency } from '@/lib/currencyUtils';
 
 export function Cart() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice, isOpen, setIsOpen, setIsCheckoutOpen } = useCart();
+  const { currency } = useCurrency();
   const prevItemsRef = useRef(items.length);
   const prevTotalRef = useRef(totalItems);
   const lastAddedRef = useRef<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('es', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
 
   const handleCheckout = () => {
     setIsOpen(false);
@@ -107,7 +106,7 @@ export function Cart() {
               <div key={item.id} className="cart-item">
                 <div className="cart-item-info">
                   <h4>{item.productTitle} — {item.variant}</h4>
-                  <span className="cart-item-price">{item.price} CUP</span>
+                  <span className="cart-item-price">{formatPriceInCurrency(item.priceNum * item.quantity, currency)}</span>
                 </div>
                 <div className="cart-item-actions">
                   <div className="cart-item-qty">
@@ -143,7 +142,7 @@ export function Cart() {
           <div className="cart-panel-footer">
             <div className="cart-total">
               <span>Total</span>
-              <span className="cart-total-amount">{formatPrice(totalPrice)} CUP</span>
+               <span className="cart-total-amount">{formatPriceInCurrency(totalPrice, currency)}</span>
             </div>
             <button
               className="cart-checkout-btn"

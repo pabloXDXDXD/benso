@@ -4,6 +4,8 @@ import { ShoppingCart, X, Plus, Minus, Package } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/hooks/useCart';
 import { imgSrc } from '@/lib/imageLoader';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceInCurrency } from '@/lib/currencyUtils';
 
 interface Variant {
   label: string;
@@ -39,11 +41,9 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
 
   if (!isOpen) return null;
 
+  const { currency } = useCurrency();
   const selectedVariant = product.variants[selectedIndex];
   const subtotal = selectedVariant.totalPrice * quantity;
-
-  const formatPrice = (price: number) =>
-    price.toLocaleString('es', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
   const handleAdd = () => {
     addItem(product.title, selectedVariant.label, selectedVariant.unitPrice, quantity);
@@ -88,7 +88,7 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
                       <span className="vsel-option-name">{v.label}</span>
                       {v.description && <span className="vsel-option-desc">{v.description}</span>}
                     </div>
-                    <span className="vsel-option-price">{formatPrice(v.totalPrice)} CUP</span>
+                    <span className="vsel-option-price">{formatPriceInCurrency(v.totalPrice, currency)}</span>
                   </button>
                 ))}
               </div>
@@ -116,12 +116,12 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
             {isSingleVariant && (
               <div className="vsel-row">
                 <span>Precio unitario</span>
-                <span>{formatPrice(selectedVariant.unitPrice)} CUP</span>
+                <span>{formatPriceInCurrency(selectedVariant.unitPrice, currency)}</span>
               </div>
             )}
             <div className="vsel-row vsel-row--final">
               <span>Subtotal</span>
-              <span className="vsel-final">{formatPrice(subtotal)} CUP</span>
+              <span className="vsel-final">{formatPriceInCurrency(subtotal, currency)}</span>
             </div>
           </div>
 
