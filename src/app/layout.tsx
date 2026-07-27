@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { cocogoose, ttCommons } from './fonts';
 import './globals.css';
 
-const SITE_URL = 'https://benso.com';
+const SITE_URL = 'https://bensofcg.com';
 const SITE_NAME = 'BENSO';
 
 export const viewport: Viewport = {

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ShoppingCart, Send, Calendar } from 'lucide-react';
 import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, RequestModal, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
 import Grainient from '@/components/Grainient';
+
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, useServicios, useEventos } from '@/hooks/useData';
@@ -151,11 +152,11 @@ export function HomePage() {
         </div>
         <LogoLoop
           logos={[
-            { node: <img src="/benso/assets/logos/MARAYOSVA (1).svg" alt="MARAYOSVA" /> },
-            { node: <img src="/benso/assets/logos/Info Impress.svg" alt="Info Impress" /> },
-            { node: <img src="/benso/assets/logos/Divas'Store.svg" alt="Divas Store" /> },
-            { node: <img src="/benso/assets/logos/Estilo Natural3.svg" alt="Estilo Natural" /> },
-            { node: <img src="/benso/assets/logos/AfroDiSiAcá .svg" alt="AfroDiSiAcá" /> },
+            { node: <img src="/assets/logos/MARAYOSVA (1).svg" alt="MARAYOSVA" /> },
+            { node: <img src="/assets/logos/Info Impress.svg" alt="Info Impress" /> },
+            { node: <img src="/assets/logos/Divas'Store.svg" alt="Divas Store" /> },
+            { node: <img src="/assets/logos/Estilo Natural3.svg" alt="Estilo Natural" /> },
+            { node: <img src="/assets/logos/AfroDiSiAcá .svg" alt="AfroDiSiAcá" /> },
           ]}
           direction="left"
           speed={50}
@@ -332,22 +333,20 @@ export function HomePage() {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <div className="container section-cta">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-          <button
-            className="cta-button"
-            onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
-            <Calendar size={18} />
-            Agendar cita
-          </button>
-        </div>
-      </ScrollReveal>
+      <div className="container section-cta">
+        <h2>¿Listo para transformar tu negocio?</h2>
+        <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+        <button
+          className="cta-button"
+          onClick={() => {
+            setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+            setIsRequestOpen(true);
+          }}
+        >
+          <Calendar size={18} />
+          Agendar cita
+        </button>
+      </div>
       </div>
 
       <RequestModal

@@ -8,7 +8,7 @@ export function Footer() {
         <div className="footer-content">
           <div className="footer-section footer-brand">
             <Image 
-              src="/benso/assets/logos/Logotipo Benso Claro.svg" 
+              src="/assets/logos/Logotipo Benso Claro.svg" 
               alt="BENSO" 
               className="footer-logo-top"
               width={100}
@@ -26,7 +26,7 @@ export function Footer() {
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                 </svg>
-                <a href="mailto:info@benso.com">info@benso.com</a>
+                <a href="mailto:bensofcg@gmail.com">bensofcg@gmail.com</a>
               </div>
               <div className="footer-contact-item">
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

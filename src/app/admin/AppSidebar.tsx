@@ -89,7 +89,7 @@ export default function AppSidebar({
           <div className="sidebar-header">
             <div className="sidebar-logo">
               <img
-                src="/benso/assets/logos/Isotipo Benso Claro.svg"
+                src="/assets/logos/Isotipo Benso Claro.svg"
                 alt="BENSO"
                 className="sidebar-logo-img"
               />

@@ -73,7 +73,7 @@ export function Header() {
     <header className={headerClass}>
       <div className="header-container">
         <Link href="/" className="logo" onClick={handleLogoClick}>
-          <img src="/benso/assets/logos/Isotipo Benso Claro.svg" alt="BENSO" className="logo-img" fetchPriority="high" />
+          <img src="/assets/logos/Isotipo Benso Claro.svg" alt="BENSO" className="logo-img" fetchPriority="high" />
         </Link>
 
         <button
