@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ShoppingCart, Send, Calendar, Search } from 'lucide-react';
 import { BentoCard, Icon, ScrollReveal, AnimatedCard, PriceDisplay, ServicesGridSkeleton, RequestModal, ShinyText } from '@/components';
 import { useCart } from '@/hooks/useCart';
-import { useServicios } from '@/hooks/useData';
+import { useServicios, type Servicio } from '@/hooks/useData';
 
 type CategoryFilter = 'all' | 'consultoria' | 'capacitacion' | 'herramientas';
 
@@ -23,7 +23,7 @@ const filters = [
   { label: 'Herramientas', value: 'herramientas' as CategoryFilter },
 ];
 
-export function ServicesPage() {
+export function ServicesPage({ initialServicios = [] }: { initialServicios?: Servicio[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [animKey, setAnimKey] = useState(0);
@@ -31,8 +31,8 @@ export function ServicesPage() {
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { addItem } = useCart();
-  const { servicios, loading } = useServicios();
-  const showLoading = !mounted || loading;
+  const { servicios, loading } = useServicios(initialServicios);
+  const showLoading = !mounted || (loading && initialServicios.length === 0);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -117,22 +117,20 @@ export function ServicesPage() {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <div className="container section-cta">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-          <button
-            className="cta-button"
-            onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
-            <Calendar size={18} />
-            Agendar cita
-          </button>
-        </div>
-      </ScrollReveal>
+      <div className="container section-cta">
+        <h2>¿Listo para transformar tu negocio?</h2>
+        <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+        <button
+          className="cta-button"
+          onClick={() => {
+            setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+            setIsRequestOpen(true);
+          }}
+        >
+          <Calendar size={18} />
+          Agendar cita
+        </button>
+      </div>
 
       <RequestModal
         item={requestItem}

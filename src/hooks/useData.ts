@@ -95,12 +95,13 @@ async function fetchEventos() {
   return (data || []) as Evento[];
 }
 
-export function useProductos() {
+export function useProductos(fallbackData?: Producto[]) {
   const { data, error, isLoading } = useSWR(PRODUCTOS_KEY, fetchProductos, {
     revalidateOnFocus: true,
-    revalidateOnMount: true,
+    revalidateOnMount: !fallbackData,
     revalidateOnReconnect: true,
     dedupingInterval: 30_000,
+    fallbackData,
   });
 
   return {
@@ -110,12 +111,13 @@ export function useProductos() {
   };
 }
 
-export function useServicios() {
+export function useServicios(fallbackData?: Servicio[]) {
   const { data, error, isLoading } = useSWR(SERVICIOS_KEY, fetchServicios, {
     revalidateOnFocus: true,
-    revalidateOnMount: true,
+    revalidateOnMount: !fallbackData,
     revalidateOnReconnect: true,
     dedupingInterval: 30_000,
+    fallbackData,
   });
 
   return {
@@ -125,12 +127,13 @@ export function useServicios() {
   };
 }
 
-export function useEventos() {
+export function useEventos(fallbackData?: Evento[]) {
   const { data, error, isLoading } = useSWR(EVENTOS_KEY, fetchEventos, {
     revalidateOnFocus: true,
-    revalidateOnMount: true,
+    revalidateOnMount: !fallbackData,
     revalidateOnReconnect: true,
     dedupingInterval: 30_000,
+    fallbackData,
   });
 
   return {

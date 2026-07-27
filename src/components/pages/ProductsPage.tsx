@@ -26,7 +26,7 @@ const filters = [
   { label: 'Merchandising', value: 'merchandising' as CategoryFilter },
 ];
 
-export function ProductsPage() {
+export function ProductsPage({ initialProductos = [] }: { initialProductos?: Producto[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
@@ -34,7 +34,7 @@ export function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
   const { addItem } = useCart();
-  const { productos, loading } = useProductos();
+  const { productos, loading } = useProductos(initialProductos);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -49,10 +49,10 @@ export function ProductsPage() {
   );
 
   // Prevent hydration mismatch: server and client first render must match
-  const isLoading = !mounted || loading;
+  const isLoading = !mounted || (loading && initialProductos.length === 0);
 
   return (
-    <section className="reveal-section reveal-disabled">
+    <div className="reveal-section reveal-disabled">
       <div className="container">
         <div className="section-title-row page-intro-title">
           <div className="section-title">
@@ -178,6 +178,6 @@ export function ProductsPage() {
         isOpen={isRequestOpen}
         onClose={() => setIsRequestOpen(false)}
       />
-    </section>
+    </div>
   );
 }
