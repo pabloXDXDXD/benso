@@ -161,6 +161,10 @@ export function HomePage() {
           
           {showServicios ? (
             <ServicesGridSkeleton count={3} />
+          ) : servicios.length === 0 ? (
+            <div className="empty-section">
+              <p>No hay servicios disponibles por el momento.</p>
+            </div>
           ) : (
           <div className="bento-grid bento-grid-center">
             {servicios.slice(0, 3).map((service, index) => (
@@ -201,6 +205,11 @@ export function HomePage() {
           
           {showProductos ? (
             <ProductsGridSkeleton count={3} />
+          ) : featuredProducts.length === 0 ? (
+            <div className="empty-section">
+              <p>No hay productos destacados por el momento.</p>
+              <Link href="/productos" className="text-cta-link">Ver todos los productos →</Link>
+            </div>
           ) : (
           <div className="bento-grid bento-grid-center">
             {featuredProducts.map((product, index) => (
@@ -254,6 +263,11 @@ export function HomePage() {
           
           {showEventos ? (
             <EventsGridSkeleton count={2} />
+          ) : upcomingEvents.length === 0 ? (
+            <div className="empty-section">
+              <p>No hay próximos eventos por el momento.</p>
+              <Link href="/eventos" className="text-cta-link">Ver historial de eventos →</Link>
+            </div>
           ) : (
           <div className="bento-grid-events">
             {upcomingEvents.map((event, index) => (
@@ -316,19 +330,24 @@ export function HomePage() {
         </div>
       </ScrollReveal>
 
-      <div className="container section-cta">
-        <h2>¿Listo para transformar tu negocio?</h2>
-        <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-        <button
-          className="cta-button"
-          onClick={() => {
-            setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-            setIsRequestOpen(true);
-          }}
-        >
-          <Calendar size={18} />
-          Agendar cita
-        </button>
+      <div className="cta-card">
+        <div className="cta-card-grainient">
+          <Grainient className="absolute inset-0" />
+        </div>
+        <div className="container section-cta cta-card-content">
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <button
+            className="cta-button cta-button--light"
+            onClick={() => {
+              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setIsRequestOpen(true);
+            }}
+          >
+            <Calendar size={18} />
+            Agendar cita gratis
+          </button>
+        </div>
       </div>
       </div>
 
