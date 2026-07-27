@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/assets/logos/Isotipo Benso Claro.svg', type: 'image/svg+xml' },
+      { url: '/assets/logos/Isotipo Benso Blanco.svg', type: 'image/svg+xml' },
     ],
   },
   robots: {
