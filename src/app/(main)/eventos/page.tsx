@@ -4,10 +4,10 @@ import { EventsPage } from '@/components/pages/EventsPage';
 import type { Evento } from '@/hooks/useData';
 
 export const metadata: Metadata = {
-  title: 'Eventos | BENSO',
+  title: 'Eventos',
   description: 'Próximos eventos, talleres y capacitaciones para emprendedores. Mantente al día con las últimas tendencias en negocios y marketing digital.',
   openGraph: {
-    title: 'Eventos | BENSO',
+    title: 'Eventos - BENSO',
     description: 'Próximos eventos, talleres y capacitaciones para emprendedores en Cuba.',
   },
 };

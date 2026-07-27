@@ -4,10 +4,10 @@ import { ProductsPage } from '@/components/pages/ProductsPage';
 import type { Producto } from '@/hooks/useData';
 
 export const metadata: Metadata = {
-  title: 'Productos | BENSO',
+  title: 'Productos',
   description: 'Soluciones digitales y productos para potenciar tu negocio: pegatinas, posters, cuadros, tarjetas y más. Calidad y diseño profesional para emprendimientos.',
   openGraph: {
-    title: 'Productos | BENSO',
+    title: 'Productos - BENSO',
     description: 'Soluciones digitales y productos para potenciar tu negocio con diseño profesional.',
   },
 };
