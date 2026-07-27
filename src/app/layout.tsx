@@ -33,7 +33,9 @@ export const metadata: Metadata = {
     images: '/og-image.svg',
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/assets/logos/Isotipo Benso Claro.svg', type: 'image/svg+xml' },
+    ],
   },
   robots: {
     index: true,
