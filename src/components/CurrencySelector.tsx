@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { DollarSign, ChevronDown } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCurrency } from '@/context/CurrencyContext';
 import { CURRENCIES, type Currency } from '@/lib/currencyUtils';
@@ -37,7 +37,6 @@ export function CurrencySelector() {
       >
         <DollarSign size={14} />
         <span>{currency}</span>
-        <ChevronDown size={12} className={`currency-chevron${open ? ' open' : ''}`} />
       </button>
 
       {open && (

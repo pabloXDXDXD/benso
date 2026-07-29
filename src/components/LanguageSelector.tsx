@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Globe, ChevronDown } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/routing';
 
@@ -47,7 +47,6 @@ export function LanguageSelector() {
       >
         <Globe size={14} />
         <span>{current}</span>
-        <ChevronDown size={12} className={`language-chevron${open ? ' open' : ''}`} />
       </button>
 
       {open && (

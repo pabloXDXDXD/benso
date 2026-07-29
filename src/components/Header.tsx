@@ -80,8 +80,8 @@ export function Header() {
         </Link>
 
         <div className="header-actions">
-          <LanguageSelector />
           <CurrencySelector />
+          <LanguageSelector />
         </div>
 
         <button
@@ -107,8 +107,8 @@ export function Header() {
             </ul>
             <div className="mobile-nav-footer">
               <div className="mobile-nav-toggles">
-                <LanguageSelector />
                 <CurrencySelector />
+                <LanguageSelector />
               </div>
             </div>
           </nav>

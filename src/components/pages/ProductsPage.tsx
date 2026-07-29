@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ShoppingCart, Calendar, Search } from 'lucide-react';
-import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, VariantSelectionDialog } from '@/components';
+import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, VariantSelectionDialog, ScrollReveal } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, type Producto } from '@/hooks/useData';
@@ -56,7 +56,8 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
   const isLoading = !mounted || (loading && initialProductos.length === 0);
 
   return (
-    <div className="reveal-section reveal-disabled">
+    <>
+    <ScrollReveal>
       <div className="container">
         <div className="section-title-row page-intro-title">
           <div className="section-title">
@@ -147,6 +148,8 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
         )}
       </div>
 
+      </ScrollReveal>
+
       <div className="cta-card">
         <div className="cta-card-grainient">
           <Grainient className="absolute inset-0" />
@@ -187,6 +190,6 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
         isOpen={isRequestOpen}
         onClose={() => setIsRequestOpen(false)}
       />
-    </div>
+    </>
   );
 }

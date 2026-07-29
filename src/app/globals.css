@@ -253,7 +253,7 @@ header:not(.admin-header).header-scrolled {
 
 nav ul {
     display: flex;
-    gap: 0.35rem;
+    gap: 0.75rem;
 }
 
 nav ul li a {
@@ -322,14 +322,6 @@ nav ul li a.active::after {
 
 .language-dropdown-trigger:hover {
     opacity: 1;
-}
-
-.language-chevron {
-    transition: transform 0.2s;
-}
-
-.language-chevron.open {
-    transform: rotate(180deg);
 }
 
 .language-dropdown-menu {
@@ -412,14 +404,6 @@ nav ul li a.active::after {
 
 .currency-dropdown-trigger:hover {
     opacity: 1;
-}
-
-.currency-chevron {
-    transition: transform 0.2s;
-}
-
-.currency-chevron.open {
-    transform: rotate(180deg);
 }
 
 .currency-dropdown-menu {
