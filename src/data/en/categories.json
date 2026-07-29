@@ -1,0 +1,16 @@
+{
+  "services": [
+    { "label": "All", "value": "all" },
+    { "label": "Consulting", "value": "consultoria" },
+    { "label": "Tools", "value": "herramientas" },
+    { "label": "Training", "value": "capacitacion" }
+  ],
+  "products": [
+    { "label": "All", "value": "all" },
+    { "label": "Stickers", "value": "adhesivos" },
+    { "label": "Signage", "value": "carteleria" },
+    { "label": "Stationery", "value": "papeleria" },
+    { "label": "Apparel", "value": "indumentaria" },
+    { "label": "Merchandising", "value": "merchandising" }
+  ]
+}

@@ -8,6 +8,7 @@ import Grainient from '@/components/Grainient';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, type Producto } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
+import { useTranslations } from 'next-intl';
 interface RequestItem {
   title: string;
   price: string;
@@ -18,15 +19,6 @@ interface RequestItem {
 
 type CategoryFilter = 'all' | 'adhesivos' | 'carteleria' | 'papeleria' | 'indumentaria' | 'merchandising';
 
-const filters = [
-  { label: 'Todos', value: 'all' as CategoryFilter },
-  { label: 'Adhesivos', value: 'adhesivos' as CategoryFilter },
-  { label: 'Cartelería', value: 'carteleria' as CategoryFilter },
-  { label: 'Papelería', value: 'papeleria' as CategoryFilter },
-  { label: 'Indumentaria', value: 'indumentaria' as CategoryFilter },
-  { label: 'Merchandising', value: 'merchandising' as CategoryFilter },
-];
-
 export function ProductsPage({ initialProductos = [] }: { initialProductos?: Producto[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
@@ -36,6 +28,17 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
   const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
   const { addItem } = useCart();
   const { productos, loading } = useProductos(initialProductos);
+  const t = useTranslations('products');
+  const common = useTranslations('common');
+  const home = useTranslations('home');
+  const filters = [
+    { label: t('filterAll'), value: 'all' as CategoryFilter },
+    { label: t('filterAdhesivos'), value: 'adhesivos' as CategoryFilter },
+    { label: t('filterCarteleria'), value: 'carteleria' as CategoryFilter },
+    { label: t('filterPapeleria'), value: 'papeleria' as CategoryFilter },
+    { label: t('filterIndumentaria'), value: 'indumentaria' as CategoryFilter },
+    { label: t('filterMerchandising'), value: 'merchandising' as CategoryFilter },
+  ];
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -57,14 +60,14 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
       <div className="container">
         <div className="section-title-row page-intro-title">
           <div className="section-title">
-            <h2>Nuestros productos</h2>
+            <h2>{t('pageTitle')}</h2>
           </div>
           <div className="filter-controls">
             <div className="search-input-wrapper">
               <Search size={18} className="search-icon" />
               <input
                 type="text"
-                placeholder="Buscar productos..."
+                placeholder={t('searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
@@ -91,7 +94,7 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
         ) : filteredProducts.length === 0 ? (
           <div className="bento-grid">
             <div className="bento-card">
-              <p>No hay productos disponibles</p>
+              <p>{t('empty')}</p>
             </div>
           </div>
         ) : (
@@ -102,7 +105,7 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
                   className={`interactive-card service-card${product.popular ? ' popular-card' : ''}`}
                   dataCategory={product.category}
                 >
-                  {product.popular && <span className="popular-tag">#popular</span>}
+                  {product.popular && <span className="popular-tag">{t('popularTag')}</span>}
                   {product.image ? (
                     <div className="product-image-container">
                       <Image 
@@ -116,7 +119,7 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
                     </div>
                   ) : (
                     <div className="product-image-placeholder">
-                      <span>Imagen no disponible</span>
+                      <span>{t('imageNotAvailable')}</span>
                     </div>
                   )}
                   <h3>{product.title}</h3>
@@ -134,7 +137,7 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
                         }}
                       >
                         <ShoppingCart size={16} />
-                        <span>Añadir al carrito</span>
+                        <span>{common('addToCart')}</span>
                       </button>
                   </div>
                 </BentoCard>
@@ -149,17 +152,17 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <h2>{home('sections.ctaTitle')}</h2>
+          <p>{home('sections.ctaText')}</p>
           <button
             className="cta-button cta-button--light"
             onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setRequestItem({ title: common('appointmentTitle'), price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
               setIsRequestOpen(true);
             }}
           >
             <Calendar size={18} />
-            Agendar cita gratis
+            {home('sections.ctaButton')}
           </button>
         </div>
       </div>

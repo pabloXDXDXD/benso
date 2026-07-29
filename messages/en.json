@@ -1,0 +1,378 @@
+{
+  "metadata": {
+    "title": "BENSO | Consulting & Digital Solutions for SMEs",
+    "description": "Strategic advisory, tools, and training to boost your business profitability.",
+    "home": {
+      "title": "BENSO | Consulting & Digital Solutions for SMEs",
+      "description": "Strategic advisory, tools, and training to boost your business profitability.",
+      "ogTitle": "BENSO | Consulting & Digital Solutions for SMEs",
+      "ogDescription": "Strategic advisory, tools, and training to boost your business profitability."
+    },
+    "servicios": {
+      "title": "Services",
+      "description": "Business consulting, strategic training, and digital tools for SMEs.",
+      "ogTitle": "Services - BENSO",
+      "ogDescription": "Business consulting, strategic training, and digital tools for SMEs."
+    },
+    "productos": {
+      "title": "Products",
+      "description": "Digital solutions and products to grow your business.",
+      "ogTitle": "Products - BENSO",
+      "ogDescription": "Digital solutions and products to grow your business with professional design."
+    },
+    "eventos": {
+      "title": "Events",
+      "description": "Upcoming events, workshops, and training for entrepreneurs.",
+      "ogTitle": "Events - BENSO",
+      "ogDescription": "Upcoming events, workshops, and training for entrepreneurs in Cuba."
+    },
+    "nosotros": {
+      "title": "About Us",
+      "description": "Discover why BENSO is the right choice for your business growth.",
+      "ogTitle": "About Us - BENSO",
+      "ogDescription": "Discover why BENSO is the right choice for your business growth."
+    },
+    "contacto": {
+      "title": "Contact",
+      "description": "Get in touch for personalized consulting.",
+      "ogTitle": "Contact - BENSO",
+      "ogDescription": "Get in touch for personalized consulting for your business."
+    },
+    "default": {
+      "title": "BENSO | Consulting & Digital Solutions for SMEs",
+      "description": "Strategic advisory, tools, and training to boost your business profitability.",
+      "ogLocaleEs": "es_ES",
+      "ogLocaleEn": "en_US",
+      "keywords": "consulting, SMEs, entrepreneurship, digital marketing, Cuba"
+    }
+  },
+  "common": {
+    "skipToContent": "Skip to main content",
+    "viewAll": "View all",
+    "viewAllProducts": "View all products",
+    "viewHistory": "View event history",
+    "seeMore": "See more",
+    "addToCart": "Add to cart",
+    "appointmentTitle": "Consultation Appointment",
+    "close": "Close",
+    "copy": "Copy"
+  },
+  "header": {
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "products": "Products",
+      "events": "Events",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "aria": {
+      "closeMenu": "Close navigation menu",
+      "openMenu": "Open navigation menu"
+    }
+  },
+  "footer": {
+    "tagline": "Consulting & Digital Solutions for Sustainable Profitability.",
+    "contactTitle": "Contact",
+    "socialTitle": "Social media",
+    "copyright": "© {year} Benso"
+  },
+  "promoBanner": {
+    "text": "New Digital Marketing Course!",
+    "discount": "20% off",
+    "fullText": "New Digital Marketing Course! 20% off",
+    "ariaLabel": "Access the Digital Marketing course promotion"
+  },
+  "home": {
+    "hero": {
+      "titleLine1": "Advisory, Tools, and Training for",
+      "titleLine2": "Entrepreneurs",
+      "slogan": "We teach you how to position a business and guide you every step of the way",
+      "appointment": "Book a free consultation",
+      "aboutUs": "About us"
+    },
+    "sections": {
+      "services": "Our services",
+      "featuredProducts": "Featured products",
+      "upcomingEvents": "Upcoming events",
+      "testimonials": "What our clients say",
+      "faq": "Frequently Asked Questions",
+      "ctaTitle": "Ready to transform your business?",
+      "ctaText": "Schedule a consultation and discover how we can help you reach your goals.",
+      "ctaButton": "Book a free consultation"
+    },
+    "empty": {
+      "services": "No services available at the moment.",
+      "products": "No featured products at the moment.",
+      "events": "No upcoming events at the moment."
+    }
+  },
+  "services": {
+    "pageTitle": "Our services",
+    "searchPlaceholder": "Search services...",
+    "filterAll": "All",
+    "filterConsultoria": "Consulting",
+    "filterCapacitacion": "Training",
+    "filterHerramientas": "Tools",
+    "addToCart": "Add to cart",
+    "empty": "No services available at the moment.",
+    "variantUnit": "Single"
+  },
+  "products": {
+    "pageTitle": "Our products",
+    "searchPlaceholder": "Search products...",
+    "filterAll": "All",
+    "filterAdhesivos": "Stickers",
+    "filterCarteleria": "Posters",
+    "filterPapeleria": "Stationery",
+    "filterIndumentaria": "Apparel",
+    "filterMerchandising": "Merchandising",
+    "empty": "No products available",
+    "popularTag": "#popular",
+    "imageNotAvailable": "Image not available",
+    "addToCart": "Add to cart",
+    "variantUnit": "Single"
+  },
+  "events": {
+    "current": "Current events",
+    "upcoming": "Upcoming",
+    "timeline": "Timeline",
+    "register": "Register",
+    "status": {
+      "inProgress": "In Progress",
+      "upcoming": "Upcoming"
+    },
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
+  },
+  "about": {
+    "sectionTitle": "Why choose us?",
+    "cards": {
+      "investment": {
+        "title": "Affordable Investment",
+        "description": "We offer top-quality services with fair and customizable payment plans."
+      },
+      "personalized": {
+        "title": "Personalized Attention",
+        "description": "Our consulting is built on understanding your business in depth and tailoring strategies to your unique reality."
+      },
+      "support": {
+        "title": "Continuous Support",
+        "description": "We show you the way and accompany you through every step of implementation."
+      },
+      "results": {
+        "title": "Measurable Results",
+        "description": "We measure our strategies' performance by the real impact they have on your project."
+      }
+    },
+    "gallery": "Gallery"
+  },
+  "contact": {
+    "sectionTitle": "Schedule your appointment",
+    "formTitle": "Contact Form",
+    "form": {
+      "name": "Full name *",
+      "email": "Email *",
+      "phone": "Phone / WhatsApp *",
+      "date": "Preferred appointment date *",
+      "service": "Service of interest",
+      "message": "Additional message",
+      "emailPlaceholder": "you@example.com…",
+      "phonePlaceholder": "+53 XXXX XXXX",
+      "servicePlaceholder": "Select a service (optional)",
+      "messagePlaceholder": "Tell us more about what you need..."
+    },
+    "validation": {
+      "nameRequired": "Name is required.",
+      "emailRequired": "Email is required.",
+      "validEmail": "Please enter a valid email address.",
+      "phoneRequired": "Phone number is required.",
+      "validPhone": "Please enter a valid phone number.",
+      "dateRequired": "Please select a date."
+    },
+    "submit": "Request appointment",
+    "submitting": "Sending...",
+    "success": {
+      "title": "Appointment requested!",
+      "message": "Your appointment request has been received successfully.",
+      "note": "We will contact you within 24-48 hours to confirm the date and time.",
+      "acceptButton": "OK"
+    },
+    "error": {
+      "saveError": "Error saving the appointment. Please try again.",
+      "processError": "Error processing your request."
+    },
+    "faqTitle": "Frequently Asked Questions"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "Sorry, the page you are looking for does not exist or has been moved.",
+    "goHome": "Back to Home"
+  },
+  "cart": {
+    "toastAdded": "\"{product} — {variant}\" added",
+    "fab": "Open cart",
+    "panel": "Your cart",
+    "dialogLabel": "Shopping cart",
+    "close": "Close cart",
+    "empty": "Cart is empty",
+    "emptyDescription": "Browse our products and add what you need",
+    "viewProducts": "View products",
+    "total": "Total",
+    "checkout": "Checkout",
+    "aria": {
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "remove": "Remove {product}"
+    }
+  },
+  "checkout": {
+    "title": "Complete Order",
+    "subtitle": "Fill in your details to process your order",
+    "contactSection": "Contact Information",
+    "deliverySection": "Delivery Address",
+    "summarySection": "Order Summary",
+    "form": {
+      "name": "Full name *",
+      "email": "Email",
+      "phone": "Phone / WhatsApp *",
+      "address": "Address",
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "you@email.com",
+      "phonePlaceholder": "+53 XXXX XXXX",
+      "addressPlaceholder": "Street, number, apartment, municipality..."
+    },
+    "submit": "Confirm order",
+    "submitting": "Processing...",
+    "success": {
+      "title": "Order received!",
+      "orderLabel": "Order number",
+      "copy": "Copy",
+      "message": "Your order has been registered successfully.",
+      "paymentNote": "This is not an immediate payment",
+      "paymentDetail": "This is not an immediate payment — payment will be coordinated manually once we confirm your order details.",
+      "contactNote": "We will contact you within 24-48 hours to confirm availability and arrange payment.",
+      "continueShopping": "Continue shopping"
+    },
+    "error": {
+      "saveError": "Error saving the order"
+    },
+    "ariaClose": "Close"
+  },
+  "requestModal": {
+    "titleDefault": "Request service",
+    "titleEvent": "Register for event",
+    "contactSection": "Contact Information",
+    "messageSection": "Message",
+    "messageOptional": "(optional)",
+    "form": {
+      "name": "Full name *",
+      "email": "Email",
+      "phone": "Phone / WhatsApp *",
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "you@email.com",
+      "phonePlaceholder": "+53 XXXX XXXX",
+      "messagePlaceholder": "Do you have any questions or special requirements?"
+    },
+    "submit": "Send request",
+    "submitting": "Processing...",
+    "success": {
+      "title": "Request received!",
+      "orderLabel": "Request number",
+      "copy": "Copy",
+      "message": "Your request for {title} has been registered successfully.",
+      "paymentNote": "This is not an immediate payment",
+      "paymentDetail": "This is not an immediate payment — payment will be coordinated manually once we confirm the details.",
+      "contactNote": "We will contact you within 24-48 hours to confirm availability and arrange payment.",
+      "continue": "Continue browsing"
+    },
+    "error": {
+      "processError": "Error processing request"
+    },
+    "ariaClose": "Close"
+  },
+  "variantDialog": {
+    "ariaLabel": "Select variant for {product}",
+    "ariaClose": "Close",
+    "labelVariant": "Presentation",
+    "labelQuantity": "Quantity",
+    "ariaDecrease": "Decrease quantity",
+    "ariaIncrease": "Increase quantity",
+    "unitPrice": "Unit price",
+    "subtotal": "Subtotal",
+    "addToCart": "Add to cart"
+  },
+  "eventRegistration": {
+    "title": "Event Registration",
+    "form": {
+      "email": "Email *",
+      "phone": "Phone *",
+      "educationLevel": "Education level *",
+      "hasBusiness": "Do you already have a business? *",
+      "businessName": "Your business name *",
+      "sector": "What sector does your business operate in? *",
+      "motivation": "What motivates you to take this course? *",
+      "agreement": "I commit to attending punctually, participating actively, and respecting the course environment and rules. *",
+      "notifications": "I wish to receive notifications about future events",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "placeholders": {
+      "email": "you@email.com",
+      "phone": "+53 XXXX XXXX",
+      "businessName": "Your business name",
+      "motivation": "Tell us what you hope to learn…",
+      "selectDefault": "Select an option"
+    },
+    "help": {
+      "email": "We will send course materials to this email.",
+      "phone": "Provide a direct contact number."
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalidEmail": "Invalid email address",
+      "selectOption": "Select an option",
+      "minLength": "Must be at least 10 characters",
+      "agreementRequired": "You must accept the learning agreement"
+    },
+    "submit": "Register",
+    "submitting": "Submitting registration...",
+    "success": {
+      "title": "Registration complete!",
+      "message": "We will contact you soon.",
+      "close": "Close"
+    },
+    "error": {
+      "processError": "Error processing registration. Please try again."
+    },
+    "educationLevels": ["High School", "Pre-University", "Technical School", "University", "Postgraduate"],
+    "sectors": ["Technology", "Food & Beverage", "Fashion & Design", "Professional Services", "Commerce", "Health & Wellness", "Education", "Arts & Culture", "Other"]
+  },
+  "gallery": {
+    "items": {
+      "consulting": "Strategic Consulting",
+      "teamwork": "Teamwork",
+      "personalized": "Personalized Attention",
+      "results": "Measurable Results",
+      "innovation": "Digital Innovation",
+      "marketing": "Digital Marketing",
+      "vision": "Strategic Vision",
+      "growth": "Growth"
+    }
+  },
+  "currencySelector": {
+    "ariaLabel": "Currency: {currency}. Click to change"
+  }
+}

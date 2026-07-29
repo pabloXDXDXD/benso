@@ -6,6 +6,7 @@ import { useCart } from '@/hooks/useCart';
 import { imgSrc } from '@/lib/imageLoader';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPriceInCurrency } from '@/lib/currencyUtils';
+import { useTranslations } from 'next-intl';
 
 interface Variant {
   label: string;
@@ -29,6 +30,7 @@ interface VariantSelectionDialogProps {
 
 export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSelectionDialogProps) {
   const { addItem } = useCart();
+  const t = useTranslations('variantDialog');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -55,8 +57,8 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
   return (
     <div className="vsel-overlay" onClick={onClose}>
       <div className="vsel-dialog" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}
-        aria-label={`Seleccionar variante de ${product.title}`}>
-        <button className="vsel-close" onClick={onClose} aria-label="Cerrar">
+        aria-label={t('ariaLabel', { product: product.title })}>
+        <button className="vsel-close" onClick={onClose} aria-label={t('ariaClose')}>
           <X size={20} />
         </button>
 
@@ -64,7 +66,7 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
         {product.image ? (
           <div className="vsel-img-wrap">
             <Image src={imgSrc(product.image)} alt={product.title} width={400} height={225}
-              className="vsel-img" unoptimized />
+              className="vsel-img" unoptimized style={{ width: '100%', height: 'auto' }} />
           </div>
         ) : (
           <div className="vsel-img-wrap vsel-img-placeholder">
@@ -78,7 +80,7 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
           {/* Variant selector — only show when there are multiple options */}
           {!isSingleVariant && (
             <div className="vsel-section">
-              <label className="vsel-label">Presentación</label>
+              <label className="vsel-label">{t('labelVariant')}</label>
               <div className="vsel-options">
                 {product.variants.map((v, i) => (
                   <button key={v.label}
@@ -97,15 +99,15 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
 
           {/* Quantity */}
           <div className="vsel-section">
-            <label className="vsel-label">Cantidad</label>
+            <label className="vsel-label">{t('labelQuantity')}</label>
             <div className="vsel-qty">
               <button className="vsel-qty-btn" onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1} aria-label="Reducir cantidad">
+                disabled={quantity <= 1} aria-label={t('ariaDecrease')}>
                 <Minus size={16} />
               </button>
               <span className="vsel-qty-val">{quantity}</span>
               <button className="vsel-qty-btn" onClick={() => setQuantity(quantity + 1)}
-                aria-label="Aumentar cantidad">
+                aria-label={t('ariaIncrease')}>
                 <Plus size={16} />
               </button>
             </div>
@@ -115,12 +117,12 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
           <div className="vsel-totals">
             {isSingleVariant && (
               <div className="vsel-row">
-                <span>Precio unitario</span>
+                <span>{t('unitPrice')}</span>
                 <span>{formatPriceInCurrency(selectedVariant.unitPrice, currency)}</span>
               </div>
             )}
             <div className="vsel-row vsel-row--final">
-              <span>Subtotal</span>
+              <span>{t('subtotal')}</span>
               <span className="vsel-final">{formatPriceInCurrency(subtotal, currency)}</span>
             </div>
           </div>
@@ -128,7 +130,7 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
           {/* Add button */}
           <button className="vsel-add" onClick={handleAdd}>
             <ShoppingCart size={18} />
-            Añadir al carrito
+            {t('addToCart')}
           </button>
         </div>
       </div>

@@ -1,0 +1,102 @@
+{
+  "featured": [
+    {
+      "title": "Expert Consulting",
+      "price": "From $0 CUP",
+      "description": "Initial analysis service including reports and quick assessments of your business's current state.",
+      "icon": "info",
+      "image": "",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20Expert%20Consulting"
+    },
+    {
+      "title": "Digital Marketing",
+      "price": "From $5,000 CUP/month",
+      "description": "Multi-platform content creation, visual identity design, and digital marketing strategies.",
+      "icon": "trending",
+      "image": "",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20Digital%20Marketing"
+    },
+    {
+      "title": "Automation",
+      "price": "From $5,000 CUP",
+      "description": "WhatsApp bot, websites, multi-channel sales funnels, and more solutions to automate your business.",
+      "icon": "tools",
+      "image": "",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20Automation"
+    }
+  ],
+  "all": [
+    {
+      "title": "Expert Consulting (Initial Diagnosis)",
+      "price": "From $0 CUP",
+      "description": "Initial analysis service including reports and quick assessments of your business's current state. Ideal for identifying areas of improvement. Areas: Accounting, Marketing, Planning.",
+      "icon": "info",
+      "image": "",
+      "category": "consultoria",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20schedule%20a%20free%20diagnosis"
+    },
+    {
+      "title": "Technical and Professional Advisory",
+      "price": "From $1,500 CUP",
+      "description": "Implementation of customized solutions for issues detected in key areas. Accounting from $1,500 CUP / Marketing from $3,000 CUP.",
+      "icon": "globe",
+      "image": "",
+      "category": "consultoria",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20technical%20advisory"
+    },
+    {
+      "title": "Accounting Systems",
+      "price": "From $3,800 CUP",
+      "description": "Standard implementation (Versat, Desfot, SAP, Odoo, etc.) from $5,000 CUP. Custom Microsoft solutions from $3,800 CUP. Custom-built software from $25,000 CUP.",
+      "icon": "money",
+      "image": "",
+      "category": "herramientas",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20Accounting%20Systems"
+    },
+    {
+      "title": "Digital Marketing",
+      "price": "From $5,000 CUP/month",
+      "description": "Social media content from $5,000 CUP/month. Visual identity design from $9,000 CUP. Digital marketing strategy with dashboard included, price upon consultation.",
+      "icon": "trending",
+      "image": "",
+      "category": "herramientas",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20Digital%20Marketing"
+    },
+    {
+      "title": "Process Automation",
+      "price": "From $5,000 CUP",
+      "description": "WhatsApp Bot: $15,000 CUP. Websites: $6,500 CUP/month (maintenance and hosting plan). Multi-channel Sales Funnel: $5,000 CUP.",
+      "icon": "tools",
+      "image": "",
+      "category": "herramientas",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20request%20Process%20Automation"
+    },
+    {
+      "title": "Negotiation Workshop",
+      "price": "$465 CUP",
+      "description": "Training program in negotiation techniques applied to the business environment. Duration: 2 weeks.",
+      "icon": "document",
+      "image": "",
+      "category": "capacitacion",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20enroll%20in%20the%20Negotiation%20Workshop"
+    },
+    {
+      "title": "Digital Marketing Workshop",
+      "price": "$465 CUP",
+      "description": "Learn digital marketing strategies to position your business on social media. Duration: 2 weeks.",
+      "icon": "chart",
+      "image": "",
+      "category": "capacitacion",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20enroll%20in%20the%20Digital%20Marketing%20Workshop"
+    },
+    {
+      "title": "Basic Accounting Course",
+      "price": "$1,265 CUP",
+      "description": "Manage your business finances effectively. Includes cash flow control, cost analysis, and budget planning. Duration: 4 weeks.",
+      "icon": "money",
+      "image": "",
+      "category": "capacitacion",
+      "whatsappLink": "https://wa.me/5355609099?text=I%20want%20to%20enroll%20in%20the%20Basic%20Accounting%20Course"
+    }
+  ]
+}

@@ -1,18 +1,33 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Metadata } from 'next';
 import { EventsPage } from '@/components/pages/EventsPage';
 import type { Evento } from '@/hooks/useData';
+import { localizeItems } from '@/lib/supabase-i18n';
+import { routing } from '@/i18n/routing';
 
-export const metadata: Metadata = {
-  title: 'Eventos',
-  description: 'Próximos eventos, talleres y capacitaciones para emprendedores. Mantente al día con las últimas tendencias en negocios y marketing digital.',
-  openGraph: {
-    title: 'Eventos - BENSO',
-    description: 'Próximos eventos, talleres y capacitaciones para emprendedores en Cuba.',
-  },
-};
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
-export default async function Page() {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'metadata.eventos' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    openGraph: {
+      title: t('ogTitle'),
+      description: t('ogDescription'),
+    },
+  };
+}
+
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -24,7 +39,7 @@ export default async function Page() {
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  const items = (eventos || []) as Evento[];
+  const items = localizeItems((eventos || []) as Evento[], locale);
 
   const eventJsonLd = {
     '@context': 'https://schema.org',
@@ -46,10 +61,7 @@ export default async function Page() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }} />
       <EventsPage initialEventos={items} />
     </>
   );

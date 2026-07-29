@@ -1,0 +1,39 @@
+{
+  "current": [
+    {
+      "title": "Taller de Gestión Financiera",
+      "status": "En Curso",
+      "date": "Diciembre 2024",
+      "description": "Capacitación intensiva sobre control de flujo de caja, análisis de costos y planificación presupuestaria para PyMEs."
+    },
+    {
+      "title": "Programa de Mentoría Empresarial",
+      "status": "En Curso",
+      "date": "Noviembre 2024 - Enero 2025",
+      "description": "Acompañamiento personalizado de 3 meses para emprendedores en etapa de crecimiento."
+    }
+  ],
+  "upcoming": [
+    {
+      "title": "Masterclass de E-commerce",
+      "status": "Próximamente",
+      "date": "Enero 2025",
+      "description": "Todo lo que necesitas saber para vender online y escalar tu negocio digital.",
+      "whatsappLink": "https://wa.me/5355609099?text=Hola%2C%20quiero%20inscribirme%20al%20evento%20Masterclass%20de%20E-commerce"
+    },
+    {
+      "title": "Bootcamp Emprendedor",
+      "status": "Próximamente",
+      "date": "Febrero 2025",
+      "description": "Programa intensivo de 4 semanas para acelerar el crecimiento de tu emprendimiento.",
+      "whatsappLink": "https://wa.me/5355609099?text=Hola%2C%20quiero%20inscribirme%20al%20evento%20Bootcamp%20Emprendedor"
+    },
+    {
+      "title": "Taller de Transformación Digital",
+      "status": "Próximamente",
+      "date": "Marzo 2025",
+      "description": "Aprende a implementar tecnología en tu negocio para optimizar procesos y reducir costos.",
+      "whatsappLink": "https://wa.me/5355609099?text=Hola%2C%20quiero%20inscribirme%20al%20evento%20Taller%20de%20Transformación%20Digital"
+    }
+  ]
+}

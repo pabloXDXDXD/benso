@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { EventRegistrationForm } from './EventRegistrationForm';
 import { RequestModal } from './RequestModal';
 
 export function PromoBanner() {
+  const t = useTranslations('promoBanner');
+  const common = useTranslations('common');
   const bannerRef = useRef<HTMLButtonElement>(null);
   const [evento, setEvento] = useState<{ id: number; title: string } | null>(null);
   const [isRegOpen, setIsRegOpen] = useState(false);
@@ -50,12 +53,12 @@ export function PromoBanner() {
         className="promo-banner"
         ref={bannerRef}
         onClick={handleClick}
-        aria-label="Acceder a la promoción de curso de Marketing Digital"
+        aria-label={t('ariaLabel')}
       >
         <div className="promo-banner-track">
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="promo-banner-item">
-              Nuevo curso de Marketing Digital! <span className="promo-highlight">20% de descuento</span>
+              {t('text')} <span className="promo-highlight">{t('discount')}</span>
             </span>
           ))}
         </div>
@@ -72,7 +75,7 @@ export function PromoBanner() {
 
       <RequestModal
         item={{
-          title: 'Cita de consulta',
+          title: common('appointmentTitle'),
           price: '',
           priceNum: 0,
           whatsappLink: '',

@@ -1,0 +1,378 @@
+{
+  "metadata": {
+    "title": "BENSO | Consultoría y Soluciones Digitales para PyMEs",
+    "description": "Asesoramiento, herramientas y capacitación estratégica para impulsar la rentabilidad de tu emprendimiento.",
+    "home": {
+      "title": "BENSO | Consultoría y Soluciones Digitales para PyMEs",
+      "description": "Asesoramiento, herramientas y capacitación estratégica para impulsar la rentabilidad de tu emprendimiento.",
+      "ogTitle": "BENSO | Consultoría y Soluciones Digitales para PyMEs",
+      "ogDescription": "Asesoramiento, herramientas y capacitación estratégica para impulsar la rentabilidad de tu emprendimiento."
+    },
+    "servicios": {
+      "title": "Servicios",
+      "description": "Consultoría empresarial, capacitación estratégica y herramientas digitales para PyMEs.",
+      "ogTitle": "Servicios - BENSO",
+      "ogDescription": "Consultoría empresarial, capacitación estratégica y herramientas digitales para PyMEs."
+    },
+    "productos": {
+      "title": "Productos",
+      "description": "Soluciones digitales y productos para potenciar tu negocio.",
+      "ogTitle": "Productos - BENSO",
+      "ogDescription": "Soluciones digitales y productos para potenciar tu negocio con diseño profesional."
+    },
+    "eventos": {
+      "title": "Eventos",
+      "description": "Próximos eventos, talleres y capacitaciones para emprendedores.",
+      "ogTitle": "Eventos - BENSO",
+      "ogDescription": "Próximos eventos, talleres y capacitaciones para emprendedores en Cuba."
+    },
+    "nosotros": {
+      "title": "Nosotros",
+      "description": "Descubre por qué elegir BENSO para impulsar tu emprendimiento.",
+      "ogTitle": "Nosotros - BENSO",
+      "ogDescription": "Descubre por qué elegir BENSO para impulsar tu emprendimiento."
+    },
+    "contacto": {
+      "title": "Contacto",
+      "description": "Contáctanos para recibir asesoría personalizada.",
+      "ogTitle": "Contacto - BENSO",
+      "ogDescription": "Contáctanos para recibir asesoría personalizada para tu emprendimiento."
+    },
+    "default": {
+      "title": "BENSO | Consultoría y Soluciones Digitales para PyMEs",
+      "description": "Asesoramiento, herramientas y capacitación estratégica para impulsar la rentabilidad de tu emprendimiento.",
+      "ogLocaleEs": "es_ES",
+      "ogLocaleEn": "en_US",
+      "keywords": "consultoría, PyMEs, emprendimiento, marketing digital, Cuba"
+    }
+  },
+  "common": {
+    "skipToContent": "Saltar al contenido principal",
+    "viewAll": "Ver todos",
+    "viewAllProducts": "Ver todos los productos",
+    "viewHistory": "Ver historial de eventos",
+    "seeMore": "Ver más",
+    "addToCart": "Añadir al carrito",
+    "appointmentTitle": "Cita de consulta",
+    "close": "Cerrar",
+    "copy": "Copiar"
+  },
+  "header": {
+    "nav": {
+      "home": "Inicio",
+      "services": "Servicios",
+      "products": "Productos",
+      "events": "Eventos",
+      "about": "Nosotros",
+      "contact": "Contacto"
+    },
+    "aria": {
+      "closeMenu": "Cerrar menú de navegación",
+      "openMenu": "Abrir menú de navegación"
+    }
+  },
+  "footer": {
+    "tagline": "Consultoría y Soluciones Digitales para la Rentabilidad Sostenible.",
+    "contactTitle": "Contacto",
+    "socialTitle": "Redes sociales",
+    "copyright": "© {year} Benso"
+  },
+  "promoBanner": {
+    "text": "Nuevo curso de Marketing Digital!",
+    "discount": "20% de descuento",
+    "fullText": "Nuevo curso de Marketing Digital! 20% de descuento",
+    "ariaLabel": "Acceder a la promoción de curso de Marketing Digital"
+  },
+  "home": {
+    "hero": {
+      "titleLine1": "Asesoramiento, Herramientas y Capacitación para",
+      "titleLine2": "Emprendedores",
+      "slogan": "Te enseñamos cómo posicionar un negocio y te acompañamos en cada paso del camino",
+      "appointment": "Agendar cita gratis",
+      "aboutUs": "Sobre nosotros"
+    },
+    "sections": {
+      "services": "Nuestros servicios",
+      "featuredProducts": "Productos destacados",
+      "upcomingEvents": "Próximos eventos",
+      "testimonials": "Lo que dicen nuestros clientes",
+      "faq": "Preguntas Frecuentes",
+      "ctaTitle": "¿Listo para transformar tu negocio?",
+      "ctaText": "Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.",
+      "ctaButton": "Agendar cita gratis"
+    },
+    "empty": {
+      "services": "No hay servicios disponibles por el momento.",
+      "products": "No hay productos destacados por el momento.",
+      "events": "No hay próximos eventos por el momento."
+    }
+  },
+  "services": {
+    "pageTitle": "Nuestros servicios",
+    "searchPlaceholder": "Buscar servicios...",
+    "filterAll": "Todos",
+    "filterConsultoria": "Consultoría",
+    "filterCapacitacion": "Capacitación",
+    "filterHerramientas": "Herramientas",
+    "addToCart": "Añadir al carrito",
+    "empty": "No hay servicios disponibles por el momento.",
+    "variantUnit": "Único"
+  },
+  "products": {
+    "pageTitle": "Nuestros productos",
+    "searchPlaceholder": "Buscar productos...",
+    "filterAll": "Todos",
+    "filterAdhesivos": "Adhesivos",
+    "filterCarteleria": "Cartelería",
+    "filterPapeleria": "Papelería",
+    "filterIndumentaria": "Indumentaria",
+    "filterMerchandising": "Merchandising",
+    "empty": "No hay productos disponibles",
+    "popularTag": "#popular",
+    "imageNotAvailable": "Imagen no disponible",
+    "addToCart": "Añadir al carrito",
+    "variantUnit": "Único"
+  },
+  "events": {
+    "current": "Eventos actuales",
+    "upcoming": "Próximamente",
+    "timeline": "Línea del tiempo",
+    "register": "Inscribirme",
+    "status": {
+      "inProgress": "En Curso",
+      "upcoming": "Proximamente"
+    },
+    "months": [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre"
+    ]
+  },
+  "about": {
+    "sectionTitle": "¿Por qué elegirnos?",
+    "cards": {
+      "investment": {
+        "title": "Inversión Accesible",
+        "description": "Ofrecemos servicios de máxima calidad con facilidades de pago justas y personalizables."
+      },
+      "personalized": {
+        "title": "Atención Personalizada",
+        "description": "Nuestro asesoramiento se basa en conocer tu negocio en profundidad y ajustar las estrategias a tu realidad única."
+      },
+      "support": {
+        "title": "Acompañamiento Continuo",
+        "description": "Te mostramos el camino y te acompañamos en cada paso de la implementación."
+      },
+      "results": {
+        "title": "Resultados Medibles",
+        "description": "Medimos el rendimiento de nuestras estrategias por el impacto real que tengan sobre tu proyecto."
+      }
+    },
+    "gallery": "Galería"
+  },
+  "contact": {
+    "sectionTitle": "Agenda tu cita",
+    "formTitle": "Formulario de Contacto",
+    "form": {
+      "name": "Nombre completo *",
+      "email": "Correo electrónico *",
+      "phone": "Teléfono / WhatsApp *",
+      "date": "Fecha preferida para la cita *",
+      "service": "Servicio de interés",
+      "message": "Mensaje adicional",
+      "emailPlaceholder": "ejemplo@correo.com…",
+      "phonePlaceholder": "+53 XXXX XXXX",
+      "servicePlaceholder": "Selecciona un servicio (opcional)",
+      "messagePlaceholder": "Cuéntanos más sobre lo que necesitas..."
+    },
+    "validation": {
+      "nameRequired": "El nombre es obligatorio.",
+      "emailRequired": "El correo electrónico es obligatorio.",
+      "validEmail": "Introduce un correo electrónico válido.",
+      "phoneRequired": "El teléfono es obligatorio.",
+      "validPhone": "Introduce un número de teléfono válido.",
+      "dateRequired": "La fecha es obligatoria."
+    },
+    "submit": "Solicitar cita",
+    "submitting": "Enviando...",
+    "success": {
+      "title": "¡Cita solicitada!",
+      "message": "Tu solicitud de cita ha sido recibida correctamente.",
+      "note": "Te contactaremos en un plazo de 24-48 horas para confirmar la fecha y hora.",
+      "acceptButton": "Aceptar"
+    },
+    "error": {
+      "saveError": "Error al guardar la cita. Intenta de nuevo.",
+      "processError": "Error al procesar la solicitud."
+    },
+    "faqTitle": "Preguntas frecuentes"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    "goHome": "Volver al Inicio"
+  },
+  "cart": {
+    "toastAdded": "\"{product} — {variant}\" añadido",
+    "fab": "Abrir carrito",
+    "panel": "Tu carrito",
+    "dialogLabel": "Carrito de compras",
+    "close": "Cerrar carrito",
+    "empty": "Carrito vacío",
+    "emptyDescription": "Explora nuestros productos y agrega lo que necesites",
+    "viewProducts": "Ver productos",
+    "total": "Total",
+    "checkout": "Continuar",
+    "aria": {
+      "decrease": "Reducir cantidad",
+      "increase": "Aumentar cantidad",
+      "remove": "Eliminar {product}"
+    }
+  },
+  "checkout": {
+    "title": "Finalizar Pedido",
+    "subtitle": "Completa tus datos para procesar tu pedido",
+    "contactSection": "Datos de contacto",
+    "deliverySection": "Dirección de entrega",
+    "summarySection": "Resumen del pedido",
+    "form": {
+      "name": "Nombre completo *",
+      "email": "Correo electrónico",
+      "phone": "Teléfono / WhatsApp *",
+      "address": "Dirección",
+      "namePlaceholder": "Tu nombre",
+      "emailPlaceholder": "tu@email.com",
+      "phonePlaceholder": "+53 XXXX XXXX",
+      "addressPlaceholder": "Calle, número, apartamento, municipio..."
+    },
+    "submit": "Confirmar pedido",
+    "submitting": "Procesando...",
+    "success": {
+      "title": "¡Pedido recibido!",
+      "orderLabel": "Número de pedido",
+      "copy": "Copiar",
+      "message": "Tu pedido ha sido registrado correctamente.",
+      "paymentNote": "No es un pago inmediato",
+      "paymentDetail": "No es un pago inmediato - el pago se coordinará manualmente una vez que confirmemos los detalles de tu pedido.",
+      "contactNote": "Te contactaremos en un plazo de 24-48 horas para confirmar la disponibilidad y acordar el pago.",
+      "continueShopping": "Continuar comprando"
+    },
+    "error": {
+      "saveError": "Error al guardar el pedido"
+    },
+    "ariaClose": "Cerrar"
+  },
+  "requestModal": {
+    "titleDefault": "Solicitar servicio",
+    "titleEvent": "Inscribirse al evento",
+    "contactSection": "Datos de contacto",
+    "messageSection": "Mensaje",
+    "messageOptional": "(opcional)",
+    "form": {
+      "name": "Nombre completo *",
+      "email": "Correo electrónico",
+      "phone": "Teléfono / WhatsApp *",
+      "namePlaceholder": "Tu nombre",
+      "emailPlaceholder": "tu@email.com",
+      "phonePlaceholder": "+53 XXXX XXXX",
+      "messagePlaceholder": "¿Tienes alguna consulta o requerimiento especial?"
+    },
+    "submit": "Enviar solicitud",
+    "submitting": "Procesando...",
+    "success": {
+      "title": "¡Solicitud recibida!",
+      "orderLabel": "Número de solicitud",
+      "copy": "Copiar",
+      "message": "Tu solicitud para {title} ha sido registrada correctamente.",
+      "paymentNote": "No es un pago inmediato",
+      "paymentDetail": "No es un pago inmediato — el pago se coordinará manualmente una vez que confirmemos los detalles.",
+      "contactNote": "Te contactaremos en un plazo de 24-48 horas para confirmar disponibilidad y acordar el pago.",
+      "continue": "Continuar navegando"
+    },
+    "error": {
+      "processError": "Error al procesar la solicitud"
+    },
+    "ariaClose": "Cerrar"
+  },
+  "variantDialog": {
+    "ariaLabel": "Seleccionar variante de {product}",
+    "ariaClose": "Cerrar",
+    "labelVariant": "Presentación",
+    "labelQuantity": "Cantidad",
+    "ariaDecrease": "Reducir cantidad",
+    "ariaIncrease": "Aumentar cantidad",
+    "unitPrice": "Precio unitario",
+    "subtotal": "Subtotal",
+    "addToCart": "Añadir al carrito"
+  },
+  "eventRegistration": {
+    "title": "Inscripción al evento",
+    "form": {
+      "email": "Correo electrónico *",
+      "phone": "Teléfono *",
+      "educationLevel": "Nivel de estudios *",
+      "hasBusiness": "¿Ya tienes un negocio/emprendimiento? *",
+      "businessName": "Nombre de tu negocio *",
+      "sector": "¿A qué sector se dedica o en cuál espera emprender? *",
+      "motivation": "¿Qué te motiva a tomar este curso? *",
+      "agreement": "Me comprometo a asistir puntualmente, participar de manera activa; así como respetar el ambiente y normas del curso. *",
+      "notifications": "¿Deseo recibir notificaciones sobre futuros eventos?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "placeholders": {
+      "email": "tu@email.com",
+      "phone": "+53 XXXX XXXX",
+      "businessName": "Nombre de tu negocio",
+      "motivation": "Cuéntanos qué esperas aprender…",
+      "selectDefault": "Selecciona una opción"
+    },
+    "help": {
+      "email": "Te enviaremos los materiales y el acceso al aula.",
+      "phone": "Facilita una vía de contacto directo."
+    },
+    "validation": {
+      "required": "Este campo es obligatorio",
+      "invalidEmail": "Correo electrónico no válido",
+      "selectOption": "Selecciona una opción",
+      "minLength": "Debe tener al menos 10 caracteres",
+      "agreementRequired": "Debes aceptar el acuerdo de aprendizaje"
+    },
+    "submit": "Inscribirme",
+    "submitting": "Enviando inscripción...",
+    "success": {
+      "title": "¡Inscripción completada!",
+      "message": "Te contactaremos pronto.",
+      "close": "Cerrar"
+    },
+    "error": {
+      "processError": "Error al procesar la inscripción. Intente de nuevo."
+    },
+    "educationLevels": ["Secundaria", "Preuniversitario", "Técnico Medio", "Universitario", "Postgrado"],
+    "sectors": ["Tecnología", "Alimentos y bebidas", "Moda y diseño", "Servicios profesionales", "Comercio", "Salud y bienestar", "Educación", "Arte y cultura", "Otro"]
+  },
+  "gallery": {
+    "items": {
+      "consulting": "Consultoría Estratégica",
+      "teamwork": "Trabajo en Equipo",
+      "personalized": "Atención Personalizada",
+      "results": "Resultados Medibles",
+      "innovation": "Innovación Digital",
+      "marketing": "Marketing Digital",
+      "vision": "Visión Estratégica",
+      "growth": "Crecimiento"
+    }
+  },
+  "currencySelector": {
+    "ariaLabel": "Moneda: {currency}. Click para cambiar"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "current": [
+    {
+      "title": "Financial Management Workshop",
+      "status": "In Progress",
+      "date": "December 2024",
+      "description": "Intensive training on cash flow control, cost analysis, and budget planning for SMEs."
+    },
+    {
+      "title": "Business Mentorship Program",
+      "status": "In Progress",
+      "date": "November 2024 - January 2025",
+      "description": "Personalized 3-month mentorship for entrepreneurs in the growth stage."
+    }
+  ],
+  "upcoming": [
+    {
+      "title": "E-commerce Masterclass",
+      "status": "Coming Soon",
+      "date": "January 2025",
+      "description": "Everything you need to know to sell online and scale your digital business.",
+      "whatsappLink": "https://wa.me/5355609099?text=Hi%2C%20I%20want%20to%20register%20for%20the%20E-commerce%20Masterclass"
+    },
+    {
+      "title": "Entrepreneur Bootcamp",
+      "status": "Coming Soon",
+      "date": "February 2025",
+      "description": "Intensive 4-week program to accelerate the growth of your venture.",
+      "whatsappLink": "https://wa.me/5355609099?text=Hi%2C%20I%20want%20to%20register%20for%20the%20Entrepreneur%20Bootcamp"
+    },
+    {
+      "title": "Digital Transformation Workshop",
+      "status": "Coming Soon",
+      "date": "March 2025",
+      "description": "Learn to implement technology in your business to optimize processes and reduce costs.",
+      "whatsappLink": "https://wa.me/5355609099?text=Hi%2C%20I%20want%20to%20register%20for%20the%20Digital%20Transformation%20Workshop"
+    }
+  ]
+}

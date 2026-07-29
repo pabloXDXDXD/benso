@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link, usePathname, useRouter } from '@/i18n/routing';
 import { CurrencySelector } from '@/components/CurrencySelector';
 
 export function Header() {
+  const t = useTranslations('header');
+  const locale = useLocale();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -50,6 +53,13 @@ export function Header() {
     setIsMenuOpen(false);
   };
 
+  const switchLocale = (newLocale: string) => {
+    const path = pathname || '/';
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+    router.replace(path, { locale: newLocale });
+    closeMenu();
+  };
+
   const handleLogoClick = (e: React.MouseEvent) => {
     if (isHomePage) {
       e.preventDefault();
@@ -80,10 +90,19 @@ export function Header() {
         <CurrencySelector />
 
         <button
+          className="locale-switcher"
+          onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
+          aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+          title={locale === 'es' ? 'English' : 'Español'}
+        >
+          {locale === 'es' ? 'EN' : 'ES'}
+        </button>
+
+        <button
           className={`menu-toggle${isMenuOpen ? ' open' : ''}`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-expanded={isMenuOpen}
-          aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+          aria-label={isMenuOpen ? t('aria.closeMenu') : t('aria.openMenu')}
           aria-controls="main-nav"
         >
           <span></span>
@@ -93,12 +112,12 @@ export function Header() {
 
         <nav id="main-nav" className={isMenuOpen ? 'active' : ''}>
           <ul>
-            <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>Inicio</Link></li>
-            <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>Servicios</Link></li>
-            <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>Productos</Link></li>
-            <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>Eventos</Link></li>
-            <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>Nosotros</Link></li>
-            <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>Contacto</Link></li>
+            <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>{t('nav.home')}</Link></li>
+            <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>{t('nav.services')}</Link></li>
+            <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>{t('nav.products')}</Link></li>
+            <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>{t('nav.events')}</Link></li>
+            <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>{t('nav.about')}</Link></li>
+            <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>{t('nav.contact')}</Link></li>
           </ul>
         </nav>
       </div>

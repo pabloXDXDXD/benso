@@ -1,0 +1,305 @@
+[
+  {
+    "title": "Stickers 5x5 cm",
+    "price": "$60.00",
+    "description": "Stickers adhesivos de 5x5 cm, perfectos para sellos, packaging y detalles de marca.",
+    "icon": "star",
+    "image": "",
+    "category": "pegatinas",
+    "popular": true,
+    "variants": [
+      { "label": "Único", "unit_price": 60.00, "total_price": 60.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Stickers%205x5%20cm"
+  },
+  {
+    "title": "Pegatinas grandes",
+    "price": "$495.00",
+    "description": "Pegatinas de gran formato (aprox. A4). Ideales para promociones y decoración de vitrinas.",
+    "icon": "star",
+    "image": "",
+    "category": "pegatinas",
+    "variants": [
+      { "label": "Único", "unit_price": 495.00, "total_price": 495.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Pegatinas%20grandes"
+  },
+  {
+    "title": "Posters en vinilo 21x14",
+    "price": "$500.00",
+    "description": "Póster en vinilo de alta resistencia. Perfecto para interiores.",
+    "icon": "grid",
+    "image": "",
+    "category": "posters",
+    "variants": [
+      { "label": "Único", "unit_price": 500.00, "total_price": 500.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Posters%20en%20vinilo%2021x14"
+  },
+  {
+    "title": "Posters en vinilo 20x20",
+    "price": "$550.00",
+    "description": "Formato cuadrado 20x20 cm. Perfecto para interiores.",
+    "icon": "grid",
+    "image": "",
+    "category": "posters",
+    "variants": [
+      { "label": "Único", "unit_price": 550.00, "total_price": 550.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Posters%20en%20vinilo%2020x20"
+  },
+  {
+    "title": "Posters en vinilo 40x20",
+    "price": "$830.00",
+    "description": "Tamaño mediano. Ideal para expositores y eventos.",
+    "icon": "grid",
+    "image": "",
+    "category": "posters",
+    "variants": [
+      { "label": "Único", "unit_price": 830.00, "total_price": 830.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Posters%20en%20vinilo%2040x20"
+  },
+  {
+    "title": "Posters en vinilo 50x30",
+    "price": "$1,500.00",
+    "description": "Tamaño mediano. Ideal para expositores y eventos.",
+    "icon": "grid",
+    "image": "",
+    "category": "posters",
+    "variants": [
+      { "label": "Único", "unit_price": 1500.00, "total_price": 1500.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Posters%20en%20vinilo%2050x30"
+  },
+  {
+    "title": "Posters en vinilo 60x40",
+    "price": "$2,350.00",
+    "description": "Tamaño mediano. Ideal para exteriores y eventos.",
+    "icon": "grid",
+    "image": "",
+    "category": "posters",
+    "variants": [
+      { "label": "Único", "unit_price": 2350.00, "total_price": 2350.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Posters%20en%20vinilo%2060x40"
+  },
+  {
+    "title": "Cuadros 10x15 cm",
+    "price": "$490.00",
+    "description": "Cuadro rígido en PVC, acabado mate.",
+    "icon": "box",
+    "image": "",
+    "category": "cuadros",
+    "variants": [
+      { "label": "Único", "unit_price": 490.00, "total_price": 490.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Cuadros%2010x15%20cm"
+  },
+  {
+    "title": "Cuadros 21x14",
+    "price": "$840.00",
+    "description": "Cuadro rígido en PVC, acabado mate.",
+    "icon": "box",
+    "image": "",
+    "category": "cuadros",
+    "variants": [
+      { "label": "Único", "unit_price": 840.00, "total_price": 840.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Cuadros%2021x14"
+  },
+  {
+    "title": "Cuadros 20x20",
+    "price": "$1,000.00",
+    "description": "Formato cuadrado 20x20 cm, ideal para composiciones modulares.",
+    "icon": "box",
+    "image": "",
+    "category": "cuadros",
+    "variants": [
+      { "label": "Único", "unit_price": 1000.00, "total_price": 1000.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Cuadros%2020x20"
+  },
+  {
+    "title": "Cuadros 30x20",
+    "price": "$1,600.00",
+    "description": "Formato mediano. Ideal para señalética y carteles de bienvenida.",
+    "icon": "box",
+    "image": "",
+    "category": "cuadros",
+    "variants": [
+      { "label": "Único", "unit_price": 1600.00, "total_price": 1600.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Cuadros%2030x20"
+  },
+  {
+    "title": "Cuadros 35x25",
+    "price": "$2,150.00",
+    "description": "Formato mediano. Ideal para señalética y carteles de bienvenida.",
+    "icon": "box",
+    "image": "",
+    "category": "cuadros",
+    "variants": [
+      { "label": "Único", "unit_price": 2150.00, "total_price": 2150.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Cuadros%2035x25"
+  },
+  {
+    "title": "Tarjetas de Presentación 1 cara (Cartulina)",
+    "price": "$25.00",
+    "description": "Tarjeta en cartulina 180g impresa a una cara.",
+    "icon": "document",
+    "image": "",
+    "category": "tarjetas",
+    "variants": [
+      { "label": "Único", "unit_price": 25.00, "total_price": 25.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Tarjetas%20de%20Presentaci%C3%B3n%201%20cara%20(Cartulina)"
+  },
+  {
+    "title": "Tarjetas de Presentación 2 caras (Cartulina)",
+    "price": "$50.00",
+    "description": "Impresión a doble cara en cartulina. Acabado mate.",
+    "icon": "document",
+    "image": "",
+    "category": "tarjetas",
+    "variants": [
+      { "label": "Único", "unit_price": 50.00, "total_price": 50.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Tarjetas%20de%20Presentaci%C3%B3n%202%20caras%20(Cartulina)"
+  },
+  {
+    "title": "Tarjetas de Presentación 1 cara (Mica)",
+    "price": "$75.00",
+    "description": "Mica con acabado brillante, impresión una cara.",
+    "icon": "document",
+    "image": "",
+    "category": "tarjetas",
+    "variants": [
+      { "label": "Único", "unit_price": 75.00, "total_price": 75.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Tarjetas%20de%20Presentaci%C3%B3n%201%20cara%20(Mica)"
+  },
+  {
+    "title": "Tarjetas de Presentación 2 caras (Mica)",
+    "price": "$95.00",
+    "description": "Mica con acabado brillante, máxima calidad.",
+    "icon": "document",
+    "image": "",
+    "category": "tarjetas",
+    "popular": true,
+    "variants": [
+      { "label": "Único", "unit_price": 95.00, "total_price": 95.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Tarjetas%20de%20Presentaci%C3%B3n%202%20caras%20(Mica)"
+  },
+  {
+    "title": "Invitaciones",
+    "price": "$100.00",
+    "description": "Invitaciones personalizadas en cartulina de diseño fotográfica o cromada.",
+    "icon": "document",
+    "image": "",
+    "category": "tarjetas",
+    "variants": [
+      { "label": "Único", "unit_price": 100.00, "total_price": 100.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Invitaciones"
+  },
+  {
+    "title": "Lonas 20x15",
+    "price": "$540.00",
+    "description": "Mini lona, resistente para colgar.",
+    "icon": "bolt",
+    "image": "",
+    "category": "lonas",
+    "variants": [
+      { "label": "Único", "unit_price": 540.00, "total_price": 540.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Lonas%2020x15"
+  },
+  {
+    "title": "Lonas 20x20",
+    "price": "$840.00",
+    "description": "Lona cuadrada, impresión en alta resolución.",
+    "icon": "bolt",
+    "image": "",
+    "category": "lonas",
+    "variants": [
+      { "label": "Único", "unit_price": 840.00, "total_price": 840.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Lonas%2020x20"
+  },
+  {
+    "title": "Lonas 20x25",
+    "price": "$840.00",
+    "description": "Formato mediano, ideal para colgar en pared.",
+    "icon": "bolt",
+    "image": "",
+    "category": "lonas",
+    "variants": [
+      { "label": "Único", "unit_price": 840.00, "total_price": 840.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Lonas%2020x25"
+  },
+  {
+    "title": "Lonas 60x40",
+    "price": "$3,500.00",
+    "description": "Formato mediano, para ferias o exteriores.",
+    "icon": "bolt",
+    "image": "",
+    "category": "lonas",
+    "popular": true,
+    "variants": [
+      { "label": "Único", "unit_price": 3500.00, "total_price": 3500.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Lonas%2060x40"
+  },
+  {
+    "title": "Ampliación 1.30x90",
+    "price": "$8,100.00",
+    "description": "Gran lona, impresión en Lona Front. Ideal para exteriores.",
+    "icon": "bolt",
+    "image": "",
+    "category": "lonas",
+    "variants": [
+      { "label": "Único", "unit_price": 8100.00, "total_price": 8100.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Ampliaci%C3%B3n%201.30x90"
+  },
+  {
+    "title": "Credenciales",
+    "price": "$500.00",
+    "description": "Credenciales plastificadas con cordón, personalizadas.",
+    "icon": "tools",
+    "image": "",
+    "category": "otros",
+    "variants": [
+      { "label": "Único", "unit_price": 500.00, "total_price": 500.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Credenciales"
+  },
+  {
+    "title": "Porta Celular",
+    "price": "$580.00",
+    "description": "Soporte expositor para celular en PVC rígido, personalizable.",
+    "icon": "tools",
+    "image": "",
+    "category": "otros",
+    "variants": [
+      { "label": "Único", "unit_price": 580.00, "total_price": 580.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Porta%20Celular"
+  },
+  {
+    "title": "Cartas con código QR en PVC",
+    "price": "$580.00",
+    "description": "Ideal para vincular a menú digital, pago en línea o redes sociales.",
+    "icon": "tools",
+    "image": "",
+    "category": "otros",
+    "variants": [
+      { "label": "Único", "unit_price": 580.00, "total_price": 580.00, "description": null }
+    ],
+    "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20producto%20Cartas%20con%20c%C3%B3digo%20QR%20en%20PVC"
+  }
+]

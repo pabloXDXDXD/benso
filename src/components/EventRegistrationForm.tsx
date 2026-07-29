@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, AlertCircle, Send, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useTranslations, useMessages } from 'next-intl';
 
 interface EventRegistrationFormProps {
   eventoId: number;
@@ -27,9 +28,6 @@ interface FormErrors {
   [key: string]: string;
 }
 
-const NIVEL_ESTUDIOS = ['', 'Secundaria', 'Preuniversitario', 'Técnico Medio', 'Universitario', 'Postgrado'];
-const SECTORES = ['', 'Tecnología', 'Alimentos y bebidas', 'Moda y diseño', 'Servicios profesionales', 'Comercio', 'Salud y bienestar', 'Educación', 'Arte y cultura', 'Otro'];
-
 const initialFormData: FormData = {
   correo_electronico: '',
   telefono: '',
@@ -43,6 +41,10 @@ const initialFormData: FormData = {
 };
 
 export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }: EventRegistrationFormProps) {
+  const t = useTranslations('eventRegistration');
+  const msg = useMessages();
+  const educationLevels = ((msg as any).eventRegistration?.educationLevels ?? []) as string[];
+  const sectors = ((msg as any).eventRegistration?.sectors ?? []) as string[];
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
@@ -94,40 +96,40 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
     const newErrors: FormErrors = {};
 
     if (!formData.correo_electronico.trim()) {
-      newErrors.correo_electronico = 'Este campo es obligatorio';
+      newErrors.correo_electronico = t('validation.required');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico)) {
-      newErrors.correo_electronico = 'Correo electrónico no válido';
+      newErrors.correo_electronico = t('validation.invalidEmail');
     }
 
     if (!formData.telefono.trim()) {
-      newErrors.telefono = 'Este campo es obligatorio';
+      newErrors.telefono = t('validation.required');
     }
 
     if (!formData.nivel_estudios) {
-      newErrors.nivel_estudios = 'Selecciona una opción';
+      newErrors.nivel_estudios = t('validation.selectOption');
     }
 
     if (!formData.tiene_negocio) {
-      newErrors.tiene_negocio = 'Selecciona una opción';
+      newErrors.tiene_negocio = t('validation.selectOption');
     }
 
     // nombre_negocio is only required if tiene_negocio === 'si'
     if (formData.tiene_negocio === 'si' && !formData.nombre_negocio.trim()) {
-      newErrors.nombre_negocio = 'Este campo es obligatorio';
+      newErrors.nombre_negocio = t('validation.required');
     }
 
     if (!formData.sector) {
-      newErrors.sector = 'Selecciona una opción';
+      newErrors.sector = t('validation.selectOption');
     }
 
     if (!formData.motivacion.trim()) {
-      newErrors.motivacion = 'Este campo es obligatorio';
+      newErrors.motivacion = t('validation.required');
     } else if (formData.motivacion.trim().length < 10) {
-      newErrors.motivacion = 'Debe tener al menos 10 caracteres';
+      newErrors.motivacion = t('validation.minLength');
     }
 
     if (!formData.acuerdo_aprendizaje) {
-      newErrors.acuerdo_aprendizaje = 'Debes aceptar el acuerdo de aprendizaje';
+      newErrors.acuerdo_aprendizaje = t('validation.agreementRequired');
     }
 
     setErrors(newErrors);
@@ -170,7 +172,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
         });
 
       if (dbError) {
-        setSubmitError('Error al procesar la inscripción. Intente de nuevo.');
+        setSubmitError(t('error.processError'));
         setSaving(false);
         setIsSubmitting(false);
         return;
@@ -178,7 +180,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
       setSuccess(true);
     } catch {
-      setSubmitError('Error al procesar la inscripción. Intente de nuevo.');
+      setSubmitError(t('error.processError'));
     }
 
     setSaving(false);
@@ -191,7 +193,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
     <>
       <div className="reg-overlay" onClick={onClose} aria-hidden="true" />
       <div className="reg-modal" role="dialog" aria-modal="true" aria-labelledby="reg-title">
-        <button className="reg-close" onClick={onClose} aria-label="Cerrar">
+        <button className="reg-close" onClick={onClose} aria-label={t('success.close')}>
           <X size={20} />
         </button>
 
@@ -200,19 +202,19 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
             <div className="reg-success-icon">
               <CheckCircle2 size={40} />
             </div>
-            <h2 id="reg-title">¡Inscripción completada!</h2>
+            <h2 id="reg-title">{t('success.title')}</h2>
             <p className="reg-success-event">{eventoTitle}</p>
-            <p className="reg-success-message">Te contactaremos pronto.</p>
+            <p className="reg-success-message">{t('success.message')}</p>
             <div className="reg-success-actions">
               <button className="reg-btn-primary" onClick={onClose}>
-                Cerrar
+                {t('success.close')}
               </button>
             </div>
           </div>
         ) : (
           <>
             <div className="reg-header">
-              <h2 id="reg-title">Inscripción al evento</h2>
+              <h2 id="reg-title">{t('title')}</h2>
               <p className="reg-event-name">{eventoTitle}</p>
             </div>
 
@@ -220,20 +222,20 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
               <form ref={formRef} onSubmit={handleSubmit} noValidate>
                 {/* Correo electrónico */}
                 <div className={`reg-field ${errors.correo_electronico ? 'reg-field-error' : ''}`}>
-                  <label htmlFor="reg-email">Correo electrónico *</label>
+                  <label htmlFor="reg-email">{t('form.email')}</label>
                   <input
                     type="email"
                     id="reg-email"
                     name="correo_electronico"
                     value={formData.correo_electronico}
                     onChange={(e) => handleChange('correo_electronico', e.target.value)}
-                    placeholder="tu@email.com"
+                    placeholder={t('placeholders.email')}
                     autoComplete="email"
                     aria-required="true"
                     aria-invalid={!!errors.correo_electronico}
                     aria-describedby={errors.correo_electronico ? 'err-correo_electronico' : undefined}
                   />
-                  <span className="reg-helptext">Te enviaremos los materiales y el acceso al aula.</span>
+                  <span className="reg-helptext">{t('help.email')}</span>
                   {errors.correo_electronico && (
                     <span className="reg-error" id="err-correo_electronico" role="alert">{errors.correo_electronico}</span>
                   )}
@@ -241,20 +243,20 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
                 {/* Teléfono */}
                 <div className={`reg-field ${errors.telefono ? 'reg-field-error' : ''}`}>
-                  <label htmlFor="reg-phone">Teléfono *</label>
+                  <label htmlFor="reg-phone">{t('form.phone')}</label>
                   <input
                     type="tel"
                     id="reg-phone"
                     name="telefono"
                     value={formData.telefono}
                     onChange={(e) => handleChange('telefono', e.target.value)}
-                    placeholder="+53 XXXX XXXX"
+                    placeholder={t('placeholders.phone')}
                     autoComplete="tel"
                     aria-required="true"
                     aria-invalid={!!errors.telefono}
                     aria-describedby={errors.telefono ? 'err-telefono' : undefined}
                   />
-                  <span className="reg-helptext">Facilita una vía de contacto directo.</span>
+                  <span className="reg-helptext">{t('help.phone')}</span>
                   {errors.telefono && (
                     <span className="reg-error" id="err-telefono" role="alert">{errors.telefono}</span>
                   )}
@@ -262,7 +264,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
                 {/* Nivel de estudios */}
                 <div className={`reg-field ${errors.nivel_estudios ? 'reg-field-error' : ''}`}>
-                  <label htmlFor="reg-estudios">Nivel de estudios *</label>
+                  <label htmlFor="reg-estudios">{t('form.educationLevel')}</label>
                   <select
                     id="reg-estudios"
                     name="nivel_estudios"
@@ -272,8 +274,8 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                     aria-invalid={!!errors.nivel_estudios}
                     aria-describedby={errors.nivel_estudios ? 'err-nivel_estudios' : undefined}
                   >
-                    <option value="" disabled>Selecciona una opción</option>
-                    {NIVEL_ESTUDIOS.filter(Boolean).map(op => (
+                    <option value="" disabled>{t('placeholders.selectDefault')}</option>
+                    {educationLevels.filter(Boolean).map(op => (
                       <option key={op} value={op}>{op}</option>
                     ))}
                   </select>
@@ -284,7 +286,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
                 {/* ¿Ya tienes un negocio/emprendimiento? */}
                 <fieldset className={`reg-field ${errors.tiene_negocio ? 'reg-field-error' : ''}`}>
-                  <legend>¿Ya tienes un negocio/emprendimiento? *</legend>
+                  <legend>{t('form.hasBusiness')}</legend>
                   <div className="reg-radio-group">
                     <label className="reg-radio-label">
                       <input
@@ -295,7 +297,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                         onChange={() => handleChange('tiene_negocio', 'si')}
                         aria-required="true"
                       />
-                      <span>Sí</span>
+                      <span>{t('form.yes')}</span>
                     </label>
                     <label className="reg-radio-label">
                       <input
@@ -306,7 +308,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                         onChange={() => handleChange('tiene_negocio', 'no')}
                         aria-required="true"
                       />
-                      <span>No</span>
+                      <span>{t('form.no')}</span>
                     </label>
                   </div>
                   {errors.tiene_negocio && (
@@ -319,14 +321,14 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                   className={`reg-field reg-conditional ${formData.tiene_negocio === 'si' ? 'reg-conditional-visible' : ''} ${errors.nombre_negocio ? 'reg-field-error' : ''}`}
                   aria-hidden={formData.tiene_negocio !== 'si'}
                 >
-                  <label htmlFor="reg-negocio">Nombre de tu negocio *</label>
+                  <label htmlFor="reg-negocio">{t('form.businessName')}</label>
                   <input
                     type="text"
                     id="reg-negocio"
                     name="nombre_negocio"
                     value={formData.nombre_negocio}
                     onChange={(e) => handleChange('nombre_negocio', e.target.value)}
-                    placeholder="Nombre de tu negocio"
+                    placeholder={t('placeholders.businessName')}
                     disabled={formData.tiene_negocio !== 'si'}
                     aria-required={formData.tiene_negocio === 'si'}
                     aria-invalid={!!errors.nombre_negocio}
@@ -339,7 +341,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
                 {/* Sector */}
                 <div className={`reg-field ${errors.sector ? 'reg-field-error' : ''}`}>
-                  <label htmlFor="reg-sector">¿A qué sector se dedica o en cuál espera emprender? *</label>
+                  <label htmlFor="reg-sector">{t('form.sector')}</label>
                   <select
                     id="reg-sector"
                     name="sector"
@@ -349,8 +351,8 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                     aria-invalid={!!errors.sector}
                     aria-describedby={errors.sector ? 'err-sector' : undefined}
                   >
-                    <option value="" disabled>Selecciona una opción</option>
-                    {SECTORES.filter(Boolean).map(op => (
+                    <option value="" disabled>{t('placeholders.selectDefault')}</option>
+                    {sectors.filter(Boolean).map(op => (
                       <option key={op} value={op}>{op}</option>
                     ))}
                   </select>
@@ -361,13 +363,13 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
                 {/* Motivación */}
                 <div className={`reg-field ${errors.motivacion ? 'reg-field-error' : ''}`}>
-                  <label htmlFor="reg-motivacion">¿Qué te motiva a tomar este curso? *</label>
+                  <label htmlFor="reg-motivacion">{t('form.motivation')}</label>
                   <textarea
                     id="reg-motivacion"
                     name="motivacion"
                     value={formData.motivacion}
                     onChange={(e) => handleChange('motivacion', e.target.value)}
-                    placeholder="Cuéntanos qué esperas aprender…"
+                    placeholder={t('placeholders.motivation')}
                     rows={4}
                     aria-required="true"
                     aria-invalid={!!errors.motivacion}
@@ -390,7 +392,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                       aria-invalid={!!errors.acuerdo_aprendizaje}
                       aria-describedby={errors.acuerdo_aprendizaje ? 'err-acuerdo_aprendizaje' : undefined}
                     />
-                    <span>Me comprometo a asistir puntualmente, participar de manera activa; así como respetar el ambiente y normas del curso. *</span>
+                    <span>{t('form.agreement')}</span>
                   </label>
                   {errors.acuerdo_aprendizaje && (
                     <span className="reg-error" id="err-acuerdo_aprendizaje" role="alert">{errors.acuerdo_aprendizaje}</span>
@@ -399,7 +401,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
 
                 {/* Notificaciones */}
                 <fieldset className="reg-field">
-                  <legend>¿Deseo recibir notificaciones sobre futuros eventos?</legend>
+                  <legend>{t('form.notifications')}</legend>
                   <div className="reg-radio-group">
                     <label className="reg-radio-label">
                       <input
@@ -409,7 +411,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                         checked={formData.notificaciones === 'si'}
                         onChange={() => handleChange('notificaciones', 'si')}
                       />
-                      <span>Sí</span>
+                      <span>{t('form.yes')}</span>
                     </label>
                     <label className="reg-radio-label">
                       <input
@@ -419,7 +421,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                         checked={formData.notificaciones === 'no'}
                         onChange={() => handleChange('notificaciones', 'no')}
                       />
-                      <span>No</span>
+                      <span>{t('form.no')}</span>
                     </label>
                   </div>
                 </fieldset>
@@ -441,12 +443,12 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
                   {saving ? (
                     <>
                       <span className="reg-spinner"></span>
-                      Enviando inscripción...
+                      {t('submitting')}
                     </>
                   ) : (
                     <>
                       <Send size={20} />
-                      Inscribirme
+                      {t('submit')}
                     </>
                   )}
                 </button>

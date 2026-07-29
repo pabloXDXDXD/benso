@@ -1,0 +1,102 @@
+{
+  "featured": [
+    {
+      "title": "Consultoría Experta",
+      "price": "Desde $0 CUP",
+      "description": "Servicio inicial de análisis que incluye informes y evaluaciones rápidas sobre el estado actual de tu negocio.",
+      "icon": "info",
+      "image": "",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20servicio%20de%20Consultoría%20Experta"
+    },
+    {
+      "title": "Marketing Digital",
+      "price": "Desde $5,000 CUP/mes",
+      "description": "Creación de contenido multiplataforma, diseño de identidad visual y estrategias de marketing digital.",
+      "icon": "trending",
+      "image": "",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20servicio%20de%20Marketing%20Digital"
+    },
+    {
+      "title": "Automatización",
+      "price": "Desde $5,000 CUP",
+      "description": "Bot de WhatsApp, páginas web, funnel de ventas multicanal y más soluciones para automatizar tu negocio.",
+      "icon": "tools",
+      "image": "",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20servicio%20de%20Automatización"
+    }
+  ],
+  "all": [
+    {
+      "title": "Consultoría Experta (Diagnóstico Inicial)",
+      "price": "Desde $0 CUP",
+      "description": "Servicio inicial de análisis que incluye informes y evaluaciones rápidas sobre el estado actual de tu negocio. Ideal para identificar puntos de mejora. Áreas: Contabilidad, Marketing, Planificación.",
+      "icon": "info",
+      "image": "",
+      "category": "consultoria",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20agendar%20un%20diagnóstico%20gratuito"
+    },
+    {
+      "title": "Asesoramiento Técnico y Profesional",
+      "price": "Desde $1,500 CUP",
+      "description": "Implementación de soluciones personalizadas para problemas detectados en áreas clave. Contabilidad desde $1,500 CUP / Marketing desde $3,000 CUP.",
+      "icon": "globe",
+      "image": "",
+      "category": "consultoria",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20asesoría%20técnica"
+    },
+    {
+      "title": "Sistemas de Contabilidad",
+      "price": "Desde $3,800 CUP",
+      "description": "Implementación de estándares (Versat, Desfot, SAP, Odoo, etc.) desde $5,000 CUP. Personalizados de Microsoft desde $3,800 CUP. Software único a medida desde $25,000 CUP.",
+      "icon": "money",
+      "image": "",
+      "category": "herramientas",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20servicio%20de%20Sistemas%20de%20Contabilidad"
+    },
+    {
+      "title": "Marketing Digital",
+      "price": "Desde $5,000 CUP/mes",
+      "description": "Contenido para redes sociales desde $5,000 CUP/mes. Diseño de identidad visual desde $9,000 CUP. Estrategia de marketing digital con dashboard incluido, precio a consultar.",
+      "icon": "trending",
+      "image": "",
+      "category": "herramientas",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20servicio%20de%20Marketing%20Digital"
+    },
+    {
+      "title": "Automatización de Procesos",
+      "price": "Desde $5,000 CUP",
+      "description": "Bot de WhatsApp: $15,000 CUP. Páginas Web: $6,500 CUP/mes (plan de mantenimiento y hosting). Funnel de Ventas Multicanal: $5,000 CUP.",
+      "icon": "tools",
+      "image": "",
+      "category": "herramientas",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20solicitar%20el%20servicio%20de%20Automatización%20de%20Procesos"
+    },
+    {
+      "title": "Taller de Negociación",
+      "price": "$465 CUP",
+      "description": "Programa de capacitación en técnicas de negociación aplicadas al entorno empresarial. Duración: 2 semanas.",
+      "icon": "document",
+      "image": "",
+      "category": "capacitacion",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20inscribirme%20al%20Taller%20de%20Negociación"
+    },
+    {
+      "title": "Taller de Marketing Digital",
+      "price": "$465 CUP",
+      "description": "Aprende estrategias de marketing digital para posicionar tu negocio en redes sociales. Duración: 2 semanas.",
+      "icon": "chart",
+      "image": "",
+      "category": "capacitacion",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20inscribirme%20al%20Taller%20de%20Marketing%20Digital"
+    },
+    {
+      "title": "Curso básico de Contabilidad",
+      "price": "$1,265 CUP",
+      "description": "Gestiona las finanzas de tu negocio de manera efectiva. Incluye control de flujo de caja, análisis de costos y planificación presupuestaria. Duración: 4 semanas.",
+      "icon": "money",
+      "image": "",
+      "category": "capacitacion",
+      "whatsappLink": "https://wa.me/5355609099?text=Quiero%20inscribirme%20al%20Curso%20básico%20de%20Contabilidad"
+    }
+  ]
+}

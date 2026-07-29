@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { ScrollReveal, AnimatedCard, BentoCard, Icon, ImageGallery, RequestModal } from '@/components';
 import Grainient from '@/components/Grainient';
+import { useTranslations } from 'next-intl';
 
 interface RequestItem {
   title: string;
@@ -26,45 +27,48 @@ const whiteIconStyle = { color: 'var(--white)', filter: 'drop-shadow(0 1px 2px r
 export function AboutPage() {
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
+  const t = useTranslations('about');
+  const home = useTranslations('home');
+  const common = useTranslations('common');
 
   return (
     <>
       <ScrollReveal className="cards-wrap">
         <div className="container cards-section">
           <div className="section-title page-intro-title">
-            <h2>¿Por qué elegirnos?</h2>
+            <h2>{t('sectionTitle')}</h2>
           </div>
 
           <div className="bento-grid">
             <AnimatedCard>
               <BentoCard style={coloredCardStyle.secondary as any}>
                 <Icon name="money" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Inversión Accesible</h3>
-                <p style={whitePStyle}>Ofrecemos servicios de máxima calidad con facilidades de pago justas y personalizables.</p>
+                <h3 style={whiteH3Style}>{t('cards.investment.title')}</h3>
+                <p style={whitePStyle}>{t('cards.investment.description')}</p>
               </BentoCard>
             </AnimatedCard>
 
             <AnimatedCard index={1}>
               <BentoCard style={coloredCardStyle.accent as any}>
                 <Icon name="people" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Atención Personalizada</h3>
-                <p style={whitePStyle}>Nuestro asesoramiento se basa en conocer tu negocio en profundidad y ajustar las estrategias a tu realidad única.</p>
+                <h3 style={whiteH3Style}>{t('cards.personalized.title')}</h3>
+                <p style={whitePStyle}>{t('cards.personalized.description')}</p>
               </BentoCard>
             </AnimatedCard>
 
             <AnimatedCard index={2}>
               <BentoCard style={coloredCardStyle.primary as any}>
                 <Icon name="check" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Acompañamiento Continuo</h3>
-                <p style={whitePStyle}>Te mostramos el camino y te acompañamos en cada paso de la implementación.</p>
+                <h3 style={whiteH3Style}>{t('cards.support.title')}</h3>
+                <p style={whitePStyle}>{t('cards.support.description')}</p>
               </BentoCard>
             </AnimatedCard>
 
             <AnimatedCard index={3}>
               <BentoCard style={coloredCardStyle.secondary as any}>
                 <Icon name="chart" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Resultados Medibles</h3>
-                <p style={whitePStyle}>Medimos el rendimiento de nuestras estrategias por el impacto real que tengan sobre tu proyecto.</p>
+                <h3 style={whiteH3Style}>{t('cards.results.title')}</h3>
+                <p style={whitePStyle}>{t('cards.results.description')}</p>
               </BentoCard>
             </AnimatedCard>
           </div>
@@ -74,7 +78,7 @@ export function AboutPage() {
       <section className="gallery-section-wrap">
         <div className="container">
           <div className="section-title">
-            <h2>Galería</h2>
+            <h2>{t('gallery')}</h2>
           </div>
         </div>
         <ImageGallery />
@@ -85,17 +89,17 @@ export function AboutPage() {
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta after-gallery cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <h2>{home('sections.ctaTitle')}</h2>
+          <p>{home('sections.ctaText')}</p>
           <button
             className="cta-button cta-button--light"
             onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setRequestItem({ title: common('appointmentTitle'), price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
               setIsRequestOpen(true);
             }}
           >
             <Calendar size={18} />
-            Agendar cita gratis
+            {home('sections.ctaButton')}
           </button>
         </div>
       </div>

@@ -1,18 +1,33 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Metadata } from 'next';
 import { ProductsPage } from '@/components/pages/ProductsPage';
 import type { Producto } from '@/hooks/useData';
+import { localizeItems } from '@/lib/supabase-i18n';
+import { routing } from '@/i18n/routing';
 
-export const metadata: Metadata = {
-  title: 'Productos',
-  description: 'Soluciones digitales y productos para potenciar tu negocio: pegatinas, posters, cuadros, tarjetas y más. Calidad y diseño profesional para emprendimientos.',
-  openGraph: {
-    title: 'Productos - BENSO',
-    description: 'Soluciones digitales y productos para potenciar tu negocio con diseño profesional.',
-  },
-};
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
-export default async function Page() {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'metadata.productos' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    openGraph: {
+      title: t('ogTitle'),
+      description: t('ogDescription'),
+    },
+  };
+}
+
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -24,7 +39,7 @@ export default async function Page() {
     .eq('is_active', true)
     .order('popular', { ascending: false });
 
-  const items = (productos || []) as Producto[];
+  const items = localizeItems((productos || []) as Producto[], locale);
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -50,10 +65,7 @@ export default async function Page() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <ProductsPage initialProductos={items} />
     </>
   );

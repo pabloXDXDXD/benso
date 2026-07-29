@@ -1,14 +1,27 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, useMemo, type FormEvent } from 'react';
 import { BentoCard, FAQAccordion, ScrollReveal, AnimatedSection, ShinyText } from '@/components';
 import { supabase } from '@/lib/supabase';
-import faqItems from '@/data/faqs.json';
-import servicesData from '@/data/services.json';
+import { useTranslations } from 'next-intl';
 
-const serviceOptions = servicesData.all.map((s: any) => s.title);
+interface FAQItem {
+  question: string;
+  answer: string;
+}
 
-export function ContactPage() {
+interface ServiceItem {
+  title: string;
+  price: string;
+  description: string;
+  icon: string;
+  image: string;
+  category?: string;
+  whatsappLink: string;
+}
+
+export function ContactPage({ faqItems = [], servicesData = { featured: [], all: [] } }: { faqItems?: FAQItem[]; servicesData?: { featured: ServiceItem[]; all: ServiceItem[] } }) {
+  const serviceOptions = useMemo(() => servicesData.all.map((s) => s.title), [servicesData]);
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -20,21 +33,22 @@ export function ContactPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const t = useTranslations('contact');
 
   const validateField = (field: string, value: string): string => {
     switch (field) {
       case 'nombre':
-        return value.trim() ? '' : 'El nombre es obligatorio.';
+        return value.trim() ? '' : t('validation.nameRequired');
       case 'email':
-        if (!value.trim()) return 'El correo electrónico es obligatorio.';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Introduce un correo electrónico válido.';
+        if (!value.trim()) return t('validation.emailRequired');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t('validation.validEmail');
         return '';
       case 'telefono':
-        if (!value.trim()) return 'El teléfono es obligatorio.';
-        if (!/^[+]?[\d\s-]{7,}$/.test(value)) return 'Introduce un número de teléfono válido.';
+        if (!value.trim()) return t('validation.phoneRequired');
+        if (!/^[+]?[\d\s-]{7,}$/.test(value)) return t('validation.validPhone');
         return '';
       case 'fecha':
-        return value.trim() ? '' : 'La fecha es obligatoria.';
+        return value.trim() ? '' : t('validation.dateRequired');
       default:
         return '';
     }
@@ -69,7 +83,7 @@ export function ContactPage() {
       
       if (error) {
         console.error('Error saving cita:', error);
-        newErrors.general = 'Error al guardar la cita. Intenta de nuevo.';
+        newErrors.general = t('error.saveError');
         setErrors(newErrors);
       } else {
         setSuccess(true);
@@ -84,7 +98,7 @@ export function ContactPage() {
       }
     } catch (err) {
       console.error('Error:', err);
-      newErrors.general = 'Error al procesar la solicitud.';
+      newErrors.general = t('error.processError');
       setErrors(newErrors);
     }
     
@@ -119,18 +133,18 @@ export function ContactPage() {
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
           </div>
-          <h2>¡Cita solicitada!</h2>
+          <h2>{t('success.title')}</h2>
           <p className="modal-message">
-            Tu solicitud de cita ha sido recibida correctamente.
+            {t('success.message')}
           </p>
           <div className="modal-note">
-            Te contactaremos en un plazo de <strong>24-48 horas</strong> para confirmar la fecha y hora.
+            {t('success.note')}
           </div>
           <button 
             className="btn-modal"
             onClick={() => setSuccess(false)}
           >
-            Aceptar
+            {t('success.acceptButton')}
           </button>
         </div>
       </>
@@ -142,15 +156,15 @@ export function ContactPage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title-center page-intro-title">
-            <h2>Agenda tu cita</h2>
+            <h2>{t('sectionTitle')}</h2>
           </div>
           
           <div className="text-center">
             <BentoCard className="contact-form-card" style={{ maxWidth: '600px', margin: '0 auto' } as any}>
-              <h3 style={{ color: 'var(--text-primary)', marginBottom: '1.5rem' }}>Formulario de Contacto</h3>
+              <h3 style={{ color: 'var(--text-primary)', marginBottom: '1.5rem' }}>{t('formTitle')}</h3>
               <form id="appointment-form" style={{ textAlign: 'left' }} onSubmit={handleSubmit} noValidate>
                 <div className="form-group">
-                  <label htmlFor="nombre">Nombre completo *</label>
+                  <label htmlFor="nombre">{t('form.name')}</label>
                   <input 
                     type="text" 
                     id="nombre" 
@@ -167,7 +181,7 @@ export function ContactPage() {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="email">Correo electrónico *</label>
+                  <label htmlFor="email">{t('form.email')}</label>
                   <input 
                     type="email" 
                     id="email" 
@@ -178,14 +192,14 @@ export function ContactPage() {
                     aria-invalid={!!errors.email}
                     value={formData.email}
                     onChange={handleChange('email')}
-                    placeholder="ejemplo@correo.com…"
+                    placeholder={t('form.emailPlaceholder')}
                     style={{ borderColor: errors.email ? '#e74c3c' : undefined }}
                   />
                   {errors.email && <span className="form-error">{errors.email}</span>}
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="telefono">Teléfono / WhatsApp *</label>
+                  <label htmlFor="telefono">{t('form.phone')}</label>
                   <input 
                     type="tel" 
                     id="telefono" 
@@ -196,14 +210,14 @@ export function ContactPage() {
                     aria-invalid={!!errors.telefono}
                     value={formData.telefono}
                     onChange={handleChange('telefono')}
-                    placeholder="+53 XXXX XXXX"
+                    placeholder={t('form.phonePlaceholder')}
                     style={{ borderColor: errors.telefono ? '#e74c3c' : undefined }}
                   />
                   {errors.telefono && <span className="form-error">{errors.telefono}</span>}
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="fecha">Fecha preferida para la cita *</label>
+                  <label htmlFor="fecha">{t('form.date')}</label>
                   <input 
                     type="date" 
                     id="fecha" 
@@ -219,14 +233,14 @@ export function ContactPage() {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="servicio">Servicio de interés</label>
+                  <label htmlFor="servicio">{t('form.service')}</label>
                   <select
                     id="servicio"
                     name="servicio"
                     value={formData.servicio}
                     onChange={handleChange('servicio')}
                   >
-                    <option value="">Selecciona un servicio (opcional)</option>
+                    <option value="">{t('form.servicePlaceholder')}</option>
                     {serviceOptions.map((option: string) => (
                       <option key={option} value={option}>{option}</option>
                     ))}
@@ -234,13 +248,13 @@ export function ContactPage() {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="mensaje">Mensaje adicional</label>
+                  <label htmlFor="mensaje">{t('form.message')}</label>
                   <textarea
                     id="mensaje"
                     name="mensaje"
                     value={formData.mensaje}
                     onChange={handleChange('mensaje')}
-                    placeholder="Cuéntanos más sobre lo que necesitas..."
+                    placeholder={t('form.messagePlaceholder')}
                     rows={3}
                   />
                 </div>
@@ -260,14 +274,14 @@ export function ContactPage() {
                   {saving ? (
                     <>
                       <span className="spinner" style={{ borderColor: 'white', borderTopColor: 'transparent' }}></span>
-                      Enviando...
+                      {t('submitting')}
                     </>
                   ) : (
                     <>
                       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                       </svg>
-                      Solicitar cita
+                      {t('submit')}
                     </>
                   )}
                 </button>
@@ -280,7 +294,7 @@ export function ContactPage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title-center">
-            <h2>Preguntas frecuentes</h2>
+            <h2>{t('faqTitle')}</h2>
           </div>
           
           <AnimatedSection>

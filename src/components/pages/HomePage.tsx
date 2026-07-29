@@ -3,17 +3,27 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Send, Calendar } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, RequestModal, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
+import { ShoppingCart, Calendar } from 'lucide-react';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
 import Grainient from '@/components/Grainient';
+import { useTranslations } from 'next-intl';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, useServicios, useEventos } from '@/hooks/useData';
 import type { Producto, Variant } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
-import faqItems from '@/data/faqs.json';
-import testimonials from '@/data/testimonials.json';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface TestimonialItem {
+  quote: string;
+  author: string;
+  position: string;
+}
 
 function getProductImage(category: string, productImage: string): string {
   if (productImage && productImage.trim() !== '') {
@@ -22,35 +32,24 @@ function getProductImage(category: string, productImage: string): string {
   return '';
 }
 
-interface RequestItem {
-  title: string;
-  price: string;
-  priceNum: number;
-  whatsappLink: string;
-  type: 'servicio' | 'producto' | 'evento';
-}
-
-export function HomePage() {
+export function HomePage({ faqItems = [], testimonials = [] }: { faqItems?: FAQItem[]; testimonials?: TestimonialItem[] }) {
   const [mounted, setMounted] = useState(false);
 
-  const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
-  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [variantProduct, setVariantProduct] = useState<Producto | null>(null);
   const [isVariantOpen, setIsVariantOpen] = useState(false);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const { addItem } = useCart();
+  const t = useTranslations('home');
+  const common = useTranslations('common');
+  const products = useTranslations('products');
+  const events = useTranslations('events');
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
   const { eventos, loading: eventosLoading } = useEventos();
   const showServicios = !mounted || serviciosLoading;
   const showProductos = !mounted || productosLoading;
   const showEventos = !mounted || eventosLoading;
-
-  const openRequest = (item: RequestItem) => {
-    setRequestItem(item);
-    setIsRequestOpen(true);
-  };
 
   const openVariantDialog = (product: Producto) => {
     setVariantProduct(product);
@@ -97,26 +96,20 @@ export function HomePage() {
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="hero-content">
             <h1>
-              <span>Asesoramiento, Herramientas y Capacitación para</span>{' '}
+              <span>{t('hero.titleLine1')}</span>{' '}
               <span className="hero-highlight">
-                Emprendedores
+                {t('hero.titleLine2')}
               </span>
             </h1>
             <p className="slogan">
-              Te enseñamos cómo posicionar un negocio y te acompañamos en cada paso del camino
+              {t('hero.slogan')}
             </p>
             <div className="hero-buttons">
-              <button
-                className="hero-cta"
-                onClick={() => {
-                  setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-                  setIsRequestOpen(true);
-                }}
-              >
-                Agendar cita gratis
-              </button>
+              <Link href="/contacto" className="hero-cta">
+                {t('hero.appointment')}
+              </Link>
               <Link href="/nosotros" className="hero-cta-outline">
-                Sobre nosotros
+                {t('hero.aboutUs')}
               </Link>
             </div>
           </div>
@@ -153,9 +146,9 @@ export function HomePage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>Nuestros</span> <span>servicios</span></h2>
+            <h2><span>{t('sections.services')}</span></h2>
             <Link href="/servicios" className="text-cta-link">
-              Ver todos →
+              {common('viewAll')} →
             </Link>
           </div>
           
@@ -163,7 +156,7 @@ export function HomePage() {
             <ServicesGridSkeleton count={3} />
           ) : servicios.length === 0 ? (
             <div className="empty-section">
-              <p>No hay servicios disponibles por el momento.</p>
+              <p>{t('empty.services')}</p>
             </div>
           ) : (
           <div className="bento-grid bento-grid-center">
@@ -182,7 +175,7 @@ export function HomePage() {
                       onClick={() => addItem(service.title, 'Único', service.price_num)}
                     >
                       <ShoppingCart size={16} />
-                      <span>Añadir al carrito</span>
+                      <span>{common('addToCart')}</span>
                     </button>
                   </div>
                 </BentoCard>
@@ -197,9 +190,9 @@ export function HomePage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>Productos</span> <span>destacados</span></h2>
+            <h2><span>{t('sections.featuredProducts')}</span></h2>
             <Link href="/productos" className="text-cta-link">
-              Ver más →
+              {common('seeMore')} →
             </Link>
           </div>
           
@@ -207,22 +200,22 @@ export function HomePage() {
             <ProductsGridSkeleton count={3} />
           ) : featuredProducts.length === 0 ? (
             <div className="empty-section">
-              <p>No hay productos destacados por el momento.</p>
-              <Link href="/productos" className="text-cta-link">Ver todos los productos →</Link>
+              <p>{t('empty.products')}</p>
+              <Link href="/productos" className="text-cta-link">{common('viewAllProducts')} →</Link>
             </div>
           ) : (
           <div className="bento-grid bento-grid-center">
             {featuredProducts.map((product, index) => (
               <AnimatedCard key={product.id} index={index}>
                 <BentoCard className="interactive-card service-card">
-                  {product.popular && <span className="popular-tag">#popular</span>}
+                  {product.popular && <span className="popular-tag">{products('popularTag')}</span>}
                   {product.image ? (
                     <div className="product-image-container">
-                      <Image src={imgSrc(product.image)} alt={product.title} width={600} height={200} loading="lazy" unoptimized />
+                      <Image src={imgSrc(product.image)} alt={product.title} width={600} height={200} loading="lazy" unoptimized style={{ width: '100%', height: 'auto' }} />
                     </div>
                   ) : (
                     <div className="product-image-placeholder">
-                      <span>Imagen no disponible</span>
+                      <span>{products('imageNotAvailable')}</span>
                     </div>
                   )}
                   <h3>{product.title}</h3>
@@ -240,7 +233,7 @@ export function HomePage() {
                       }}
                     >
                       <ShoppingCart size={16} />
-                      <span>Añadir al carrito</span>
+                      <span>{common('addToCart')}</span>
                     </button>
                   </div>
                 </BentoCard>
@@ -255,9 +248,9 @@ export function HomePage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>Próximos</span> <span>eventos</span></h2>
+            <h2><span>{t('sections.upcomingEvents')}</span></h2>
             <Link href="/eventos" className="text-cta-link">
-              Ver más →
+              {common('seeMore')} →
             </Link>
           </div>
           
@@ -265,8 +258,8 @@ export function HomePage() {
             <EventsGridSkeleton count={2} />
           ) : upcomingEvents.length === 0 ? (
             <div className="empty-section">
-              <p>No hay próximos eventos por el momento.</p>
-              <Link href="/eventos" className="text-cta-link">Ver historial de eventos →</Link>
+              <p>{t('empty.events')}</p>
+              <Link href="/eventos" className="text-cta-link">{common('viewHistory')} →</Link>
             </div>
           ) : (
           <div className="bento-grid-events">
@@ -287,7 +280,7 @@ export function HomePage() {
                       className="event-cta-link"
                       onClick={() => openRegistration(event.id, event.title)}
                     >
-                      <span>Inscribirme</span>
+                      <span>{events('register')}</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                   </div>
@@ -303,7 +296,7 @@ export function HomePage() {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2>Lo que dicen nuestros clientes</h2>
+            <h2>{t('sections.testimonials')}</h2>
           </div>
 
           <div className="testimonials-section">
@@ -320,7 +313,7 @@ export function HomePage() {
         <div className="container">
           <div className="section-title-center">
             <h2 style={{ margin: 0 }}>
-              Preguntas Frecuentes
+              {t('sections.faq')}
             </h2>
           </div>
           
@@ -335,27 +328,15 @@ export function HomePage() {
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
-          <button
-            className="cta-button cta-button--light"
-            onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
+          <h2>{t('sections.ctaTitle')}</h2>
+          <p>{t('sections.ctaText')}</p>
+          <Link href="/contacto" className="cta-button cta-button--light">
             <Calendar size={18} />
-            Agendar cita gratis
-          </button>
+            {t('sections.ctaButton')}
+          </Link>
         </div>
       </div>
       </div>
-
-      <RequestModal
-        item={requestItem}
-        isOpen={isRequestOpen}
-        onClose={() => setIsRequestOpen(false)}
-      />
 
       {variantProduct && (
         <VariantSelectionDialog

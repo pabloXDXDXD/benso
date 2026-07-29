@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ShoppingCart, Send, Calendar, Search } from 'lucide-react';
 import { BentoCard, Icon, ScrollReveal, AnimatedCard, PriceDisplay, ServicesGridSkeleton, RequestModal, ShinyText } from '@/components';
 import Grainient from '@/components/Grainient';
+import { useTranslations } from 'next-intl';
 import { useCart } from '@/hooks/useCart';
 import { useServicios, type Servicio } from '@/hooks/useData';
 
@@ -17,13 +18,6 @@ interface RequestItem {
   type: 'servicio' | 'producto' | 'evento';
 }
 
-const filters = [
-  { label: 'Todos', value: 'all' as CategoryFilter },
-  { label: 'Consultoría', value: 'consultoria' as CategoryFilter },
-  { label: 'Capacitación', value: 'capacitacion' as CategoryFilter },
-  { label: 'Herramientas', value: 'herramientas' as CategoryFilter },
-];
-
 export function ServicesPage({ initialServicios = [] }: { initialServicios?: Servicio[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
@@ -32,6 +26,15 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { addItem } = useCart();
+  const t = useTranslations('services');
+  const common = useTranslations('common');
+  const home = useTranslations('home');
+  const filters = [
+    { label: t('filterAll'), value: 'all' as CategoryFilter },
+    { label: t('filterConsultoria'), value: 'consultoria' as CategoryFilter },
+    { label: t('filterCapacitacion'), value: 'capacitacion' as CategoryFilter },
+    { label: t('filterHerramientas'), value: 'herramientas' as CategoryFilter },
+  ];
   const { servicios, loading } = useServicios(initialServicios);
   const showLoading = !mounted || (loading && initialServicios.length === 0);
 
@@ -58,14 +61,14 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
         <div className="container">
           <div className="section-title-row page-intro-title">
             <div className="section-title">
-              <h2>Nuestros servicios</h2>
+              <h2>{t('pageTitle')}</h2>
             </div>
             <div className="filter-controls">
               <div className="search-input-wrapper">
                 <Search size={18} className="search-icon" />
                 <input
                   type="text"
-                  placeholder="Buscar servicios..."
+                  placeholder={t('searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
@@ -107,7 +110,7 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
                       onClick={() => addItem(service.title, 'Único', service.price_num)}
                     >
                       <ShoppingCart size={16} />
-                      <span>Añadir al carrito</span>
+                      <span>{common('addToCart')}</span>
                     </button>
                   </div>
                 </BentoCard>
@@ -123,17 +126,17 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <h2>{home('sections.ctaTitle')}</h2>
+          <p>{home('sections.ctaText')}</p>
           <button
             className="cta-button cta-button--light"
             onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setRequestItem({ title: common('appointmentTitle'), price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
               setIsRequestOpen(true);
             }}
           >
             <Calendar size={18} />
-            Agendar cita gratis
+            {home('sections.ctaButton')}
           </button>
         </div>
       </div>

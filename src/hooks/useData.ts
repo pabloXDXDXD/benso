@@ -1,5 +1,8 @@
+import { useCallback } from 'react';
+import { useLocale } from 'next-intl';
 import useSWR from 'swr';
 import { supabase } from '@/lib/supabase';
+import { localizeItems } from '@/lib/supabase-i18n';
 
 export interface Variant {
   label: string;
@@ -12,6 +15,8 @@ export interface Producto {
   id: number;
   title: string;
   description: string;
+  title_en?: string;
+  description_en?: string;
   price: string;
   price_num: number;
   category: string;
@@ -27,6 +32,8 @@ export interface Servicio {
   id: number;
   title: string;
   description: string;
+  title_en?: string;
+  description_en?: string;
   price: string;
   price_num: number;
   category: string;
@@ -41,6 +48,8 @@ export interface Evento {
   id: number;
   title: string;
   description: string;
+  title_en?: string;
+  description_en?: string;
   date: string;
   status: string;
   whatsapp_link: string;
@@ -63,46 +72,31 @@ function mapVariants(product: any): Producto {
   return product as Producto;
 }
 
-async function fetchProductos() {
-  const { data, error } = await supabase
-    .from('productos')
-    .select('*')
-    .eq('is_active', true)
-    .order('popular', { ascending: false });
-
-  if (error) throw error;
-  return (data || []).map(mapVariants);
-}
-
-async function fetchServicios() {
-  const { data, error } = await supabase
-    .from('servicios')
-    .select('*')
-    .eq('is_active', true);
-
-  if (error) throw error;
-  return (data || []) as Servicio[];
-}
-
-async function fetchEventos() {
-  const { data, error } = await supabase
-    .from('eventos')
-    .select('*')
-    .eq('is_active', true)
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return (data || []) as Evento[];
-}
-
 export function useProductos(fallbackData?: Producto[]) {
-  const { data, error, isLoading } = useSWR(PRODUCTOS_KEY, fetchProductos, {
-    revalidateOnFocus: true,
-    revalidateOnMount: !fallbackData,
-    revalidateOnReconnect: true,
-    dedupingInterval: 30_000,
-    fallbackData,
-  });
+  const locale = useLocale();
+
+  const fetcher = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('productos')
+      .select('*')
+      .eq('is_active', true)
+      .order('popular', { ascending: false });
+
+    if (error) throw error;
+    return localizeItems((data || []).map(mapVariants), locale);
+  }, [locale]);
+
+  const { data, error, isLoading } = useSWR(
+    [PRODUCTOS_KEY, locale],
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnMount: !fallbackData,
+      revalidateOnReconnect: true,
+      dedupingInterval: 30_000,
+      fallbackData,
+    },
+  );
 
   return {
     productos: data ?? [],
@@ -112,13 +106,29 @@ export function useProductos(fallbackData?: Producto[]) {
 }
 
 export function useServicios(fallbackData?: Servicio[]) {
-  const { data, error, isLoading } = useSWR(SERVICIOS_KEY, fetchServicios, {
-    revalidateOnFocus: true,
-    revalidateOnMount: !fallbackData,
-    revalidateOnReconnect: true,
-    dedupingInterval: 30_000,
-    fallbackData,
-  });
+  const locale = useLocale();
+
+  const fetcher = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('servicios')
+      .select('*')
+      .eq('is_active', true);
+
+    if (error) throw error;
+    return localizeItems(data || [], locale) as Servicio[];
+  }, [locale]);
+
+  const { data, error, isLoading } = useSWR(
+    [SERVICIOS_KEY, locale],
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnMount: !fallbackData,
+      revalidateOnReconnect: true,
+      dedupingInterval: 30_000,
+      fallbackData,
+    },
+  );
 
   return {
     servicios: data ?? [],
@@ -128,13 +138,30 @@ export function useServicios(fallbackData?: Servicio[]) {
 }
 
 export function useEventos(fallbackData?: Evento[]) {
-  const { data, error, isLoading } = useSWR(EVENTOS_KEY, fetchEventos, {
-    revalidateOnFocus: true,
-    revalidateOnMount: !fallbackData,
-    revalidateOnReconnect: true,
-    dedupingInterval: 30_000,
-    fallbackData,
-  });
+  const locale = useLocale();
+
+  const fetcher = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('eventos')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return localizeItems(data || [], locale) as Evento[];
+  }, [locale]);
+
+  const { data, error, isLoading } = useSWR(
+    [EVENTOS_KEY, locale],
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnMount: !fallbackData,
+      revalidateOnReconnect: true,
+      dedupingInterval: 30_000,
+      fallbackData,
+    },
+  );
 
   return {
     eventos: data ?? [],

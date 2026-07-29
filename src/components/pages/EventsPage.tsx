@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { Calendar } from 'lucide-react';
 import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, EventRegistrationForm, RequestModal, ShinyText } from '@/components';
 import Grainient from '@/components/Grainient';
+import { useTranslations, useMessages } from 'next-intl';
 import { useEventos, type Evento } from '@/hooks/useData';
 
 interface RequestItem {
@@ -35,11 +36,16 @@ function getYear(dateStr: string): string {
   return match ? match[1] : '';
 }
 
-function getMonthLabel(dateStr: string): string {
+function getMonthLabel(dateStr: string, monthNames: string[]): string {
   const parts = dateStr.split(' - ').map(s => s.trim());
   const labeled = parts.map(p => {
     const key = Object.keys(MONTH_MAP).find(m => p.toLowerCase().includes(m));
-    return key ? key.charAt(0).toUpperCase() + key.slice(1) : p;
+    if (key) {
+      const idx = MONTH_MAP[key]! - 1;
+      const name = monthNames[idx];
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    }
+    return p;
   });
   return labeled.join(' — ');
 }
@@ -54,6 +60,11 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
   const timelineRef = useRef<HTMLDivElement>(null);
   const [fillTop, setFillTop] = useState(0);
   const [fillHeight, setFillHeight] = useState(0);
+  const t = useTranslations('events');
+  const home = useTranslations('home');
+  const common = useTranslations('common');
+  const messages = useMessages();
+  const monthNames = (messages as any).events.months as string[];
 
   useEffect(() => { setMounted(true); }, []);
   const showLoading = !mounted || (loading && initialEventos.length === 0);
@@ -95,7 +106,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
       <ScrollReveal>
         <div className="container">
           <div className="section-title page-intro-title">
-            <h2>Eventos actuales</h2>
+            <h2>{t('current')}</h2>
           </div>
           
           {showLoading ? (
@@ -107,7 +118,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                 <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
-                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status}</span>
+                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? t('status.inProgress') : t('status.upcoming')}</span>
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
@@ -122,7 +133,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                         setIsRegistrationOpen(true);
                       }}
                     >
-                      <span>Inscribirme</span>
+                      <span>{t('register')}</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                   </div>
@@ -138,7 +149,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
       <ScrollReveal>
         <div className="container">
           <div className="section-title">
-            <h2>Próximamente</h2>
+            <h2>{t('upcoming')}</h2>
           </div>
           
           {showLoading ? (
@@ -150,7 +161,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                 <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
-                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status}</span>
+                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? t('status.inProgress') : t('status.upcoming')}</span>
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
@@ -165,7 +176,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                         setIsRegistrationOpen(true);
                       }}
                     >
-                      <span>Inscribirme</span>
+                      <span>{t('register')}</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                   </div>
@@ -182,7 +193,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
       <ScrollReveal>
         <div className="container">
           <div className="section-title-center">
-            <h2>Línea del tiempo</h2>
+            <h2>{t('timeline')}</h2>
           </div>
 
           <div className="timeline19" ref={timelineRef}>
@@ -203,10 +214,10 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                   <div className={`timeline19-dot${i < activeCount ? ' filled' : ''}`} />
                 </div>
                 <div className="timeline19-content">
-                  <span className="timeline19-date">{getMonthLabel(event.date)}</span>
+                  <span className="timeline19-date">{getMonthLabel(event.date, monthNames)}</span>
                   <h4 className="timeline19-title">{event.title}</h4>
                   <span className={`timeline19-status${event.status === 'En Curso' ? ' active' : ''}`}>
-                    {event.status}
+                    {event.status === 'En Curso' ? t('status.inProgress') : t('status.upcoming')}
                   </span>
                 </div>
               </div>
@@ -221,13 +232,13 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.</p>
+          <h2>{home('sections.ctaTitle')}</h2>
+          <p>{home('sections.ctaText')}</p>
           <button 
             className="cta-button cta-button--light"
             onClick={() => {
               setRequestItem({
-                title: 'Cita de consulta',
+                title: common('appointmentTitle'),
                 price: '',
                 priceNum: 0,
                 whatsappLink: '',
@@ -237,7 +248,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
             }}
           >
             <Calendar size={18} />
-            Agendar cita gratis
+            {home('sections.ctaButton')}
           </button>
         </div>
       </div>

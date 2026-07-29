@@ -7,10 +7,12 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPriceInCurrency } from '@/lib/currencyUtils';
+import { useTranslations } from 'next-intl';
 
 export function Cart() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice, isOpen, setIsOpen, setIsCheckoutOpen } = useCart();
   const { currency } = useCurrency();
+  const t = useTranslations('cart');
   const prevItemsRef = useRef(items.length);
   const prevTotalRef = useRef(totalItems);
   const lastAddedRef = useRef<string | null>(null);
@@ -42,12 +44,12 @@ export function Cart() {
       
       if (newItem && lastAddedRef.current !== newItem.id) {
         lastAddedRef.current = newItem.id;
-        toast.custom((t) => (
+        toast.custom((toastVisible) => (
           <div
-            className={`cart-toast ${t.visible ? 'show' : 'hide'}`}
+            className={`cart-toast ${toastVisible.visible ? 'show' : 'hide'}`}
           >
             <Check size={16} />
-            <span>"{newItem.productTitle} — {newItem.variant}" añadido</span>
+            <span>{t('toastAdded', { product: newItem.productTitle, variant: newItem.variant })}</span>
           </div>
         ), { duration: 2500 });
       }
@@ -62,7 +64,7 @@ export function Cart() {
         <button
           className="cart-fab"
           onClick={() => setIsOpen(true)}
-          aria-label="Abrir carrito"
+          aria-label={t('fab')}
         >
           <ShoppingCart size={22} />
           <span className="cart-fab-badge">{totalItems}</span>
@@ -79,11 +81,11 @@ export function Cart() {
         className={`cart-panel${isOpen ? ' open' : ''}`}
         role="dialog"
         aria-modal="true"
-        aria-label="Carrito de compras"
+        aria-label={t('dialogLabel')}
       >
         <div className="cart-panel-header">
-          <h3>Tu carrito</h3>
-          <button className="cart-panel-close" onClick={() => setIsOpen(false)} aria-label="Cerrar carrito">
+          <h3>{t('panel')}</h3>
+          <button className="cart-panel-close" onClick={() => setIsOpen(false)} aria-label={t('close')}>
             <X size={20} />
           </button>
         </div>
@@ -92,13 +94,13 @@ export function Cart() {
           {items.length === 0 ? (
             <div className="cart-empty">
               <ShoppingCart size={48} strokeWidth={1.5} />
-              <p>Carrito vacío</p>
-              <span className="cart-empty-hint">Explora nuestros productos y agrega lo que necesites</span>
+              <p>{t('empty')}</p>
+              <span className="cart-empty-hint">{t('emptyDescription')}</span>
               <button 
                 className="btn-browse"
                 onClick={() => setIsOpen(false)}
               >
-                Ver productos
+                {t('viewProducts')}
               </button>
             </div>
           ) : (
@@ -113,14 +115,14 @@ export function Cart() {
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity - 1)} 
                       disabled={item.quantity <= 1}
-                      aria-label="Reducir cantidad"
+                      aria-label={t('aria.decrease')}
                     >
                       <Minus size={14} />
                     </button>
                     <span>{item.quantity}</span>
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      aria-label="Aumentar cantidad"
+                      aria-label={t('aria.increase')}
                     >
                       <Plus size={14} />
                     </button>
@@ -128,7 +130,7 @@ export function Cart() {
                   <button 
                     className="cart-item-remove" 
                     onClick={() => removeItem(item.id)} 
-                    aria-label={`Eliminar ${item.productTitle}`}
+                    aria-label={t('aria.remove', { product: item.productTitle })}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -141,14 +143,14 @@ export function Cart() {
         {items.length > 0 && (
           <div className="cart-panel-footer">
             <div className="cart-total">
-              <span>Total</span>
+              <span>{t('total')}</span>
                <span className="cart-total-amount">{formatPriceInCurrency(totalPrice, currency)}</span>
             </div>
             <button
               className="cart-checkout-btn"
               onClick={handleCheckout}
             >
-              Continuar
+              {t('checkout')}
               <ArrowRight size={18} />
             </button>
           </div>
