@@ -23,15 +23,18 @@ export default function RootPage() {
   }, []);
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      fontFamily: 'system-ui, sans-serif',
-      color: '#666',
-    }}>
-      <p>Redirigiendo / Redirecting...</p>
-    </div>
+    <>
+      <meta httpEquiv="refresh" content="0;url=/es/" />
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        fontFamily: 'system-ui, sans-serif',
+        color: '#666',
+      }}>
+        <p>Redirigiendo / Redirecting...</p>
+      </div>
+    </>
   );
 }
