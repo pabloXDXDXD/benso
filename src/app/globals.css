@@ -4281,8 +4281,8 @@ footer {
 }
 
 .home-content .testimonial-card-loop {
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .home-content .testimonial-card {
