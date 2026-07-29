@@ -1,16 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Globe } from 'lucide-react';
-import { useTranslations, useLocale } from 'next-intl';
-import { Link, usePathname, useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/routing';
 import { CurrencySelector } from '@/components/CurrencySelector';
 import { LanguageSelector } from '@/components/LanguageSelector';
 
 export function Header() {
   const t = useTranslations('header');
-  const locale = useLocale();
-  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -53,13 +50,6 @@ export function Header() {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
-  };
-
-  const switchLocale = (newLocale: string) => {
-    const path = pathname || '/';
-    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}`;
-    router.replace(path, { locale: newLocale });
-    closeMenu();
   };
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -117,14 +107,7 @@ export function Header() {
             </ul>
             <div className="mobile-nav-footer">
               <div className="mobile-nav-toggles">
-                <button
-                  className="mobile-toggle-btn"
-                  onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
-                  aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
-                >
-                  <Globe size={14} />
-                  <span>{locale === 'es' ? 'ES' : 'EN'}</span>
-                </button>
+                <LanguageSelector />
                 <CurrencySelector />
               </div>
             </div>

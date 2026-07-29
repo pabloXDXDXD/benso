@@ -388,6 +388,11 @@ nav ul li a.active::after {
     .header-container > .logo {
         order: 0;
     }
+
+    /* Hide mobile footer on desktop */
+    .mobile-nav-footer {
+        display: none !important;
+    }
 }
 
 .currency-dropdown-trigger {
@@ -505,7 +510,21 @@ nav ul li a.active::after {
         background: rgba(255, 255, 255, 0.18);
     }
 
-    .mobile-nav-toggles .currency-dropdown-menu {
+    .mobile-nav-toggles .language-dropdown-trigger {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 0.5rem 0.9rem;
+        color: var(--white);
+        opacity: 1;
+    }
+
+    .mobile-nav-toggles .language-dropdown-trigger:hover {
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .mobile-nav-toggles .currency-dropdown-menu,
+    .mobile-nav-toggles .language-dropdown-menu {
         bottom: 100%;
         top: auto;
         margin-bottom: 4px;
@@ -3424,8 +3443,19 @@ footer {
     nav:not(.admin-nav) ul li a {
         display: block;
         text-align: center;
-        padding: 1rem;
-        font-size: 1.2rem;
+        padding: 1.2rem 1rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    nav:not(.admin-nav) ul li a::after {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    nav:not(.admin-nav) ul li a:hover::after,
+    nav:not(.admin-nav) ul li a.active::after {
+        width: 30%;
     }
 
     .menu-toggle {
