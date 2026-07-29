@@ -20,10 +20,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: t('title'),
     description: t('description'),
     alternates: {
+      canonical: `https://www.bensofcg.com/${locale}/`,
       languages: {
-        es: '/es',
-        en: '/en',
-        'x-default': '/es',
+        es: 'https://www.bensofcg.com/es/',
+        en: 'https://www.bensofcg.com/en/',
+        'x-default': 'https://www.bensofcg.com/es/',
       },
     },
   };

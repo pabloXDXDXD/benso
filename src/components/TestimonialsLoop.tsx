@@ -100,11 +100,11 @@ export default function TestimonialsLoop({
           flex-shrink: 0;
           width: 360px;
           padding: 1rem 1.5rem;
-          background: white;
+          background: #f2f5fb;
           border-radius: 10px;
           margin-right: 2rem;
-          border: 1px solid #d0d0d0;
-          box-shadow: 0 2px 8px rgba(0, 44, 106, 0.06);
+          border: none;
+          box-shadow: none;
           text-align: left;
         }
 
@@ -116,15 +116,15 @@ export default function TestimonialsLoop({
         }
 
         .testimonial-avatar > span {
-          background: #e8e8e8;
-          color: #aaa;
+          background: #d4e0f5;
+          color: #4a6a9a;
         }
 
         .testimonial-avatar svg {
           display: block;
           width: 24px;
           height: 24px;
-          stroke: #aaa;
+          stroke: #4a6a9a;
         }
 
         .testimonial-author-info {

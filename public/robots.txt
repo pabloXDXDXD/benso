@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://bensofcg.com/sitemap.xml
+Sitemap: https://www.bensofcg.com/sitemap.xml

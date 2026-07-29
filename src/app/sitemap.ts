@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export const dynamic = 'force-static';
 
-const SITE_URL = 'https://bensofcg.com';
+const SITE_URL = 'https://www.bensofcg.com';
 
 const locales = ['es', 'en'] as const;
 
@@ -18,17 +18,28 @@ const routes = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
+  // Root URLs (x-default)
+  entries.push({
+    url: `${SITE_URL}/`,
+    changeFrequency: 'weekly',
+    priority: 1.0,
+    alternates: {
+      languages: {
+        es: `${SITE_URL}/es/`,
+        en: `${SITE_URL}/en/`,
+      },
+    },
+  });
+
   for (const locale of locales) {
     for (const route of routes) {
-      const url = route.path
-        ? `${SITE_URL}/${locale}/${route.path}/`
-        : `${SITE_URL}/${locale}/`;
+      if (!route.path) continue; // root already handled above
+
+      const url = `${SITE_URL}/${locale}/${route.path}/`;
 
       const alternates: Record<string, string> = {};
       for (const altLocale of locales) {
-        alternates[altLocale] = route.path
-          ? `${SITE_URL}/${altLocale}/${route.path}/`
-          : `${SITE_URL}/${altLocale}/`;
+        alternates[altLocale] = `${SITE_URL}/${altLocale}/${route.path}/`;
       }
 
       entries.push({
