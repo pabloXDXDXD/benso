@@ -87,16 +87,17 @@ export function Header() {
           <img src="/assets/logos/Isotipo Benso Claro.svg" alt="BENSO" className="logo-img" fetchPriority="high" />
         </Link>
 
-        <CurrencySelector />
-
-        <button
-          className="locale-switcher"
-          onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
-          aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
-          title={locale === 'es' ? 'English' : 'Español'}
-        >
-          {locale === 'es' ? 'EN' : 'ES'}
-        </button>
+        <div className="header-actions">
+          <button
+            className="locale-switcher"
+            onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
+            aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+            title={locale === 'es' ? 'English' : 'Español'}
+          >
+            {locale === 'es' ? 'EN' : 'ES'}
+          </button>
+          <CurrencySelector />
+        </div>
 
         <button
           className={`menu-toggle${isMenuOpen ? ' open' : ''}`}
@@ -110,16 +111,26 @@ export function Header() {
           <span></span>
         </button>
 
-        <nav id="main-nav" className={isMenuOpen ? 'active' : ''}>
-          <ul>
-            <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>{t('nav.home')}</Link></li>
-            <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>{t('nav.services')}</Link></li>
-            <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>{t('nav.products')}</Link></li>
-            <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>{t('nav.events')}</Link></li>
-            <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>{t('nav.about')}</Link></li>
-            <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>{t('nav.contact')}</Link></li>
-          </ul>
-        </nav>
+<nav id="main-nav" className={isMenuOpen ? 'active' : ''}>
+            <ul>
+              <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>{t('nav.home')}</Link></li>
+              <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>{t('nav.services')}</Link></li>
+              <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>{t('nav.products')}</Link></li>
+              <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>{t('nav.events')}</Link></li>
+              <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>{t('nav.about')}</Link></li>
+              <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>{t('nav.contact')}</Link></li>
+            </ul>
+            <div className="mobile-nav-footer">
+              <button
+                className="locale-switcher"
+                onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
+                aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+              >
+                {locale === 'es' ? 'EN' : 'ES'}
+              </button>
+              <CurrencySelector />
+            </div>
+          </nav>
       </div>
     </header>
   );

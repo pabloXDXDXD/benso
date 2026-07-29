@@ -299,18 +299,51 @@ nav ul li a.active::after {
     transform: scale(1.05);
 }
 
+/* Locale Switcher — matches currency dropdown style */
+.locale-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    cursor: pointer;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: opacity 0.2s, border-color 0.2s;
+    opacity: 0.85;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.locale-switcher:hover {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Mobile locale switcher — inside nav */
+.mobile-nav-footer .locale-switcher {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.mobile-nav-footer .locale-switcher:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
 /* Currency Dropdown */
 .currency-dropdown {
     position: relative;
     flex-shrink: 0;
-    margin-left: 1rem;
 }
 
 /* Desktop: push currency after nav via flex order */
 @media (min-width: 769px) {
-    .header-container > .currency-dropdown {
+    .header-container > .header-actions {
         order: 2;
-        margin-left: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
     .header-container > nav {
         order: 1;
@@ -383,15 +416,32 @@ nav ul li a.active::after {
     color: var(--primary);
 }
 
-/* Mobile currency — sits left of hamburger */
+/* Mobile currency & locale — hidden from top bar, shown in nav footer */
 @media (max-width: 768px) {
-    .currency-dropdown {
-        margin-left: auto;
-        margin-right: 0.5rem;
+    .header-actions {
+        display: none !important;
     }
 
-    .currency-dropdown-trigger {
-        padding: 0.3rem 0.4rem;
+    .mobile-nav-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.5rem 2rem 2.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: auto;
+    }
+
+    .mobile-nav-footer .currency-dropdown-trigger {
+        padding: 0.4rem 0.5rem;
+        color: var(--white);
+    }
+
+    .mobile-nav-footer .currency-dropdown-menu {
+        bottom: 100%;
+        top: auto;
+        margin-bottom: 4px;
+        margin-top: 0;
     }
 }
 
