@@ -7,6 +7,6 @@ export const config = {
   // Match all pathnames except for:
   // - /api, /_next, /_vercel
   // - files with dots (favicon.ico, etc.)
-  // - /team (admin login routes use their own auth)
-  matcher: '/((?!api|_next|_vercel|team|.*\\..*).*)',
+  // - /admin and /team (non-localized routes with their own auth)
+  matcher: '/((?!api|_next|_vercel|admin|team|.*\\..*).*)',
 };
