@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Globe } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
 import { CurrencySelector } from '@/components/CurrencySelector';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 export function Header() {
   const t = useTranslations('header');
@@ -88,14 +90,7 @@ export function Header() {
         </Link>
 
         <div className="header-actions">
-          <button
-            className="locale-switcher"
-            onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
-            aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
-            title={locale === 'es' ? 'English' : 'Español'}
-          >
-            {locale === 'es' ? 'EN' : 'ES'}
-          </button>
+          <LanguageSelector />
           <CurrencySelector />
         </div>
 
@@ -121,14 +116,17 @@ export function Header() {
               <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>{t('nav.contact')}</Link></li>
             </ul>
             <div className="mobile-nav-footer">
-              <button
-                className="locale-switcher"
-                onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
-                aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
-              >
-                {locale === 'es' ? 'EN' : 'ES'}
-              </button>
-              <CurrencySelector />
+              <div className="mobile-nav-toggles">
+                <button
+                  className="mobile-toggle-btn"
+                  onClick={() => switchLocale(locale === 'es' ? 'en' : 'es')}
+                  aria-label={locale === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+                >
+                  <Globe size={14} />
+                  <span>{locale === 'es' ? 'ES' : 'EN'}</span>
+                </button>
+                <CurrencySelector />
+              </div>
             </div>
           </nav>
       </div>

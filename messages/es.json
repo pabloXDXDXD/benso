@@ -374,5 +374,8 @@
   },
   "currencySelector": {
     "ariaLabel": "Moneda: {currency}. Click para cambiar"
+  },
+  "languageSelector": {
+    "ariaLabel": "Idioma: {locale}. Click para cambiar"
   }
 }

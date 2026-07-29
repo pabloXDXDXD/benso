@@ -299,36 +299,73 @@ nav ul li a.active::after {
     transform: scale(1.05);
 }
 
-/* Locale Switcher — matches currency dropdown style */
-.locale-switcher {
+/* Language Dropdown — matches currency dropdown style */
+.language-dropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.language-dropdown-trigger {
     display: flex;
     align-items: center;
     gap: 0.35rem;
     background: none;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: none;
     color: var(--white);
     cursor: pointer;
     padding: 0.4rem 0.5rem;
     font-size: 0.8rem;
     font-weight: 600;
-    transition: opacity 0.2s, border-color 0.2s;
+    transition: opacity 0.2s;
     opacity: 0.85;
-    border-radius: 6px;
-    line-height: 1;
 }
 
-.locale-switcher:hover {
+.language-dropdown-trigger:hover {
     opacity: 1;
-    border-color: rgba(255, 255, 255, 0.6);
 }
 
-/* Mobile locale switcher — inside nav */
-.mobile-nav-footer .locale-switcher {
-    border-color: rgba(255, 255, 255, 0.2);
+.language-chevron {
+    transition: transform 0.2s;
 }
 
-.mobile-nav-footer .locale-switcher:hover {
-    border-color: rgba(255, 255, 255, 0.5);
+.language-chevron.open {
+    transform: rotate(180deg);
+}
+
+.language-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    min-width: 60px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.language-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.language-dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+.language-dropdown-item.active {
+    font-weight: 700;
+    color: var(--primary);
 }
 
 /* Currency Dropdown */
@@ -423,21 +460,52 @@ nav ul li a.active::after {
     }
 
     .mobile-nav-footer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.75rem;
         padding: 1.5rem 2rem 2.5rem;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         margin-top: auto;
     }
 
-    .mobile-nav-footer .currency-dropdown-trigger {
-        padding: 0.4rem 0.5rem;
-        color: var(--white);
+    .mobile-nav-toggles {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
     }
 
-    .mobile-nav-footer .currency-dropdown-menu {
+    .mobile-toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: var(--white);
+        cursor: pointer;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background 0.2s;
+        line-height: 1;
+    }
+
+    .mobile-toggle-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .mobile-nav-toggles .currency-dropdown-trigger {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 0.5rem 0.9rem;
+        color: var(--white);
+        opacity: 1;
+    }
+
+    .mobile-nav-toggles .currency-dropdown-trigger:hover {
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .mobile-nav-toggles .currency-dropdown-menu {
         bottom: 100%;
         top: auto;
         margin-bottom: 4px;
