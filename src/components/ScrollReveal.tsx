@@ -1,7 +1,7 @@
 'use client';
 
-import { type ReactNode, useEffect, useRef } from 'react';
-import { motion, useInView } from 'motion/react';
+import { type ReactNode } from 'react';
+import { motion } from 'motion/react';
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -14,17 +14,15 @@ export function ScrollReveal({
   className = '', 
   style 
 }: ScrollRevealProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
   return (
     <motion.section
-      ref={ref}
       className={`reveal-section ${className}`.trim()}
       style={style}
-      initial={{ opacity: 0, y: 35 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 35 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      suppressHydrationWarning
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.section>
@@ -45,11 +43,12 @@ export function AnimatedSection({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 20 }}
+      suppressHydrationWarning
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{
-        duration: 0.4,
+        duration: 0.5,
         ease: 'easeOut',
         delay
       }}
@@ -73,11 +72,12 @@ export function AnimatedCard({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 30 }}
+      suppressHydrationWarning
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.05 }}
+      viewport={{ once: true, amount: 0.15 }}
       transition={{
-        duration: 0.4,
+        duration: 0.5,
         ease: 'easeOut',
         delay: index * 0.08
       }}

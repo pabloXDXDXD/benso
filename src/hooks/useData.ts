@@ -196,7 +196,7 @@ export function useEventos(fallbackData?: Evento[]) {
   };
 }
 
-export function useTestimonials() {
+export function useTestimonials(fallbackData?: Testimonial[]) {
   const locale = useLocale();
 
   const fetcher = useCallback(async () => {
@@ -215,19 +215,17 @@ export function useTestimonials() {
     fetcher,
     {
       revalidateOnFocus: true,
+      revalidateOnMount: !fallbackData,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
+      fallbackData,
     },
   );
 
-  return {
-    testimonials: data ?? [],
-    loading: isLoading,
-    error: error?.message ?? null,
-  };
+  return { testimonials: data ?? [], loading: isLoading, error: error?.message ?? null };
 }
 
-export function useFaqs() {
+export function useFaqs(fallbackData?: Faq[]) {
   const locale = useLocale();
 
   const fetcher = useCallback(async () => {
@@ -250,14 +248,12 @@ export function useFaqs() {
     fetcher,
     {
       revalidateOnFocus: true,
+      revalidateOnMount: !fallbackData,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
+      fallbackData,
     },
   );
 
-  return {
-    faqs: data ?? [],
-    loading: isLoading,
-    error: error?.message ?? null,
-  };
+  return { faqs: data ?? [], loading: isLoading, error: error?.message ?? null };
 }

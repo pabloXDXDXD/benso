@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: 'BENSO | Consultoría y Soluciones Digitales para PyMEs en Cuba',
     template: '%s | BENSO',
   },
-  description: 'Consultoría empresarial, marketing digital y automatización para PyMEs en Cuba. Asesoramiento estratégico para impulsar la rentabilidad de tu emprendimiento.',
+  description: 'Consultoría empresarial, marketing digital y automatización para PyMEs en Cuba. Contáctanos al +53 55609099. Estrategia digital para impulsar tu rentabilidad.',
   metadataBase: new URL('https://www.bensofcg.com'),
   icons: {
     icon: '/favicon.svg',
@@ -40,7 +40,7 @@ export default function RootLayout({
     name: 'BENSO',
     url: 'https://www.bensofcg.com',
     logo: 'https://www.bensofcg.com/assets/logos/Isotipo%20Benso%20Claro.svg',
-    description: 'Consultoría empresarial, marketing digital y automatización para PyMEs en Cuba.',
+    description: 'Consultoría empresarial, marketing digital y automatización para PyMEs en Cuba. Contáctanos al +53 55609099.',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+53-5560-9099',
