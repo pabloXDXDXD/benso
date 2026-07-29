@@ -54,11 +54,37 @@ export interface Evento {
   status: string;
   whatsapp_link: string;
   is_active: boolean;
+  image: string;
+  icon: string;
+}
+
+export interface Testimonial {
+  id: number;
+  quote: string;
+  quote_en: string;
+  author: string;
+  position: string;
+  position_en: string;
+  image: string;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface Faq {
+  id: number;
+  question: string;
+  question_en: string;
+  answer: string;
+  answer_en: string;
+  is_active: boolean;
+  sort_order: number;
 }
 
 const PRODUCTOS_KEY = 'productos';
 const SERVICIOS_KEY = 'servicios';
 const EVENTOS_KEY = 'eventos';
+const TESTIMONIALS_KEY = 'testimonials';
+const FAQS_KEY = 'faqs';
 
 function mapVariants(product: any): Producto {
   if (product.variants && Array.isArray(product.variants)) {
@@ -165,6 +191,72 @@ export function useEventos(fallbackData?: Evento[]) {
 
   return {
     eventos: data ?? [],
+    loading: isLoading,
+    error: error?.message ?? null,
+  };
+}
+
+export function useTestimonials() {
+  const locale = useLocale();
+
+  const fetcher = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('testimonials')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+    return localizeItems(data || [], locale) as Testimonial[];
+  }, [locale]);
+
+  const { data, error, isLoading } = useSWR(
+    [TESTIMONIALS_KEY, locale],
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 30_000,
+    },
+  );
+
+  return {
+    testimonials: data ?? [],
+    loading: isLoading,
+    error: error?.message ?? null,
+  };
+}
+
+export function useFaqs() {
+  const locale = useLocale();
+
+  const fetcher = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('faqs')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+    return (data || []).map((item: any) => ({
+      ...item,
+      question: locale === 'en' ? (item.question_en || item.question) : item.question,
+      answer: locale === 'en' ? (item.answer_en || item.answer) : item.answer,
+    })) as Faq[];
+  }, [locale]);
+
+  const { data, error, isLoading } = useSWR(
+    [FAQS_KEY, locale],
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 30_000,
+    },
+  );
+
+  return {
+    faqs: data ?? [],
     loading: isLoading,
     error: error?.message ?? null,
   };

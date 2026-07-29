@@ -4,11 +4,7 @@ import { useState, useMemo, type FormEvent } from 'react';
 import { BentoCard, FAQAccordion, ScrollReveal, AnimatedSection, ShinyText } from '@/components';
 import { supabase } from '@/lib/supabase';
 import { useTranslations } from 'next-intl';
-
-interface FAQItem {
-  question: string;
-  answer: string;
-}
+import { useFaqs } from '@/hooks/useData';
 
 interface ServiceItem {
   title: string;
@@ -20,7 +16,8 @@ interface ServiceItem {
   whatsappLink: string;
 }
 
-export function ContactPage({ faqItems = [], servicesData = { featured: [], all: [] } }: { faqItems?: FAQItem[]; servicesData?: { featured: ServiceItem[]; all: ServiceItem[] } }) {
+export function ContactPage({ servicesData = { featured: [], all: [] } }: { servicesData?: { featured: ServiceItem[]; all: ServiceItem[] } }) {
+  const { faqs: faqItems } = useFaqs();
   const serviceOptions = useMemo(() => servicesData.all.map((s) => s.title), [servicesData]);
   const [formData, setFormData] = useState({
     nombre: '',

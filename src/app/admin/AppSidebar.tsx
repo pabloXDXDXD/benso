@@ -10,11 +10,13 @@ import {
   Tag,
   Wrench,
   CalendarDays,
+  MessageSquare,
+  HelpCircle,
   RefreshCw,
   LogOut,
 } from 'lucide-react';
 
-export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'productos' | 'servicios' | 'eventos';
+export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs';
 
 export interface AppSidebarProps {
   activeTab: AdminTab;
@@ -59,6 +61,13 @@ const navSections: NavSection[] = [
       { tab: 'productos', label: 'Productos', icon: Tag, countKey: 'productos' },
       { tab: 'servicios', label: 'Servicios', icon: Wrench, countKey: 'servicios' },
       { tab: 'eventos', label: 'Eventos', icon: CalendarDays, countKey: 'eventos' },
+    ],
+  },
+  {
+    title: 'CONTENIDO',
+    items: [
+      { tab: 'testimonials', label: 'Testimonios', icon: MessageSquare, countKey: 'testimonials' },
+      { tab: 'faqs', label: 'FAQs', icon: HelpCircle, countKey: 'faqs' },
     ],
   },
 ];

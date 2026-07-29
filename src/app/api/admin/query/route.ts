@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas'];
+const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs'];
 
 async function verifyAdmin(req: NextRequest) {
   const auth = req.headers.get('authorization')?.replace('Bearer ', '');

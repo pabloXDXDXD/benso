@@ -10,20 +10,9 @@ import { useTranslations } from 'next-intl';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useCart } from '@/hooks/useCart';
-import { useProductos, useServicios, useEventos } from '@/hooks/useData';
+import { useProductos, useServicios, useEventos, useTestimonials, useFaqs } from '@/hooks/useData';
 import type { Producto, Variant } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
-
-interface FAQItem {
-  question: string;
-  answer: string;
-}
-
-interface TestimonialItem {
-  quote: string;
-  author: string;
-  position: string;
-}
 
 function getProductImage(category: string, productImage: string): string {
   if (productImage && productImage.trim() !== '') {
@@ -32,7 +21,7 @@ function getProductImage(category: string, productImage: string): string {
   return '';
 }
 
-export function HomePage({ faqItems = [], testimonials = [] }: { faqItems?: FAQItem[]; testimonials?: TestimonialItem[] }) {
+export function HomePage() {
   const [mounted, setMounted] = useState(false);
 
   const [variantProduct, setVariantProduct] = useState<Producto | null>(null);
@@ -47,6 +36,8 @@ export function HomePage({ faqItems = [], testimonials = [] }: { faqItems?: FAQI
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
   const { eventos, loading: eventosLoading } = useEventos();
+  const { testimonials } = useTestimonials();
+  const { faqs: faqItems } = useFaqs();
   const showServicios = !mounted || serviciosLoading;
   const showProductos = !mounted || productosLoading;
   const showEventos = !mounted || eventosLoading;

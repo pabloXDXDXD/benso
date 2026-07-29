@@ -25,8 +25,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const faqItems = await import(`@/data/${locale}/faqs.json`).then(m => m.default);
   const servicesData = await import(`@/data/${locale}/services.json`).then(m => m.default);
 
-  return <ContactPage faqItems={faqItems} servicesData={servicesData} />;
+  return <ContactPage servicesData={servicesData} />;
 }
