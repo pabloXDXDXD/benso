@@ -132,13 +132,11 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           ) : (
           <div className="home-split-section">
             <div className="home-split-cell">
-              <div className="home-services-stack">
+              <div className="home-services-card">
                 {servicios.slice(0, 3).map((service) => (
-                  <div key={service.id} className="home-service-card">
+                  <div key={service.id} className="home-service-row">
                     <Icon name={service.icon} />
-                    <div>
-                      <h3>{service.title}</h3>
-                    </div>
+                    <h3>{service.title}</h3>
                   </div>
                 ))}
               </div>
@@ -173,28 +171,36 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
               </Link>
             </div>
             <div className="home-split-cell">
-              <div className="home-products-stack">
-                {featuredProducts.map((product, index) => {
-                  const offset = { translateY: -(index * 12) };
-                  return product.image ? (
+              <div className="home-products-grid">
+                {featuredProducts.filter(p => p.image).map((product, index) => {
+                  const spans = [
+                    { gridRow: 'span 2', gridColumn: '1' },
+                    { gridRow: '1', gridColumn: '2' },
+                    { gridRow: '2', gridColumn: '2' },
+                  ];
+                  const span = spans[index] || {};
+                  const sizes = [
+                    { width: 400, height: 500 },
+                    { width: 300, height: 220 },
+                    { width: 300, height: 250 },
+                  ];
+                  const size = sizes[index] || { width: 300, height: 250 };
+                  return (
                     <div
                       key={product.id}
-                      className="home-product-image-card"
-                      style={{
-                        transform: `translateY(${offset.translateY}px)`,
-                        zIndex: featuredProducts.length - index,
-                      }}
+                      className="home-product-image-cell"
+                      style={span}
                     >
                       <Image
-                        src={imgSrc(product.image)}
+                        src={imgSrc(product.image!)}
                         alt={product.title}
-                        width={500}
-                        height={350}
+                        width={size.width}
+                        height={size.height}
                         loading="lazy"
                         unoptimized
                       />
                     </div>
-                  ) : null;
+                  );
                 })}
               </div>
             </div>

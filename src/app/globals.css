@@ -4711,70 +4711,56 @@ footer {
 }
 
 /* ===================================
-   Home — Services (cards, left-aligned)
+   Home — Services (toned card list)
    =================================== */
-.home-services-stack {
+.home-services-card {
+    background: #f2f5fb;
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.25rem;
 }
 
-.home-service-card {
+.home-service-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
-    padding: 0;
+    padding: 0.6rem 0;
 }
 
-.home-service-card .icon-svg {
-    width: 32px;
-    height: 32px;
+.home-service-row + .home-service-row {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.home-service-row .icon-svg {
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
     color: var(--text-primary);
-    margin-top: 0.15rem;
 }
 
-.home-service-card div {
-    flex: 1;
-    min-width: 0;
-}
-
-.home-service-card h3 {
-    margin: 0 0 0.25rem;
-    font-size: 1.15rem;
+.home-service-row h3 {
+    margin: 0;
+    font-size: 1.05rem;
     font-weight: 600;
     color: var(--text-primary);
     font-family: var(--font-main);
     line-height: 1.3;
 }
 
-.home-service-card p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-}
-
 /* ===================================
-   Home — Products (image stack + info)
+   Home — Products (2D image grid)
    =================================== */
-.home-products-section {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.home-products-stack {
-    display: flex;
-    align-items: flex-end;
+.home-products-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: 0.75rem;
-    position: relative;
-    flex-shrink: 0;
+    align-items: start;
 }
 
-.home-product-image-card {
-    flex-shrink: 0;
-    width: min(180px, 22vw);
+.home-product-image-cell {
     border-radius: 10px;
     overflow: hidden;
     box-shadow:
@@ -4784,13 +4770,13 @@ footer {
     background: white;
 }
 
-.home-product-image-card:hover {
-    transform: translateY(-8px) !important;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
-    z-index: 10 !important;
+.home-product-image-cell:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    z-index: 5;
 }
 
-.home-product-image-card img {
+.home-product-image-cell img {
     display: block;
     width: 100%;
     height: auto;
@@ -4868,11 +4854,7 @@ footer {
         order: -1;
     }
 
-    .home-products-stack {
+    .home-products-grid {
         gap: 0.5rem;
-    }
-
-    .home-product-image-card {
-        width: min(140px, 38vw);
     }
 }
