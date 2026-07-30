@@ -4696,104 +4696,86 @@ footer {
 }
 
 /* ===================================
-   Home — Split section (stack + button)
+   Home — 50/50 Split Section
    =================================== */
 .home-split-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
-    justify-items: center;
+    gap: 3rem;
     padding: 1.5rem 0 3rem;
 }
 
-.home-split-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--primary);
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.95rem;
-    font-family: var(--font-main);
-    padding: 0.75rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: background 0.25s ease, transform 0.2s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.home-split-btn:hover {
-    background: #003680;
-    transform: scale(1.03);
+.home-split-cell {
+    display: flex;
+    flex-direction: column;
 }
 
 /* ===================================
-   Home — Services (stacked right list)
+   Home — Services (cards, left-aligned)
    =================================== */
 .home-services-stack {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
+    gap: 1.25rem;
 }
 
-.home-service-row {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    text-decoration: none;
+.home-service-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0;
+}
+
+.home-service-card .icon-svg {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
     color: var(--text-primary);
-    padding: 0.6rem 1rem;
-    border-radius: var(--radius);
-    transition: background 0.2s ease;
-    font-size: 1.05rem;
-    font-weight: 500;
+    margin-top: 0.15rem;
+}
+
+.home-service-card div {
+    flex: 1;
+    min-width: 0;
+}
+
+.home-service-card h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
     font-family: var(--font-main);
-    max-width: 360px;
-    width: auto;
+    line-height: 1.3;
 }
 
-.home-service-row:hover {
-    background: rgba(0, 0, 0, 0.03);
-}
-
-.home-service-row .icon-svg {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    color: var(--primary);
-}
-
-.home-service-row span {
-    flex-shrink: 0;
-}
-
-.home-service-arrow {
-    color: var(--text-muted);
-    font-size: 1rem;
-    transition: transform 0.2s ease;
-    margin-left: 0.25rem;
-}
-
-.home-service-row:hover .home-service-arrow {
-    transform: translateX(3px);
+.home-service-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
 }
 
 /* ===================================
-   Home — Products (image stack, left)
+   Home — Products (image stack + info)
    =================================== */
+.home-products-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .home-products-stack {
     display: flex;
     align-items: flex-end;
-    gap: 1rem;
+    gap: 0.75rem;
     position: relative;
+    flex-shrink: 0;
 }
 
 .home-product-image-card {
     flex-shrink: 0;
-    width: min(220px, 28vw);
-    border-radius: 12px;
+    width: min(180px, 22vw);
+    border-radius: 10px;
     overflow: hidden;
     box-shadow:
         0 2px 8px rgba(0, 0, 0, 0.06),
@@ -4812,34 +4794,90 @@ footer {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: auto;
     object-fit: cover;
 }
 
-@media (max-width: 640px) {
+.home-products-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.home-products-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* ===================================
+   Home — Outline Button
+   =================================== */
+.home-outline-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: var(--font-main);
+    padding: 0.6rem 1.5rem;
+    border: 2px solid var(--primary);
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.25s ease, color 0.25s ease, gap 0.25s ease;
+    white-space: nowrap;
+}
+
+.home-outline-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    gap: 0.7rem;
+}
+
+.home-outline-btn span {
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.home-outline-btn:hover span {
+    transform: translateX(3px);
+}
+
+.home-cell-footer {
+    margin-top: 1.5rem;
+}
+
+/* ===================================
+   Home — Section titles inside split cells
+   =================================== */
+.home-split-cell .section-title-home {
+    margin-bottom: 1.5rem;
+}
+
+/* ===================================
+   Mobile
+   =================================== */
+@media (max-width: 768px) {
     .home-split-section {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 2.5rem;
     }
 
-    .home-split-btn {
-        justify-self: center;
-    }
-
-    .home-services-stack {
+    .home-products-section {
+        flex-direction: column;
         align-items: flex-start;
     }
 
-    .home-service-row {
-        max-width: 100%;
-    }
-
     .home-products-stack {
-        justify-content: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
 
     .home-product-image-card {
-        width: min(160px, 42vw);
+        width: min(140px, 38vw);
     }
 }

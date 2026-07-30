@@ -119,83 +119,89 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
 
       <div className="home-content">
 
-      {/* Services Preview Section */}
+      {/* Services + Products — 50/50 Split */}
       <ScrollReveal>
         <div className="container">
-          <div className="section-title section-title-home">
-            <h2><span>{t('sections.services')}</span></h2>
-          </div>
-          
-          {showServicios ? (
-            <ServicesGridSkeleton count={3} />
-          ) : servicios.length === 0 ? (
-            <div className="empty-section">
-              <p>{t('empty.services')}</p>
-            </div>
-          ) : (
           <div className="home-split-section">
-            <Link href="/servicios" className="home-split-btn">
-              {common('viewAll')}
-            </Link>
-            <div className="home-services-stack">
-              {servicios.slice(0, 3).map((service) => (
-                <Link key={service.id} href="/servicios" className="home-service-row">
-                  <Icon name={service.icon} />
-                  <span>{service.title}</span>
-                  <span className="home-service-arrow">→</span>
+            {/* LEFT — Services */}
+            <div className="home-split-cell">
+              <div className="section-title section-title-home">
+                <h2><span>{t('sections.services')}</span></h2>
+              </div>
+              {showServicios ? (
+                <ServicesGridSkeleton count={3} />
+              ) : servicios.length === 0 ? (
+                <div className="empty-section">
+                  <p>{t('empty.services')}</p>
+                </div>
+              ) : (
+                <div className="home-services-stack">
+                  {servicios.slice(0, 3).map((service) => (
+                    <div key={service.id} className="home-service-card">
+                      <Icon name={service.icon} />
+                      <div>
+                        <h3>{service.title}</h3>
+                        <p>{service.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="home-cell-footer">
+                <Link href="/servicios" className="home-outline-btn">
+                  {common('viewAll')} <span>→</span>
                 </Link>
-              ))}
+              </div>
             </div>
-          </div>
-          )}
-        </div>
-      </ScrollReveal>
 
-{/* Featured Products Section */}
-      <ScrollReveal>
-        <div className="container">
-          <div className="section-title section-title-home">
-            <h2><span>{t('sections.featuredProducts')}</span></h2>
-          </div>
-          
-          {showProductos ? (
-            <ProductsGridSkeleton count={3} />
-          ) : featuredProducts.length === 0 ? (
-            <div className="empty-section">
-              <p>{t('empty.products')}</p>
-              <Link href="/productos" className="text-cta-link">{common('viewAllProducts')} →</Link>
-            </div>
-          ) : (
-          <div className="home-split-section">
-            <div className="home-products-stack">
-              {featuredProducts.map((product, index) => {
-                const offset = { translateY: -(index * 8) };
-                return product.image ? (
-                  <div
-                    key={product.id}
-                    className="home-product-image-card"
-                    style={{
-                      transform: `translateY(${offset.translateY}px)`,
-                      zIndex: featuredProducts.length - index,
-                    }}
-                  >
-                    <Image
-                      src={imgSrc(product.image)}
-                      alt={product.title}
-                      width={400}
-                      height={280}
-                      loading="lazy"
-                      unoptimized
-                    />
+            {/* RIGHT — Products */}
+            <div className="home-split-cell">
+              <div className="section-title section-title-home">
+                <h2><span>{t('sections.featuredProducts')}</span></h2>
+              </div>
+              {showProductos ? (
+                <ProductsGridSkeleton count={3} />
+              ) : featuredProducts.length === 0 ? (
+                <div className="empty-section">
+                  <p>{t('empty.products')}</p>
+                  <Link href="/productos" className="text-cta-link">{common('viewAllProducts')} →</Link>
+                </div>
+              ) : (
+                <div className="home-products-section">
+                  <div className="home-products-stack">
+                    {featuredProducts.map((product, index) => {
+                      const offset = { translateY: -(index * 12) };
+                      return product.image ? (
+                        <div
+                          key={product.id}
+                          className="home-product-image-card"
+                          style={{
+                            transform: `translateY(${offset.translateY}px)`,
+                            zIndex: featuredProducts.length - index,
+                          }}
+                        >
+                          <Image
+                            src={imgSrc(product.image)}
+                            alt={product.title}
+                            width={500}
+                            height={350}
+                            loading="lazy"
+                            unoptimized
+                          />
+                        </div>
+                      ) : null;
+                    })}
                   </div>
-                ) : null;
-              })}
+                  <div className="home-products-info">
+                    <p>{t('sections.ctaText')}</p>
+                    <Link href="/productos" className="home-outline-btn">
+                      {common('seeMore')} <span>→</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
-            <Link href="/productos" className="home-split-btn">
-              {common('seeMore')}
-            </Link>
           </div>
-          )}
         </div>
       </ScrollReveal>
 
