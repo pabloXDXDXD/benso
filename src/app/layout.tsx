@@ -40,12 +40,12 @@ export const metadata: Metadata = {
     siteName: 'BENSO',
     type: 'website',
     locale: 'es_ES',
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    images: [{ url: 'https://www.bensofcg.com/og-image.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@benso_fcg',
-    images: [{ url: '/twitter-image.png', width: 1200, height: 630 }],
+    images: [{ url: 'https://www.bensofcg.com/twitter-image.png', width: 1200, height: 630 }],
   },
 };
 
@@ -77,6 +77,12 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        {/* Fallback OG tags — Next.js metadata API may not render all OG properties */}
+        <meta property="og:image" content="https://www.bensofcg.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://www.bensofcg.com" />
+        <meta property="og:locale" content="es_ES" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
