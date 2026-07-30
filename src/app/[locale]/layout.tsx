@@ -31,13 +31,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       },
     },
     openGraph: {
-      images: [{ url: '/og-image.svg', width: 1200, height: 630 }],
+      url: `https://www.bensofcg.com/${locale}/`,
       siteName: 'BENSO',
+      type: 'website',
       locale: locale === 'en' ? 'en_US' : 'es_ES',
+      images: [{ url: '/og-image.png', width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       site: '@benso_fcg',
+      images: [{ url: '/twitter-image.png', width: 1200, height: 630 }],
     },
   };
 }
