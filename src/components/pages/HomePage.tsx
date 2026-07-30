@@ -3,23 +3,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import { ShoppingCart, Calendar } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
+import { Calendar } from 'lucide-react';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, EventRegistrationForm } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations } from 'next-intl';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
-import { useCart } from '@/hooks/useCart';
 import { useProductos, useServicios, useEventos, useTestimonials, useFaqs } from '@/hooks/useData';
-import type { Producto, Variant, Testimonial, Faq } from '@/hooks/useData';
+import type { Producto, Testimonial, Faq } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
-
-function getProductImage(category: string, productImage: string): string {
-  if (productImage && productImage.trim() !== '') {
-    return productImage;
-  }
-  return '';
-}
 
 export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   fallbackTestimonials?: Testimonial[];
@@ -27,14 +19,10 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
 } = {}) {
   const [mounted, setMounted] = useState(false);
 
-  const [variantProduct, setVariantProduct] = useState<Producto | null>(null);
-  const [isVariantOpen, setIsVariantOpen] = useState(false);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const { addItem } = useCart();
   const t = useTranslations('home');
   const common = useTranslations('common');
-  const products = useTranslations('products');
   const events = useTranslations('events');
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
@@ -44,11 +32,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const showServicios = !mounted || serviciosLoading;
   const showProductos = !mounted || productosLoading;
   const showEventos = !mounted || eventosLoading;
-
-  const openVariantDialog = (product: Producto) => {
-    setVariantProduct(product);
-    setIsVariantOpen(true);
-  };
 
   const openRegistration = (eventId: number, eventTitle: string) => {
     setRegistrationEvent({ id: eventId, title: eventTitle });
@@ -153,26 +136,19 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
               <p>{t('empty.services')}</p>
             </div>
           ) : (
-          <div className="bento-grid bento-grid-center">
+          <div className="home-services-grid">
             {servicios.slice(0, 3).map((service, index) => (
               <AnimatedCard key={service.id} index={index}>
-                <BentoCard className="interactive-card service-card toned-card">
-                  <div className="service-card-header">
+                <div className="home-service-card">
+                  <div className="home-service-card-header">
                     <Icon name={service.icon} />
                     <h3>{service.title}</h3>
                   </div>
-                  <p>{service.description}</p>
-                  <span className="card-price"><PriceDisplay price={service.price} priceNum={service.price_num} /></span>
-                  <div className="card-actions">
-                    <button
-                      className="btn-add-cart btn-add-cart-full"
-                      onClick={() => addItem(service.title, 'Único', service.price_num)}
-                    >
-                      <ShoppingCart size={16} />
-                      <span>{common('addToCart')}</span>
-                    </button>
-                  </div>
-                </BentoCard>
+                  <p className="home-service-desc">{service.description}</p>
+                  <Link href="/servicios" className="home-service-link">
+                    {common('viewAll')} →
+                  </Link>
+                </div>
               </AnimatedCard>
             ))}
           </div>
@@ -198,41 +174,34 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
               <Link href="/productos" className="text-cta-link">{common('viewAllProducts')} →</Link>
             </div>
           ) : (
-          <div className="bento-grid bento-grid-center">
-            {featuredProducts.map((product, index) => (
-              <AnimatedCard key={product.id} index={index}>
-                <BentoCard className="interactive-card service-card">
-                  {product.popular && <span className="popular-tag">{products('popularTag')}</span>}
-                  {product.image ? (
-                    <div className="product-image-container">
-                      <Image src={imgSrc(product.image)} alt={product.title} width={600} height={200} loading="lazy" unoptimized style={{ width: '100%', height: 'auto' }} />
-                    </div>
-                  ) : (
-                    <div className="product-image-placeholder">
-                      <span>{products('imageNotAvailable')}</span>
-                    </div>
-                  )}
-                  <h3>{product.title}</h3>
-                  <p>{product.description}</p>
-                  <span className="card-price"><PriceDisplay price={product.price} priceNum={product.price_num} /></span>
-                  <div className="card-actions">
-                    <button
-                      className="btn-add-cart btn-add-cart-full"
-                      onClick={() => {
-                        if (product.variants && product.variants.length > 0) {
-                          openVariantDialog(product);
-                        } else {
-                          addItem(product.title, 'Único', product.price_num);
-                        }
-                      }}
-                    >
-                      <ShoppingCart size={16} />
-                      <span>{common('addToCart')}</span>
-                    </button>
-                  </div>
-                </BentoCard>
-              </AnimatedCard>
-))}
+          <div className="home-products-stack">
+            {featuredProducts.map((product, index) => {
+              const offsets = [
+                { rotate: -3, translateY: 0 },
+                { rotate: 4, translateY: -20 },
+                { rotate: -2, translateY: -10 },
+              ];
+              const offset = offsets[index] || { rotate: 0, translateY: 0 };
+              return product.image ? (
+                <div
+                  key={product.id}
+                  className="home-product-image-card"
+                  style={{
+                    transform: `rotate(${offset.rotate}deg) translateY(${offset.translateY}px)`,
+                    zIndex: featuredProducts.length - index,
+                  }}
+                >
+                  <Image
+                    src={imgSrc(product.image)}
+                    alt={product.title}
+                    width={400}
+                    height={280}
+                    loading="lazy"
+                    unoptimized
+                  />
+                </div>
+              ) : null;
+            })}
           </div>
           )}
         </div>
@@ -331,14 +300,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         </div>
       </div>
       </div>
-
-      {variantProduct && (
-        <VariantSelectionDialog
-          product={variantProduct}
-          isOpen={isVariantOpen}
-          onClose={() => { setIsVariantOpen(false); setVariantProduct(null); }}
-        />
-      )}
 
       {registrationEvent && (
         <EventRegistrationForm
