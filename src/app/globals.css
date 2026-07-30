@@ -4798,18 +4798,18 @@ footer {
     object-fit: cover;
 }
 
-.home-products-info {
-    display: flex;
-    flex-direction: column;
+.home-split-cell--info {
+    justify-content: center;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
-.home-products-info p {
+.home-filler-text {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.7;
+    max-width: 320px;
 }
 
 /* ===================================
@@ -4848,10 +4848,6 @@ footer {
     transform: translateX(3px);
 }
 
-.home-cell-footer {
-    margin-top: 1.5rem;
-}
-
 /* ===================================
    Home — Section titles inside split cells
    =================================== */
@@ -4865,12 +4861,11 @@ footer {
 @media (max-width: 768px) {
     .home-split-section {
         grid-template-columns: 1fr;
-        gap: 2.5rem;
+        gap: 2rem;
     }
 
-    .home-products-section {
-        flex-direction: column;
-        align-items: flex-start;
+    .home-split-cell--info {
+        order: -1;
     }
 
     .home-products-stack {
