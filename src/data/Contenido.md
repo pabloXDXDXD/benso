@@ -56,15 +56,16 @@ Estructura General del Sitio
   · Formato: Lista de preguntas en filas. Cada una tiene un icono "+" que, al tocarlo, se despliega suavemente para mostrar la respuesta .
   · Contenido:
     · Pregunta: ¿Cómo funciona la primera consulta?
-    · Respuesta: Agendamos una llamada o reunión de 15-30 minutos sin costo para conocer tu negocio y entender tus necesidades.
+    · Respuesta: Agendamos una llamada o reunión de 30-45 minutos sin costo para conocer tu negocio y auditar tus necesidades reales.
     · Pregunta: ¿Ofrecen planes de pago?
-    · Respuesta: Sí, ofrecemos opciones de financiamiento y planes de pago flexibles. Consúltanos por las opciones disponibles según el servicio que te interese.
+    · Respuesta: Sí, ofrecemos opciones de financiamiento y planes de pago flexibles. Consulta con nuestro equipo comercial, las opciones disponibles según el tipo de servicio requerido.
     · Pregunta: ¿Los cursos ofrecen certificados?
-    · Respuesta: Sí, nuestros programas de capacitación ofrecen un certificado de participación. 
+    · Respuesta: Sí, nuestros programas de capacitación ofrecen un certificado de participación.
 
 
 · Sección 7: Segundo Llamado a la Acción
   · Texto: "¿Listo para transformar tu negocio?"
+  · Sub: "Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos."
   · CTA: Botón destacado "Agendar cita por WhatsApp" que enlaza directamente a un número de WhatsApp con un mensaje predefinido (ej. "Hola, quiero agendar una cita para conocer más sobre sus servicios.").
 
 

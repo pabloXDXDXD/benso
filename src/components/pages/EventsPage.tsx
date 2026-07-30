@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Calendar } from 'lucide-react';
+import { Calendar, BadgeCheck } from 'lucide-react';
 import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, EventRegistrationForm, RequestModal, ShinyText } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations, useMessages } from 'next-intl';
@@ -103,6 +103,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
 
   return (
     <>
+      {currentEvents.length > 0 && (
       <ScrollReveal>
         <div className="container">
           <div className="section-title page-intro-title">
@@ -122,6 +123,10 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
+                    </span>
+                    <span className="event-cert-tag">
+                      <BadgeCheck size={13} />
+                      {t('includesCertificate')}
                     </span>
                   </div>
                   <p>{event.description}</p>
@@ -144,6 +149,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
           )}
         </div>
       </ScrollReveal>
+      )}
 
       {upcomingEvents.length > 0 && (
       <ScrollReveal>
@@ -165,6 +171,10 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
+                    </span>
+                    <span className="event-cert-tag">
+                      <BadgeCheck size={13} />
+                      {t('includesCertificate')}
                     </span>
                   </div>
                   <p>{event.description}</p>

@@ -72,7 +72,7 @@
     }
   },
   "footer": {
-    "tagline": "Consultoría y Soluciones Digitales para la Rentabilidad Sostenible.",
+    "tagline": "Asesoramiento, Herramientas Digitales y Capacitación para Emprendedores",
     "contactTitle": "Contacto",
     "socialTitle": "Redes sociales",
     "copyright": "© {year} Benso"
@@ -85,11 +85,11 @@
   },
   "home": {
     "hero": {
-      "titleLine1": "Asesoramiento, Herramientas y Capacitación para",
-      "titleLine2": "Emprendedores",
-      "slogan": "Te enseñamos cómo posicionar un negocio y te acompañamos en cada paso del camino",
-      "appointment": "Agendar cita gratis",
-      "aboutUs": "Sobre nosotros"
+      "titleLine1": "Asesoramiento, Herramientas Digitales y Capacitación",
+      "titleLine2": "para Emprendedores",
+      "slogan": "Hacemos tu negocio rentable y sostenible con automatización financiera, estrategias de marca y formación de equipos",
+      "appointment": "Agendar cita",
+      "aboutUs": "Conócenos"
     },
     "sections": {
       "services": "Nuestros servicios",
@@ -98,8 +98,8 @@
       "testimonials": "Lo que dicen nuestros clientes",
       "faq": "Preguntas Frecuentes",
       "ctaTitle": "¿Listo para transformar tu negocio?",
-      "ctaText": "Agenda una cita y descubre cómo podemos ayudarte a alcanzar tus metas.",
-      "ctaButton": "Agendar cita gratis"
+      "ctaText": "Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.",
+      "ctaButton": "Agendar cita"
     },
     "empty": {
       "services": "No hay servicios disponibles por el momento.",
@@ -138,6 +138,7 @@
     "upcoming": "Próximamente",
     "timeline": "Línea del tiempo",
     "register": "Inscribirme",
+    "includesCertificate": "Incluye certificado",
     "status": {
       "inProgress": "En Curso",
       "upcoming": "Proximamente"

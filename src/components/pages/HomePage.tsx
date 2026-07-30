@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import { ShoppingCart, Calendar } from 'lucide-react';
+import { ShoppingCart, Calendar, BadgeCheck } from 'lucide-react';
 import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations } from 'next-intl';
@@ -266,6 +266,10 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
+                    </span>
+                    <span className="event-cert-tag">
+                      <BadgeCheck size={13} />
+                      {events('includesCertificate')}
                     </span>
                   </div>
                   <p>{event.description}</p>

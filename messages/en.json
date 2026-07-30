@@ -72,7 +72,7 @@
     }
   },
   "footer": {
-    "tagline": "Consulting & Digital Solutions for Sustainable Profitability.",
+    "tagline": "Advisory, Digital Tools, and Training for Entrepreneurs",
     "contactTitle": "Contact",
     "socialTitle": "Social media",
     "copyright": "© {year} Benso"
@@ -85,11 +85,11 @@
   },
   "home": {
     "hero": {
-      "titleLine1": "Advisory, Tools, and Training for",
-      "titleLine2": "Entrepreneurs",
-      "slogan": "We teach you how to position a business and guide you every step of the way",
-      "appointment": "Book a free consultation",
-      "aboutUs": "About us"
+      "titleLine1": "Advisory, Digital Tools, and Training",
+      "titleLine2": "for Entrepreneurs",
+      "slogan": "We make your business profitable and sustainable with financial automation, brand strategies, and team training",
+      "appointment": "Book an appointment",
+      "aboutUs": "Get to know us"
     },
     "sections": {
       "services": "Our services",
@@ -98,8 +98,8 @@
       "testimonials": "What our clients say",
       "faq": "Frequently Asked Questions",
       "ctaTitle": "Ready to transform your business?",
-      "ctaText": "Schedule a consultation and discover how we can help you reach your goals.",
-      "ctaButton": "Book a free consultation"
+      "ctaText": "Schedule a consultation and discover how we can help you scale your projects.",
+      "ctaButton": "Book an appointment"
     },
     "empty": {
       "services": "No services available at the moment.",
@@ -138,6 +138,7 @@
     "upcoming": "Upcoming",
     "timeline": "Timeline",
     "register": "Register",
+    "includesCertificate": "Includes certificate",
     "status": {
       "inProgress": "In Progress",
       "upcoming": "Upcoming"
