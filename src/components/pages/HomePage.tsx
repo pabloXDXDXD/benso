@@ -124,9 +124,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         <div className="container">
           <div className="section-title section-title-home">
             <h2><span>{t('sections.services')}</span></h2>
-            <Link href="/servicios" className="text-cta-link">
-              {common('viewAll')} →
-            </Link>
           </div>
           
           {showServicios ? (
@@ -136,21 +133,19 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
               <p>{t('empty.services')}</p>
             </div>
           ) : (
-          <div className="home-services-grid">
-            {servicios.slice(0, 3).map((service, index) => (
-              <AnimatedCard key={service.id} index={index}>
-                <div className="home-service-card">
-                  <div className="home-service-card-header">
-                    <Icon name={service.icon} />
-                    <h3>{service.title}</h3>
-                  </div>
-                  <p className="home-service-desc">{service.description}</p>
-                  <Link href="/servicios" className="home-service-link">
-                    {common('viewAll')} →
-                  </Link>
-                </div>
-              </AnimatedCard>
-            ))}
+          <div className="home-split-section">
+            <Link href="/servicios" className="home-split-btn">
+              {common('viewAll')}
+            </Link>
+            <div className="home-services-stack">
+              {servicios.slice(0, 3).map((service) => (
+                <Link key={service.id} href="/servicios" className="home-service-row">
+                  <Icon name={service.icon} />
+                  <span>{service.title}</span>
+                  <span className="home-service-arrow">→</span>
+                </Link>
+              ))}
+            </div>
           </div>
           )}
         </div>
@@ -161,9 +156,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         <div className="container">
           <div className="section-title section-title-home">
             <h2><span>{t('sections.featuredProducts')}</span></h2>
-            <Link href="/productos" className="text-cta-link">
-              {common('seeMore')} →
-            </Link>
           </div>
           
           {showProductos ? (
@@ -174,34 +166,34 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
               <Link href="/productos" className="text-cta-link">{common('viewAllProducts')} →</Link>
             </div>
           ) : (
-          <div className="home-products-stack">
-            {featuredProducts.map((product, index) => {
-              const offsets = [
-                { rotate: -3, translateY: 0 },
-                { rotate: 4, translateY: -20 },
-                { rotate: -2, translateY: -10 },
-              ];
-              const offset = offsets[index] || { rotate: 0, translateY: 0 };
-              return product.image ? (
-                <div
-                  key={product.id}
-                  className="home-product-image-card"
-                  style={{
-                    transform: `rotate(${offset.rotate}deg) translateY(${offset.translateY}px)`,
-                    zIndex: featuredProducts.length - index,
-                  }}
-                >
-                  <Image
-                    src={imgSrc(product.image)}
-                    alt={product.title}
-                    width={400}
-                    height={280}
-                    loading="lazy"
-                    unoptimized
-                  />
-                </div>
-              ) : null;
-            })}
+          <div className="home-split-section">
+            <div className="home-products-stack">
+              {featuredProducts.map((product, index) => {
+                const offset = { translateY: -(index * 8) };
+                return product.image ? (
+                  <div
+                    key={product.id}
+                    className="home-product-image-card"
+                    style={{
+                      transform: `translateY(${offset.translateY}px)`,
+                      zIndex: featuredProducts.length - index,
+                    }}
+                  >
+                    <Image
+                      src={imgSrc(product.image)}
+                      alt={product.title}
+                      width={400}
+                      height={280}
+                      loading="lazy"
+                      unoptimized
+                    />
+                  </div>
+                ) : null;
+              })}
+            </div>
+            <Link href="/productos" className="home-split-btn">
+              {common('seeMore')}
+            </Link>
           </div>
           )}
         </div>
