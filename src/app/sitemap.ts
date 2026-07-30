@@ -1,54 +1,41 @@
+import { routing } from '@/i18n/routing';
 import type { MetadataRoute } from 'next';
 
-export const dynamic = 'force-static';
+const baseUrl = 'https://www.bensofcg.com';
+const locales = routing.locales;
+const defaultLocale = routing.defaultLocale;
 
-const SITE_URL = 'https://www.bensofcg.com';
-
-const locales = ['es', 'en'] as const;
-
-const routes = [
-  { path: '', priority: 1.0, changeFrequency: 'weekly' as const },
-  { path: 'servicios', priority: 0.9, changeFrequency: 'weekly' as const },
-  { path: 'productos', priority: 0.9, changeFrequency: 'weekly' as const },
-  { path: 'eventos', priority: 0.9, changeFrequency: 'weekly' as const },
-  { path: 'nosotros', priority: 0.6, changeFrequency: 'monthly' as const },
-  { path: 'contacto', priority: 0.6, changeFrequency: 'monthly' as const },
+// Pages with no locale prefix for the default locale
+const pages = [
+  { path: '' },
+  { path: '/servicios' },
+  { path: '/productos' },
+  { path: '/eventos' },
+  { path: '/nosotros' },
+  { path: '/contacto' },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
-  // Root URLs (x-default)
-  entries.push({
-    url: `${SITE_URL}/`,
-    changeFrequency: 'weekly',
-    priority: 1.0,
-    alternates: {
-      languages: {
-        es: `${SITE_URL}/es/`,
-        en: `${SITE_URL}/en/`,
-      },
-    },
-  });
+  for (const page of pages) {
+    for (const locale of locales) {
+      const localizedPath = locale === defaultLocale ? page.path : `/${locale}${page.path}`;
+      const url = `${baseUrl}${localizedPath}`;
 
-  for (const locale of locales) {
-    for (const route of routes) {
-      if (!route.path) continue; // root already handled above
-
-      const url = `${SITE_URL}/${locale}/${route.path}/`;
-
-      const alternates: Record<string, string> = {};
-      for (const altLocale of locales) {
-        alternates[altLocale] = `${SITE_URL}/${altLocale}/${route.path}/`;
+      // Build alternate language versions
+      const languages: Record<string, string> = {};
+      for (const alt of locales) {
+        languages[alt] = `${baseUrl}${alt === defaultLocale ? page.path : `/${alt}${page.path}`}`;
       }
+      languages['x-default'] = `${baseUrl}${page.path}`;
 
       entries.push({
         url,
-        changeFrequency: route.changeFrequency,
-        priority: route.priority,
-        alternates: {
-          languages: alternates,
-        },
+        lastModified: new Date(),
+        changeFrequency: page.path === '' ? 'weekly' as const : 'monthly' as const,
+        priority: page.path === '' ? 1.0 : 0.8,
+        alternates: { languages },
       });
     }
   }

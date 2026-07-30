@@ -17,7 +17,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'metadata' });
   return {
-    title: t('title'),
+    title: {
+      default: t('title'),
+      template: '%s | BENSO',
+    },
     description: t('description'),
     alternates: {
       canonical: `https://www.bensofcg.com/${locale}/`,
@@ -26,6 +29,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         en: 'https://www.bensofcg.com/en/',
         'x-default': 'https://www.bensofcg.com/es/',
       },
+    },
+    openGraph: {
+      images: [{ url: '/og-image.svg', width: 1200, height: 630 }],
+      siteName: 'BENSO',
+      locale: locale === 'en' ? 'en_US' : 'es_ES',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@benso_fcg',
     },
   };
 }

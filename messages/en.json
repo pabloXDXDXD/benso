@@ -1,42 +1,42 @@
 {
   "metadata": {
     "title": "Consulting & Digital Solutions for SMEs in Cuba",
-    "description": "Business consulting, digital marketing, and automation for SMEs in Cuba. Contact us at +53 55609099. Strategic advisory to boost your profitability.",
+    "description": "Business consulting, digital marketing, and automation for SMEs in Cuba. Book your free appointment and get personalized advice to boost your profitability.",
     "home": {
       "title": "Consulting & Digital Solutions for SMEs in Cuba",
-      "description": "Business consulting, digital marketing, and automation for SMEs in Cuba. Contact us at +53 55609099. Strategic advisory to boost your profitability.",
+      "description": "Business consulting, digital marketing, and automation for SMEs in Cuba. Book your free appointment and get personalized advice to boost your profitability.",
       "ogTitle": "BENSO | Consulting & Digital Solutions for SMEs in Cuba",
-      "ogDescription": "Business consulting, digital marketing, and automation for SMEs in Cuba."
+      "ogDescription": "Business consulting, digital marketing, and automation for SMEs in Cuba. Book your free appointment."
     },
     "servicios": {
-      "title": "Services",
-      "description": "Business consulting, strategic training, and digital tools for SMEs.",
-      "ogTitle": "Services - BENSO",
-      "ogDescription": "Business consulting, strategic training, and digital tools for SMEs."
+      "title": "Consulting & Training Services for SMEs",
+      "description": "Discover our strategic consulting, training, and digital tools services for SMEs in Cuba. Book your free appointment and take your business to the next level.",
+      "ogTitle": "Consulting & Training Services - BENSO",
+      "ogDescription": "Strategic consulting, training, and digital tools for SMEs in Cuba. Book your free appointment."
     },
     "productos": {
-      "title": "Products",
-      "description": "Digital solutions and products to grow your business.",
-      "ogTitle": "Products - BENSO",
-      "ogDescription": "Digital solutions and products to grow your business with professional design."
+      "title": "Digital Products & Design for Your Business",
+      "description": "Digital solutions, stationery, signage, and professional design for your business in Cuba. Browse our store and find products to boost your brand.",
+      "ogTitle": "Digital Products & Design - BENSO",
+      "ogDescription": "Digital solutions, stationery, and professional design for your business in Cuba."
     },
     "eventos": {
-      "title": "Events",
-      "description": "Upcoming events, workshops, and training for entrepreneurs.",
-      "ogTitle": "Events - BENSO",
-      "ogDescription": "Upcoming events, workshops, and training for entrepreneurs in Cuba."
+      "title": "Events & Workshops for Entrepreneurs",
+      "description": "Workshops, courses, and events for entrepreneurs in Cuba. Register now and gain the key skills to grow your business with BENSO.",
+      "ogTitle": "Events & Workshops - BENSO",
+      "ogDescription": "Workshops, courses, and events for entrepreneurs in Cuba. Register now."
     },
     "nosotros": {
-      "title": "About Us",
-      "description": "Discover why BENSO is the right choice for your business growth.",
-      "ogTitle": "About Us - BENSO",
-      "ogDescription": "Discover why BENSO is the right choice for your business growth."
+      "title": "About Us — Digital Consulting in Cuba",
+      "description": "BENSO was born to empower Cuban entrepreneurs with accessible consulting, personalized attention, and measurable results. Learn our story and why choose us.",
+      "ogTitle": "About Us — BENSO",
+      "ogDescription": "Accessible consulting, personalized attention, and measurable results for Cuban entrepreneurs."
     },
     "contacto": {
-      "title": "Contact",
-      "description": "Get in touch for personalized consulting.",
-      "ogTitle": "Contact - BENSO",
-      "ogDescription": "Get in touch for personalized consulting for your business."
+      "title": "Contact — Book Your Free Appointment",
+      "description": "Book your free consulting appointment. Contact us on WhatsApp at +53 55609099 and get personalized advice to boost your business in Cuba.",
+      "ogTitle": "Contact — BENSO",
+      "ogDescription": "Book your free consulting appointment. Contact us on WhatsApp at +53 55609099."
     },
     "default": {
       "title": "BENSO | Consulting & Digital Solutions for SMEs",
