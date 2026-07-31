@@ -31,12 +31,14 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const { data: productos, error: productosError } = await withRetry(() =>
-    supabase
-      .from('productos')
-      .select('*')
-      .eq('is_active', true)
-      .order('popular', { ascending: false })
+  const { data: productos, error: productosError } = await withRetry(
+    () =>
+      supabase
+        .from('productos')
+        .select('*')
+        .eq('is_active', true)
+        .order('popular', { ascending: false }),
+    1
   );
 
   const items = productosError ? undefined : localizeItems((productos || []) as Producto[], locale);

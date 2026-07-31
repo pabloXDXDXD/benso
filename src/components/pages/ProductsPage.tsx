@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ShoppingCart, Calendar, Search, RefreshCw } from 'lucide-react';
-import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, VariantSelectionDialog, ScrollReveal } from '@/components';
+import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, VariantSelectionDialog, AnimatedCard, ScrollReveal } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, type Producto } from '@/hooks/useData';
@@ -110,8 +110,8 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
           </div>
         ) : (
           <div className="bento-grid">
-            {filteredProducts.map((product) => (
-              <div key={`${activeFilter}-${product.id}`}>
+            {filteredProducts.map((product, index) => (
+              <AnimatedCard key={`${activeFilter}-${product.id}`} index={index}>
                 <BentoCard 
                   className={`interactive-card service-card${product.popular ? ' popular-card' : ''}`}
                   dataCategory={product.category}
@@ -152,7 +152,7 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
                       </button>
                   </div>
                 </BentoCard>
-              </div>
+              </AnimatedCard>
             ))}
           </div>
         )}
