@@ -116,6 +116,8 @@
     "filterHerramientas": "Herramientas",
     "addToCart": "Añadir al carrito",
     "empty": "No hay servicios disponibles por el momento.",
+    "loadError": "No pudimos cargar los servicios. Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar",
     "variantUnit": "Único"
   },
   "products": {
@@ -128,6 +130,8 @@
     "filterIndumentaria": "Indumentaria",
     "filterMerchandising": "Merchandising",
     "empty": "No hay productos disponibles",
+    "loadError": "No pudimos cargar los productos. Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar",
     "popularTag": "#popular",
     "imageNotAvailable": "Imagen no disponible",
     "addToCart": "Añadir al carrito",
@@ -156,7 +160,9 @@
       "octubre",
       "noviembre",
       "diciembre"
-    ]
+    ],
+    "loadError": "No pudimos cargar los eventos. Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar"
   },
   "about": {
     "sectionTitle": "¿Por qué elegirnos?",

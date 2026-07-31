@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Send, Calendar, Search } from 'lucide-react';
+import { ShoppingCart, Send, Calendar, Search, RefreshCw } from 'lucide-react';
 import { BentoCard, Icon, ScrollReveal, AnimatedCard, PriceDisplay, ServicesGridSkeleton, RequestModal, ShinyText } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations } from 'next-intl';
@@ -18,7 +18,7 @@ interface RequestItem {
   type: 'servicio' | 'producto' | 'evento';
 }
 
-export function ServicesPage({ initialServicios = [] }: { initialServicios?: Servicio[] }) {
+export function ServicesPage({ initialServicios }: { initialServicios?: Servicio[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [animKey, setAnimKey] = useState(0);
@@ -35,8 +35,8 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
     { label: t('filterCapacitacion'), value: 'capacitacion' as CategoryFilter },
     { label: t('filterHerramientas'), value: 'herramientas' as CategoryFilter },
   ];
-  const { servicios, loading } = useServicios(initialServicios);
-  const showLoading = !mounted || (loading && initialServicios.length === 0);
+  const { servicios, loading, error, retry } = useServicios(initialServicios);
+  const showLoading = !mounted || (loading && (initialServicios || []).length === 0);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -90,6 +90,16 @@ export function ServicesPage({ initialServicios = [] }: { initialServicios?: Ser
 
           {loading ? (
             <ServicesGridSkeleton count={6} />
+          ) : error && servicios.length === 0 ? (
+            <div className="bento-grid">
+              <div className="bento-card">
+                <p>{t('loadError')}</p>
+                <button onClick={retry} className="btn-add-cart btn-add-cart-full">
+                  <RefreshCw size={16} />
+                  {t('retry')}
+                </button>
+              </div>
+            </div>
           ) : (
           <div className="bento-grid" key={animKey}>
             {filteredServices.map((service, idx) => (

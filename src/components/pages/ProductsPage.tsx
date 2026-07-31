@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ShoppingCart, Calendar, Search } from 'lucide-react';
+import { ShoppingCart, Calendar, Search, RefreshCw } from 'lucide-react';
 import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, VariantSelectionDialog, ScrollReveal } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useCart } from '@/hooks/useCart';
@@ -19,7 +19,7 @@ interface RequestItem {
 
 type CategoryFilter = 'all' | 'adhesivos' | 'carteleria' | 'papeleria' | 'indumentaria' | 'merchandising';
 
-export function ProductsPage({ initialProductos = [] }: { initialProductos?: Producto[] }) {
+export function ProductsPage({ initialProductos }: { initialProductos?: Producto[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
@@ -27,7 +27,7 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
   const { addItem } = useCart();
-  const { productos, loading } = useProductos(initialProductos);
+  const { productos, loading, error, retry } = useProductos(initialProductos);
   const t = useTranslations('products');
   const common = useTranslations('common');
   const home = useTranslations('home');
@@ -53,7 +53,7 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
   );
 
   // Prevent hydration mismatch: server and client first render must match
-  const isLoading = !mounted || (loading && initialProductos.length === 0);
+  const isLoading = !mounted || (loading && (initialProductos || []).length === 0);
 
   return (
     <>
@@ -92,6 +92,16 @@ export function ProductsPage({ initialProductos = [] }: { initialProductos?: Pro
 
         {isLoading ? (
           <ProductsGridSkeleton count={8} />
+        ) : error && productos.length === 0 ? (
+          <div className="bento-grid">
+            <div className="bento-card">
+              <p>{t('loadError')}</p>
+              <button onClick={retry} className="btn-add-cart btn-add-cart-full">
+                <RefreshCw size={16} />
+                {t('retry')}
+              </button>
+            </div>
+          </div>
         ) : filteredProducts.length === 0 ? (
           <div className="bento-grid">
             <div className="bento-card">

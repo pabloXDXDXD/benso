@@ -6,6 +6,8 @@ import type { Evento } from '@/hooks/useData';
 import { localizeItems } from '@/lib/supabase-i18n';
 import { routing } from '@/i18n/routing';
 
+export const revalidate = 300;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -33,18 +35,18 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { data: eventos } = await supabase
+  const { data: eventos, error: eventosError } = await supabase
     .from('eventos')
     .select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  const items = localizeItems((eventos || []) as Evento[], locale);
+  const items = eventosError ? undefined : localizeItems((eventos || []) as Evento[], locale);
 
   const eventJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    itemListElement: items.map((item, i) => ({
+    itemListElement: (items || []).map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       item: {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Calendar, BadgeCheck } from 'lucide-react';
+import { Calendar, BadgeCheck, RefreshCw } from 'lucide-react';
 import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, EventRegistrationForm, RequestModal, ShinyText } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations, useMessages } from 'next-intl';
@@ -50,9 +50,9 @@ function getMonthLabel(dateStr: string, monthNames: string[]): string {
   return labeled.join(' — ');
 }
 
-export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] }) {
+export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
   const [mounted, setMounted] = useState(false);
-  const { eventos, loading } = useEventos(initialEventos);
+  const { eventos, loading, error, retry } = useEventos(initialEventos);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
@@ -67,7 +67,7 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
   const monthNames = (messages as any).events.months as string[];
 
   useEffect(() => { setMounted(true); }, []);
-  const showLoading = !mounted || (loading && initialEventos.length === 0);
+  const showLoading = !mounted || (loading && (initialEventos || []).length === 0);
   const currentEvents = eventos.filter(e => e.status === 'En Curso');
   const upcomingEvents = eventos.filter(e => e.status === 'Proximamente');
 
@@ -103,6 +103,22 @@ export function EventsPage({ initialEventos = [] }: { initialEventos?: Evento[] 
 
   return (
     <>
+      {error && eventos.length === 0 && (
+      <ScrollReveal>
+        <div className="container">
+          <div className="bento-grid">
+            <div className="bento-card">
+              <p>{t('loadError')}</p>
+              <button onClick={retry} className="btn-add-cart btn-add-cart-full">
+                <RefreshCw size={16} />
+                {t('retry')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </ScrollReveal>
+      )}
+
       {currentEvents.length > 0 && (
       <ScrollReveal>
         <div className="container">

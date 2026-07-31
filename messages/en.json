@@ -116,6 +116,8 @@
     "filterHerramientas": "Tools",
     "addToCart": "Add to cart",
     "empty": "No services available at the moment.",
+    "loadError": "We couldn't load the services. Check your connection and try again.",
+    "retry": "Try again",
     "variantUnit": "Single"
   },
   "products": {
@@ -128,6 +130,8 @@
     "filterIndumentaria": "Apparel",
     "filterMerchandising": "Merchandising",
     "empty": "No products available",
+    "loadError": "We couldn't load the products. Check your connection and try again.",
+    "retry": "Try again",
     "popularTag": "#popular",
     "imageNotAvailable": "Image not available",
     "addToCart": "Add to cart",
@@ -156,7 +160,9 @@
       "October",
       "November",
       "December"
-    ]
+    ],
+    "loadError": "We couldn't load the events. Check your connection and try again.",
+    "retry": "Try again"
   },
   "about": {
     "sectionTitle": "Why choose us?",

@@ -6,6 +6,8 @@ import type { Servicio } from '@/hooks/useData';
 import { localizeItems } from '@/lib/supabase-i18n';
 import { routing } from '@/i18n/routing';
 
+export const revalidate = 300;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -33,17 +35,17 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { data: servicios } = await supabase
+  const { data: servicios, error: serviciosError } = await supabase
     .from('servicios')
     .select('*')
     .eq('is_active', true);
 
-  const items = localizeItems((servicios || []) as Servicio[], locale);
+  const items = serviciosError ? undefined : localizeItems((servicios || []) as Servicio[], locale);
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    itemListElement: items.map((item, i) => ({
+    itemListElement: (items || []).map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       item: {

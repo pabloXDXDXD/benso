@@ -112,12 +112,12 @@ export function useProductos(fallbackData?: Producto[]) {
     return localizeItems((data || []).map(mapVariants), locale);
   }, [locale]);
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     [PRODUCTOS_KEY, locale],
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateOnMount: !fallbackData,
+      revalidateOnMount: !fallbackData || fallbackData.length === 0,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
       fallbackData,
@@ -128,6 +128,7 @@ export function useProductos(fallbackData?: Producto[]) {
     productos: data ?? [],
     loading: isLoading,
     error: error?.message ?? null,
+    retry: () => mutate(),
   };
 }
 
@@ -144,12 +145,12 @@ export function useServicios(fallbackData?: Servicio[]) {
     return localizeItems(data || [], locale) as Servicio[];
   }, [locale]);
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     [SERVICIOS_KEY, locale],
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateOnMount: !fallbackData,
+      revalidateOnMount: !fallbackData || fallbackData.length === 0,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
       fallbackData,
@@ -160,6 +161,7 @@ export function useServicios(fallbackData?: Servicio[]) {
     servicios: data ?? [],
     loading: isLoading,
     error: error?.message ?? null,
+    retry: () => mutate(),
   };
 }
 
@@ -177,12 +179,12 @@ export function useEventos(fallbackData?: Evento[]) {
     return localizeItems(data || [], locale) as Evento[];
   }, [locale]);
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     [EVENTOS_KEY, locale],
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateOnMount: !fallbackData,
+      revalidateOnMount: !fallbackData || fallbackData.length === 0,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
       fallbackData,
@@ -193,6 +195,7 @@ export function useEventos(fallbackData?: Evento[]) {
     eventos: data ?? [],
     loading: isLoading,
     error: error?.message ?? null,
+    retry: () => mutate(),
   };
 }
 
@@ -215,7 +218,7 @@ export function useTestimonials(fallbackData?: Testimonial[]) {
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateOnMount: !fallbackData,
+      revalidateOnMount: !fallbackData || fallbackData.length === 0,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
       fallbackData,
@@ -248,7 +251,7 @@ export function useFaqs(fallbackData?: Faq[]) {
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateOnMount: !fallbackData,
+      revalidateOnMount: !fallbackData || fallbackData.length === 0,
       revalidateOnReconnect: true,
       dedupingInterval: 30_000,
       fallbackData,
