@@ -2421,23 +2421,6 @@ section.alt-border {
 /* ===================================
    Scroll Reveal Animations
 =================================== */
-.reveal-section {
-    opacity: 0;
-    transform: translateY(35px);
-    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-section.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.reveal-section.has-item-reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-}
-
 .reveal-section.reveal-disabled,
 .reveal-section.reveal-disabled *:not(.bento-card):not(.bento-card *) {
     opacity: 1 !important;
