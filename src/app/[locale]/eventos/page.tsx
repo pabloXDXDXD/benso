@@ -1,9 +1,10 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { createClient } from '@supabase/supabase-js';
 import type { Metadata } from 'next';
 import { EventsPage } from '@/components/pages/EventsPage';
 import type { Evento } from '@/hooks/useData';
+import { supabase } from '@/lib/supabase';
 import { localizeItems } from '@/lib/supabase-i18n';
+import { withRetry } from '@/lib/withRetry';
 import { routing } from '@/i18n/routing';
 
 export const revalidate = 300;
@@ -30,16 +31,13 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const { data: eventos, error: eventosError } = await withRetry(() =>
+    supabase
+      .from('eventos')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
   );
-
-  const { data: eventos, error: eventosError } = await supabase
-    .from('eventos')
-    .select('*')
-    .eq('is_active', true)
-    .order('created_at', { ascending: false });
 
   const items = eventosError ? undefined : localizeItems((eventos || []) as Evento[], locale);
 

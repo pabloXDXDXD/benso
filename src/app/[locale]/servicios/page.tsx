@@ -1,9 +1,10 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { createClient } from '@supabase/supabase-js';
 import type { Metadata } from 'next';
 import { ServicesPage } from '@/components/pages/ServicesPage';
 import type { Servicio } from '@/hooks/useData';
+import { supabase } from '@/lib/supabase';
 import { localizeItems } from '@/lib/supabase-i18n';
+import { withRetry } from '@/lib/withRetry';
 import { routing } from '@/i18n/routing';
 
 export const revalidate = 300;
@@ -30,15 +31,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const { data: servicios, error: serviciosError } = await withRetry(() =>
+    supabase
+      .from('servicios')
+      .select('*')
+      .eq('is_active', true)
   );
-
-  const { data: servicios, error: serviciosError } = await supabase
-    .from('servicios')
-    .select('*')
-    .eq('is_active', true);
 
   const items = serviciosError ? undefined : localizeItems((servicios || []) as Servicio[], locale);
 
