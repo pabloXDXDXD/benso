@@ -1,13 +1,15 @@
 import { test, expect } from '@playwright/test';
 
-const ADMIN_URL = 'http://localhost:3000/benso/admin';
+const ADMIN_URL = 'http://localhost:3000/admin/';
+// Admin auth now goes through the deployed `admin-auth` edge function (ADMIN_PASSWORD env)
+const ADMIN_PASSWORD = 'bensoadmin+2026';
 
 test.describe('Admin Sidebar', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(ADMIN_URL);
-    await page.fill('input[aria-label="Contraseña de administrador"]', 'benso-admin-2024');
+    await page.fill('input[aria-label="Contraseña de administrador"]', ADMIN_PASSWORD);
     await page.click('text=Entrar');
     await page.waitForSelector('.app-sidebar', { timeout: 10000 });
     await page.waitForTimeout(800);
@@ -113,7 +115,7 @@ test.describe('Admin Responsive', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(ADMIN_URL);
-    await page.fill('input[aria-label="Contraseña de administrador"]', 'benso-admin-2024');
+    await page.fill('input[aria-label="Contraseña de administrador"]', ADMIN_PASSWORD);
     await page.click('text=Entrar');
     await page.waitForSelector('.app-sidebar', { timeout: 10000 });
     await page.waitForTimeout(600);
@@ -201,5 +203,58 @@ test.describe('Admin Responsive', () => {
     // Backdrop should be visible (mobile overlay pattern)
     const hasBackdrop = await page.evaluate(() => !!document.querySelector('.sidebar-backdrop'));
     expect(hasBackdrop).toBe(true);
+  });
+});
+
+// Solicitudes tab coverage (R5/R11/R12, S11/S12). The list is read-only: no add button in the
+// toolbar and no edit/delete actions in the rows. Expects at least one request row to exist
+// (tests are seeded externally with the service role, marker: "Admin E2E Seed").
+test.describe('Admin Solicitudes tab', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(ADMIN_URL);
+    await page.fill('input[aria-label="Contraseña de administrador"]', ADMIN_PASSWORD);
+    await page.click('text=Entrar');
+    await page.waitForSelector('.app-sidebar', { timeout: 10000 });
+  });
+
+  test('shows Solicitudes in the sidebar under OPERACIONES with a count badge', async ({ page }) => {
+    const item = page.locator('.sidebar-item', { hasText: 'Solicitudes' });
+    await expect(item).toBeVisible();
+    // badge starts at 0 and updates once the solicitudes query resolves
+    await expect(item.locator('.badge')).not.toHaveText('0', { timeout: 15000 });
+    const count = Number(await item.locator('.badge').innerText());
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+  test('solicitudes table is read-only and lists the seeded request newest-first', async ({ page }) => {
+    await page.evaluate(() => {
+      const buttons = document.querySelectorAll('button.sidebar-item');
+      for (const btn of buttons) {
+        if (btn.textContent?.includes('Solicitudes')) {
+          (btn as HTMLButtonElement).click();
+          break;
+        }
+      }
+    });
+
+    await expect(page.locator('.admin-toolbar')).toBeVisible();
+
+    // R11: no "Añadir" button for read-only tabs
+    await expect(page.locator('.toolbar-right .btn-add')).toHaveCount(0);
+
+    // Seeded request row is listed with service snapshot + contact info
+    const row = page.locator('.data-table tbody tr', { hasText: 'Admin E2E Seed' });
+    await expect(row).toHaveCount(1, { timeout: 15000 });
+    await expect(row).toContainText('Modelos Contables a Medida');
+    await expect(row).toContainText('admin-e2e-seed@benso.test');
+
+    // R11: read-only table — no action (edit/delete/copy) cells at all
+    await expect(page.locator('.data-table .actions-cell')).toHaveCount(0);
+
+    // Headers of the solicitudes table
+    for (const header of ['Servicio', 'Nombre', 'Contactos', 'Mensaje', 'Fecha']) {
+      await expect(page.locator('.data-table th', { hasText: header }).first()).toBeVisible();
+    }
   });
 });
