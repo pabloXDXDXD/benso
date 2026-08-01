@@ -15,6 +15,7 @@ export { PriceDisplay } from './PriceDisplay';
 export { ProductSkeleton, ProductsGridSkeleton, ServiceSkeleton, ServicesGridSkeleton, EventSkeleton, EventsGridSkeleton } from './ProductSkeleton';
 export { PromoBanner } from './PromoBanner';
 export { RequestModal } from './RequestModal';
+export { ServiceRequestModal } from './ServiceRequestModal';
 export { ScrollReveal, AnimatedCard, AnimatedSection } from './ScrollReveal';
 export { default as ShinyText } from './ShinyText';
 export { default as SplitText } from './SplitText';
