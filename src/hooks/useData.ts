@@ -34,6 +34,10 @@ export interface Servicio {
   description: string;
   title_en?: string;
   description_en?: string;
+  subtitle?: string;
+  subtitle_en?: string;
+  includes?: string[];
+  includes_en?: string[];
   price: string;
   price_num: number;
   category: string;

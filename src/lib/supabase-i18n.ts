@@ -29,6 +29,8 @@ export function localizeItem<T extends Record<string, any>>(item: T, locale: str
     ...item,
     title: item.title_en ?? item.title,
     description: item.description_en ?? item.description,
+    subtitle: item.subtitle_en ?? item.subtitle,
+    includes: item.includes_en ?? item.includes,
     quote: item.quote_en ?? item.quote,
     position: item.position_en ?? item.position,
   };
