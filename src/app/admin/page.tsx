@@ -107,7 +107,13 @@ interface Faq {
 }
 
 const PRODUCT_CATEGORIES = ['pegatinas', 'posters', 'cuadros', 'tarjetas', 'lonas', 'otros'];
-const SERVICE_CATEGORIES = ['consultoria', 'herramientas', 'capacitacion'];
+const SERVICE_CATEGORIES = ['contabilidad-finanzas', 'marketing-marca', 'soluciones-bi-digital', 'administracion-gestion'];
+const SERVICE_CATEGORY_LABELS: Record<string, string> = {
+  'contabilidad-finanzas': 'Contabilidad y Finanzas',
+  'marketing-marca': 'Marketing y Marca',
+  'soluciones-bi-digital': 'Soluciones BI y Digital',
+  'administracion-gestion': 'Administración y Gestión',
+};
 
 function extractNumberFromPrice(price: string): number {
   const match = price.match(/[\d,.]+/);
@@ -1646,7 +1652,7 @@ export default function AdminPage() {
                       ? PRODUCT_CATEGORIES
                       : SERVICE_CATEGORIES
                     ).map(cat => (
-                      <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                    <option key={cat} value={cat}>{SERVICE_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
                     ))}
                   </select>
                 </>
