@@ -39,6 +39,10 @@ interface Servicio {
   icon: string;
   popular: boolean;
   image?: string;
+  subtitle?: string;
+  subtitle_en?: string | null;
+  includes?: string[];
+  includes_en?: string[] | null;
 }
 
 interface Evento {
@@ -67,6 +71,17 @@ interface Cita {
   telefono: string;
   mensaje: string;
   fecha_creacion: string;
+}
+
+interface Solicitud {
+  id: number;
+  servicio_id: number | null;
+  servicio_titulo: string;
+  nombre: string;
+  email?: string | null;
+  telefono?: string | null;
+  mensaje?: string | null;
+  created_at: string;
 }
 
 interface Testimonial {
@@ -112,6 +127,7 @@ const COLUMN_DEFAULTS: Record<string, number> = {
   precio: 120, fecha: 120, contactos: 200, items: 220,
   total: 110, cliente: 150, nombre: 150, titulo: 200,
   desc: 250, mensaje: 250, msj: 250,
+  subtitle: 200, includes: 240,
 };
 
 function getColWidth(key: string, overrides: Record<string, number>): number {
@@ -124,7 +140,7 @@ export default function AdminPage() {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('dashboard');
   const [productos, setProductos] = useState<Producto[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -218,6 +234,12 @@ export default function AdminPage() {
     enabled: authEnabled,
   });
 
+  const solicitudesQuery = useQuery({
+    queryKey: ['admin', 'solicitudes'],
+    queryFn: () => adminFetch('select', { table: 'servicio_solicitudes', orderBy: 'created_at', ascending: false }),
+    enabled: authEnabled,
+  });
+
   const testimonialsQuery = useQuery({
     queryKey: ['admin', 'testimonials'],
     queryFn: () => adminFetch('select', { table: 'testimonials', orderBy: 'sort_order', ascending: true }),
@@ -265,7 +287,7 @@ export default function AdminPage() {
   const loading = isAuthenticated
     ? productosQuery.isLoading || serviciosQuery.isLoading
       || eventosQuery.isLoading || pedidosQuery.isLoading || citasQuery.isLoading
-      || testimonialsQuery.isLoading || faqsQuery.isLoading
+      || solicitudesQuery.isLoading || testimonialsQuery.isLoading || faqsQuery.isLoading
     : false;
 
   function handleColResizeStart(col: string, e: React.MouseEvent) {
@@ -384,6 +406,11 @@ export default function AdminPage() {
       const priceNum = extractNumberFromPrice(editData.price);
       const { popular: _, ...rest } = editData;
       updateData = { ...rest, price_num: priceNum };
+    }
+
+    // Servicios: includes is edited as one-per-line textarea → convert to text[]
+    if (table === 'servicios' && typeof updateData.includes === 'string') {
+      updateData.includes = updateData.includes.split('\n').map((s: string) => s.trim()).filter(Boolean);
     }
 
     // Optimistic: update local state immediately
@@ -518,9 +545,15 @@ export default function AdminPage() {
     toast.success(`${label} copiado`);
   }
 
+  const solicitudesData = (solicitudesQuery.data?.data || []) as Solicitud[];
+
   const filteredData = {
     pedidos: pedidos.filter(p => p.customer_name?.toLowerCase().includes(searchTerm.toLowerCase())),
     citas: citas.filter(c => c.nombre?.toLowerCase().includes(searchTerm.toLowerCase())),
+    solicitudes: solicitudesData.filter(s =>
+      s.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
+      || s.servicio_titulo?.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
     productos: productos.filter(p => {
       const matchesSearch = p.title?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = !categoryFilter || p.category === categoryFilter;
@@ -580,6 +613,7 @@ export default function AdminPage() {
   const counts: Record<string, number> = {
     pedidos: pedidos.length,
     citas: citas.length,
+    servicio_solicitudes: solicitudesData.length,
     productos: productos.length,
     servicios: servicios.length,
     eventos: eventos.length,
@@ -669,7 +703,7 @@ export default function AdminPage() {
               </span>
             </div>
             <div className="toolbar-right">
-              {activeTab !== 'pedidos' && activeTab !== 'citas' && (
+              {activeTab !== 'pedidos' && activeTab !== 'citas' && activeTab !== 'solicitudes' && (
                 <button onClick={() => { setShowCreateModal(true); setCreateTable(activeTab as 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'); }} className="btn-add">
                   <Plus size={18} /> Añadir
                 </button>
@@ -924,6 +958,48 @@ export default function AdminPage() {
                   </div>
                 )}
 
+                {activeTab === 'solicitudes' && (
+                  <div className="table-container">
+                    <table className="data-table">
+                      <colgroup>
+                        <col style={{ width: getColWidth('sol-id', colWidths) }} />
+                        <col style={{ width: getColWidth('sol-servicio', colWidths) }} />
+                        <col style={{ width: getColWidth('sol-nombre', colWidths) }} />
+                        <col style={{ width: getColWidth('sol-contactos', colWidths) }} />
+                        <col style={{ width: getColWidth('sol-mensaje', colWidths) }} />
+                        <col style={{ width: getColWidth('sol-fecha', colWidths) }} />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th style={{position:'relative'}}>ID</th>
+                          <th style={{position:'relative'}}>Servicio</th>
+                          <th style={{position:'relative'}}>Nombre</th>
+                          <th style={{position:'relative'}}>Contactos</th>
+                          <th style={{position:'relative'}}>Mensaje</th>
+                          <th style={{position:'relative'}}>Fecha</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredData.solicitudes.map(sol => (
+                          <tr key={sol.id}>
+                            <td className="id-cell">{formatId(sol.id)}</td>
+                            <td className="name-cell">{sol.servicio_titulo}</td>
+                            <td className="name-cell">{sol.nombre}</td>
+                            <td>
+                              <div className="contact-cell">
+                                {sol.email && <span><Mail size={14} /> {sol.email}</span>}
+                                {sol.telefono && <span><Phone size={14} /> {sol.telefono}</span>}
+                              </div>
+                            </td>
+                            <td className="messaje-cell"><TruncatedCell text={sol.mensaje || ''} cellKey={`msg-sol-${sol.id}`} /></td>
+                            <td className="date-cell">{new Date(sol.created_at).toLocaleString('es-ES')}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
                 {activeTab === 'productos' && (
                   <div className="table-container">
                     <table className="data-table">
@@ -1041,8 +1117,10 @@ export default function AdminPage() {
                       <colgroup>
                         <col style={{ width: getColWidth('serv-id', colWidths) }} />
                         <col style={{ width: getColWidth('serv-titulo', colWidths) }} />
+                        <col style={{ width: getColWidth('serv-subtitle', colWidths) }} />
                         <col style={{ width: 60 }} />
                         <col style={{ width: getColWidth('serv-desc', colWidths) }} />
+                        <col style={{ width: getColWidth('serv-includes', colWidths) }} />
                         <col style={{ width: getColWidth('serv-precio', colWidths) }} />
                         <col style={{ width: getColWidth('serv-acciones', colWidths) }} />
                       </colgroup>
@@ -1050,8 +1128,10 @@ export default function AdminPage() {
                         <tr>
                           <th style={{position:'relative'}}>ID<ColResizeHandle col="serv-id" /></th>
                           <th style={{position:'relative'}}>Servicio<ColResizeHandle col="serv-titulo" /></th>
+                          <th style={{position:'relative'}}>Subtítulo</th>
                           <th style={{position:'relative'}}>Imagen</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="serv-desc" /></th>
+                          <th style={{position:'relative'}}>Incluye</th>
                           <th style={{position:'relative'}}>Precio<ColResizeHandle col="serv-precio" /></th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="serv-acciones" /></th>
                         </tr>
@@ -1068,6 +1148,17 @@ export default function AdminPage() {
                                   className="edit-input"
                                 />
                               ) : s.title}
+                            </td>
+                            <td>
+                              {editingId === s.id ? (
+                                <input 
+                                  value={editData.subtitle || ''} 
+                                  onChange={(e) => setEditData({...editData, subtitle: e.target.value})}
+                                  className="edit-input"
+                                />
+                              ) : (
+                                s.subtitle || '-'
+                              )}
                             </td>
                             <td>
                               {editingId === s.id ? (
@@ -1103,6 +1194,19 @@ export default function AdminPage() {
                                 />
                               ) : (
                                 <TruncatedCell text={s.description} cellKey={`desc-s-${s.id}`} />
+                              )}
+                            </td>
+                            <td className="desc-cell">
+                              {editingId === s.id ? (
+                                <textarea 
+                                  value={Array.isArray(editData.includes) ? editData.includes.join('\n') : (editData.includes || '')}
+                                  onChange={(e) => setEditData({...editData, includes: e.target.value})}
+                                  className="edit-textarea"
+                                  rows={3}
+                                  placeholder="Un ítem por línea"
+                                />
+                              ) : (
+                                <TruncatedCell text={(s.includes || []).join(' • ')} cellKey={`inc-s-${s.id}`} />
                               )}
                             </td>
                             <td>

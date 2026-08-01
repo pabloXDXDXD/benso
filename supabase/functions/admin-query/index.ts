@@ -3,7 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const encoder = new TextEncoder();
 
-const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas'];
+const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'servicio_solicitudes'];
+
+// Tables that can only be read (no insert/update/delete via this function)
+const READ_ONLY_TABLES = ['servicio_solicitudes'];
 
 async function verifyJWT(token: string, secret: string): Promise<Record<string, unknown>> {
   const parts = token.split('.');
@@ -76,6 +79,13 @@ serve(async (req: Request) => {
     if (!ALLOWED_TABLES.includes(table)) {
       return new Response(
         JSON.stringify({ error: `Tabla "${table}" no permitida` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (READ_ONLY_TABLES.includes(table) && action !== 'select') {
+      return new Response(
+        JSON.stringify({ error: `Tabla "${table}" es de solo lectura` }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
