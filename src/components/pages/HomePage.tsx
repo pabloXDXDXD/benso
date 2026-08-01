@@ -165,7 +165,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                     <h3>{service.title}</h3>
                   </div>
                   {service.subtitle && <p className="service-card-subtitle">{service.subtitle}</p>}
-                  <p className="service-card-desc">{service.description}</p>
                   <div className="card-actions">
                     <button
                       className="btn-view-more"

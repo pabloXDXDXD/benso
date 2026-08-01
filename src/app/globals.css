@@ -1479,17 +1479,6 @@ section.alt-border {
     margin: 0 0 0.5rem;
 }
 
-.service-card-desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    line-height: 1.55;
-    margin: 0;
-}
-
 .btn-view-more {
     width: 100%;
     display: inline-flex;
@@ -1535,7 +1524,10 @@ section.alt-border {
 }
 
 .svc-modal-panel {
-    position: relative;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 9999;
     width: 100%;
     max-width: 460px;
