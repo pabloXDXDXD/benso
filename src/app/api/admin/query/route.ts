@@ -9,7 +9,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs'];
+const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs', 'servicio_solicitudes'];
+
+// Tables that can only be read (no insert/update/delete via this route)
+const READ_ONLY_TABLES = ['servicio_solicitudes'];
 
 async function verifyAdmin(req: NextRequest) {
   const auth = req.headers.get('authorization')?.replace('Bearer ', '');
@@ -28,6 +31,13 @@ export async function POST(req: NextRequest) {
     if (!ALLOWED_TABLES.includes(table)) {
       return NextResponse.json(
         { error: `Tabla "${table}" no permitida` },
+        { status: 400 }
+      );
+    }
+
+    if (READ_ONLY_TABLES.includes(table) && action !== 'select') {
+      return NextResponse.json(
+        { error: `Tabla "${table}" es de solo lectura` },
         { status: 400 }
       );
     }
