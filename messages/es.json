@@ -111,6 +111,10 @@
     "pageTitle": "Nuestros servicios",
     "searchPlaceholder": "Buscar servicios...",
     "filterAll": "Todos",
+    "filterFinanzas": "Contabilidad y Finanzas",
+    "filterMarketing": "Marketing y Marca",
+    "filterBIDigital": "Soluciones BI y Digital",
+    "filterAdmon": "Administración y Gestión",
     "filterConsultoria": "Consultoría",
     "filterCapacitacion": "Capacitación",
     "filterHerramientas": "Herramientas",
@@ -118,7 +122,21 @@
     "empty": "No hay servicios disponibles por el momento.",
     "loadError": "No pudimos cargar los servicios. Revisa tu conexión e inténtalo de nuevo.",
     "retry": "Reintentar",
-    "variantUnit": "Único"
+    "variantUnit": "Único",
+    "viewMoreInfo": "Ver más info",
+    "requestService": "Solicitar servicio",
+    "whatsIncluded": "Qué incluye",
+    "requestSent": "¡Solicitud enviada! Te contactaremos en breve.",
+    "noCommitment": "Sin compromiso",
+    "submitRequest": "Enviar solicitud",
+    "backToDetails": "Volver a los detalles",
+    "contactWhatsApp": "Contactar por WhatsApp",
+    "form": {
+      "name": "Nombre completo *",
+      "email": "Correo electrónico *",
+      "phone": "Teléfono / WhatsApp",
+      "message": "Mensaje (opcional)"
+    }
   },
   "products": {
     "pageTitle": "Nuestros productos",

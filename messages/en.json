@@ -111,6 +111,10 @@
     "pageTitle": "Our services",
     "searchPlaceholder": "Search services...",
     "filterAll": "All",
+    "filterFinanzas": "Accounting and Finance",
+    "filterMarketing": "Marketing and Brand",
+    "filterBIDigital": "BI and Digital Solutions",
+    "filterAdmon": "Administration and Management",
     "filterConsultoria": "Consulting",
     "filterCapacitacion": "Training",
     "filterHerramientas": "Tools",
@@ -118,7 +122,21 @@
     "empty": "No services available at the moment.",
     "loadError": "We couldn't load the services. Check your connection and try again.",
     "retry": "Try again",
-    "variantUnit": "Single"
+    "variantUnit": "Single",
+    "viewMoreInfo": "See more info",
+    "requestService": "Request service",
+    "whatsIncluded": "What's included",
+    "requestSent": "Request sent! We'll contact you shortly.",
+    "noCommitment": "No commitment",
+    "submitRequest": "Submit request",
+    "backToDetails": "Back to details",
+    "contactWhatsApp": "Contact via WhatsApp",
+    "form": {
+      "name": "Full name *",
+      "email": "Email *",
+      "phone": "Phone / WhatsApp",
+      "message": "Message (optional)"
+    }
   },
   "products": {
     "pageTitle": "Our products",
