@@ -1,48 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Send, Calendar, Search, RefreshCw } from 'lucide-react';
-import { BentoCard, Icon, ScrollReveal, AnimatedCard, PriceDisplay, ServicesGridSkeleton, RequestModal, ShinyText } from '@/components';
+import { ArrowRight, Calendar, Search, RefreshCw } from 'lucide-react';
+import { Link } from '@/i18n/routing';
+import { BentoCard, Icon, ScrollReveal, AnimatedCard, ServicesGridSkeleton } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations } from 'next-intl';
-import { useCart } from '@/hooks/useCart';
 import { useServicios, type Servicio } from '@/hooks/useData';
+import { ServiceRequestModal } from '@/components/ServiceRequestModal';
 
-type CategoryFilter = 'all' | 'consultoria' | 'capacitacion' | 'herramientas';
+type CategoryFilter = 'all' | 'contabilidad-finanzas' | 'marketing-marca' | 'soluciones-bi-digital' | 'administracion-gestion';
 
-interface RequestItem {
-  title: string;
-  price: string;
-  priceNum: number;
-  whatsappLink: string;
-  type: 'servicio' | 'producto' | 'evento';
-}
+const FILTERS: { value: CategoryFilter; labelKey: string }[] = [
+  { value: 'all', labelKey: 'filterAll' },
+  { value: 'contabilidad-finanzas', labelKey: 'filterFinanzas' },
+  { value: 'marketing-marca', labelKey: 'filterMarketing' },
+  { value: 'soluciones-bi-digital', labelKey: 'filterBIDigital' },
+  { value: 'administracion-gestion', labelKey: 'filterAdmon' },
+];
 
 export function ServicesPage({ initialServicios }: { initialServicios?: Servicio[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [animKey, setAnimKey] = useState(0);
-  const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
-  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const { addItem } = useCart();
+  const [selectedServicio, setSelectedServicio] = useState<Servicio | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const t = useTranslations('services');
-  const common = useTranslations('common');
   const home = useTranslations('home');
-  const filters = [
-    { label: t('filterAll'), value: 'all' as CategoryFilter },
-    { label: t('filterConsultoria'), value: 'consultoria' as CategoryFilter },
-    { label: t('filterCapacitacion'), value: 'capacitacion' as CategoryFilter },
-    { label: t('filterHerramientas'), value: 'herramientas' as CategoryFilter },
-  ];
   const { servicios, loading, error, retry } = useServicios(initialServicios);
   const showLoading = !mounted || (loading && (initialServicios || []).length === 0);
 
   useEffect(() => { setMounted(true); }, []);
 
-  const openRequest = (item: RequestItem) => {
-    setRequestItem(item);
-    setIsRequestOpen(true);
+  const openModal = (servicio: Servicio) => {
+    setSelectedServicio(servicio);
+    setIsModalOpen(true);
   };
 
   const filteredServices = servicios.filter(
@@ -79,9 +72,9 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
                 value={activeFilter}
                 onChange={(e) => handleFilterChange(e.target.value as CategoryFilter)}
               >
-                {filters.map(filter => (
+                {FILTERS.map(filter => (
                   <option key={filter.value} value={filter.value}>
-                    {filter.label}
+                    {t(filter.labelKey)}
                   </option>
                 ))}
               </select>
@@ -104,7 +97,7 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
           <div className="bento-grid" key={animKey}>
             {filteredServices.map((service, idx) => (
               <AnimatedCard key={`${activeFilter}-${service.id}`} index={idx}>
-                <BentoCard 
+                <BentoCard
                   className="interactive-card service-card toned-card"
                   dataCategory={service.category}
                 >
@@ -112,15 +105,12 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
                     <Icon name={service.icon} />
                     <h3>{service.title}</h3>
                   </div>
-                  <p>{service.description}</p>
-                  <span className="card-price"><PriceDisplay price={service.price} priceNum={service.price_num} /></span>
+                  {service.subtitle && <p className="service-card-subtitle">{service.subtitle}</p>}
+                  <p className="service-card-desc">{service.description}</p>
                   <div className="card-actions">
-                    <button
-                      className="btn-add-cart btn-add-cart-full"
-                      onClick={() => addItem(service.title, 'Único', service.price_num)}
-                    >
-                      <ShoppingCart size={16} />
-                      <span>{common('addToCart')}</span>
+                    <button className="btn-view-more" onClick={() => openModal(service)}>
+                      {t('viewMoreInfo')}
+                      <ArrowRight size={15} />
                     </button>
                   </div>
                 </BentoCard>
@@ -138,23 +128,17 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
         <div className="container section-cta cta-card-content">
           <h2>{home('sections.ctaTitle')}</h2>
           <p>{home('sections.ctaText')}</p>
-          <button
-            className="cta-button cta-button--light"
-            onClick={() => {
-              setRequestItem({ title: common('appointmentTitle'), price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
+          <Link href="/contacto" className="cta-button cta-button--light">
             <Calendar size={18} />
             {home('sections.ctaButton')}
-          </button>
+          </Link>
         </div>
       </div>
 
-      <RequestModal
-        item={requestItem}
-        isOpen={isRequestOpen}
-        onClose={() => setIsRequestOpen(false)}
+      <ServiceRequestModal
+        servicio={selectedServicio}
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </>
   );

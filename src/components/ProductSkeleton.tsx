@@ -37,10 +37,10 @@ export function ServiceSkeleton() {
       <div className="skeleton-line skeleton-description" />
       <div className="skeleton-line skeleton-description short" />
       
-      {/* Price skeleton */}
-      <div className="skeleton-line skeleton-price" />
+      {/* Subtitle skeleton */}
+      <div className="skeleton-line skeleton-subtitle" />
       
-      {/* Button skeleton — matches single btn-add-cart-full */}
+      {/* Button skeleton — matches btn-view-more */}
       <div className="skeleton-buttons">
         <div className="skeleton-button" />
       </div>
