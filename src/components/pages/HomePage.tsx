@@ -3,15 +3,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import { ShoppingCart, Calendar, BadgeCheck } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
+import { ShoppingCart, Calendar, BadgeCheck, ArrowRight } from 'lucide-react';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm, ServiceRequestModal } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useTranslations } from 'next-intl';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, useServicios, useEventos, useTestimonials, useFaqs } from '@/hooks/useData';
-import type { Producto, Variant, Testimonial, Faq } from '@/hooks/useData';
+import type { Producto, Servicio, Variant, Testimonial, Faq } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
 
 function getProductImage(category: string, productImage: string): string {
@@ -31,11 +31,14 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const [isVariantOpen, setIsVariantOpen] = useState(false);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const [selectedServicio, setSelectedServicio] = useState<Servicio | null>(null);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const { addItem } = useCart();
   const t = useTranslations('home');
   const common = useTranslations('common');
   const products = useTranslations('products');
   const events = useTranslations('events');
+  const services = useTranslations('services');
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
   const { eventos, loading: eventosLoading } = useEventos();
@@ -161,15 +164,18 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                     <Icon name={service.icon} />
                     <h3>{service.title}</h3>
                   </div>
-                  <p>{service.description}</p>
-                  <span className="card-price"><PriceDisplay price={service.price} priceNum={service.price_num} /></span>
+                  {service.subtitle && <p className="service-card-subtitle">{service.subtitle}</p>}
+                  <p className="service-card-desc">{service.description}</p>
                   <div className="card-actions">
                     <button
-                      className="btn-add-cart btn-add-cart-full"
-                      onClick={() => addItem(service.title, 'Único', service.price_num)}
+                      className="btn-view-more"
+                      onClick={() => {
+                        setSelectedServicio(service);
+                        setIsServiceModalOpen(true);
+                      }}
                     >
-                      <ShoppingCart size={16} />
-                      <span>{common('addToCart')}</span>
+                      {services('viewMoreInfo')}
+                      <ArrowRight size={15} />
                     </button>
                   </div>
                 </BentoCard>
@@ -352,6 +358,12 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           onClose={() => { setIsRegistrationOpen(false); setRegistrationEvent(null); }}
         />
       )}
+
+      <ServiceRequestModal
+        servicio={selectedServicio}
+        open={isServiceModalOpen}
+        onClose={() => setIsServiceModalOpen(false)}
+      />
     </>
   );
 }
