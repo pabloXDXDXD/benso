@@ -12,9 +12,8 @@ const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:3000';
 const RUN_ID = Date.now().toString(36);
 const E2E_EMAIL = `e2e-${RUN_ID}@benso.test`;
 
-// The site uses next-intl with localePrefix 'as-needed': unprefixed URLs resolve the locale
-// from Accept-Language. Force es-ES so assertions match the Spanish copy (the default
-// catalog language).
+// The site is single-language Spanish (i18n removed). Force es-ES so any browser
+// locale handling in tests matches the Spanish copy.
 test.use({ locale: 'es-ES' });
 
 test.describe('Servicios catalog (S1, S3, S8)', () => {

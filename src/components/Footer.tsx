@@ -1,9 +1,7 @@
 import Image from 'next/image';
 import { Mail, Phone } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 export function Footer() {
-  const t = useTranslations('footer');
   const currentYear = new Date().getFullYear();
   return (
     <footer className="footer">
@@ -18,12 +16,12 @@ export function Footer() {
               height={25}
               unoptimized
             />
-            <p>{t('tagline')}</p>
+            <p>Asesoramiento, Herramientas Digitales y Capacitación para Emprendedores</p>
           </div>
 
           <div className="footer-right-blocks">
           <div className="footer-section footer-contact-block">
-            <h4>{t('contactTitle')}</h4>
+            <h4>Contacto</h4>
             <div className="footer-contact-details">
               <div className="footer-contact-item">
                 <Mail size={16} />
@@ -37,7 +35,7 @@ export function Footer() {
           </div>
 
           <div className="footer-section footer-social-block">
-            <h4>{t('socialTitle')}</h4>
+            <h4>Redes sociales</h4>
             <div className="social-links">
               <a href="https://www.instagram.com/bensofcg" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <svg className="social-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +58,7 @@ export function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="footer-copyright">{t('copyright', { year: currentYear })}</p>
+          <p className="footer-copyright">© {currentYear} Benso</p>
         </div>
       </div>
     </footer>

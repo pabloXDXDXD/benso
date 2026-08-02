@@ -1,19 +1,17 @@
 'use client';
 
-import { Link } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 export function NotFound() {
-  const t = useTranslations('notFound');
   return (
     <div className="container" style={{ paddingTop: '3rem', paddingBottom: '5rem', textAlign: 'center' }}>
       <h1 style={{ fontSize: '4rem', color: 'var(--primary)', marginBottom: '1rem' }}>404</h1>
-      <h2 style={{ marginBottom: '1rem' }}>{t('title')}</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Página no encontrada</h2>
       <p style={{ marginBottom: '2rem', color: 'var(--text-light)' }}>
-        {t('description')}
+        Lo sentimos, la página que buscas no existe o ha sido movida.
       </p>
       <Link href="/" className="btn-primary">
-        {t('goHome')}
+        Volver al Inicio
       </Link>
     </div>
   );

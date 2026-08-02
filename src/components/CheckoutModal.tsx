@@ -5,12 +5,10 @@ import { CheckCircle2, Clipboard, AlertCircle, CreditCard } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPriceInCurrency } from '@/lib/currencyUtils';
-import { useTranslations } from 'next-intl';
 
 export function CheckoutModal() {
   const { items, totalPrice, isCheckoutOpen, setIsCheckoutOpen, saveOrder } = useCart();
   const { currency } = useCurrency();
-  const t = useTranslations('checkout');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -48,7 +46,7 @@ export function CheckoutModal() {
       setOrderId(result.pedidoId);
       setSuccess(true);
     } else {
-      setError(result.error || t('error.saveError'));
+      setError(result.error || 'Error al guardar el pedido');
     }
     
     setSaving(false);
@@ -58,7 +56,7 @@ export function CheckoutModal() {
     <>
       <div className="checkout-overlay" onClick={handleClose} />
       <div className="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
-        <button className="checkout-close" onClick={handleClose} aria-label={t('ariaClose')}>
+        <button className="checkout-close" onClick={handleClose} aria-label="Cerrar">
           ×
         </button>
 
@@ -67,9 +65,9 @@ export function CheckoutModal() {
             <div className="success-icon">
               <CheckCircle2 size={40} />
             </div>
-            <h2 id="checkout-title">{t('success.title')}</h2>
+            <h2 id="checkout-title">¡Pedido recibido!</h2>
             <div className="order-id-box">
-              <span className="order-label">{t('success.orderLabel')}</span>
+              <span className="order-label">Número de pedido</span>
               <span className="order-number">#{orderId}</span>
               <button 
                 className="copy-btn" 
@@ -77,87 +75,87 @@ export function CheckoutModal() {
                 title="Copiar ID"
               >
                 <Clipboard size={16} />
-{t('success.copy')}
+Copiar
               </button>
             </div>
             <p className="success-message">
-              {t('success.message')} <strong>{t('success.paymentNote')}</strong>
-              {t('success.paymentDetail').replace(t('success.paymentNote'), '')}
+              Tu pedido ha sido registrado correctamente. <strong>No es un pago inmediato</strong>
+              {' - el pago se coordinará manualmente una vez que confirmemos los detalles de tu pedido.'}
             </p>
             <p className="success-note">
-              {t('success.contactNote')}
+              Te contactaremos en un plazo de 24-48 horas para confirmar la disponibilidad y acordar el pago.
             </p>
             <div className="success-actions">
               <button className="btn-primary" onClick={handleClose}>
-                {t('success.continueShopping')}
+                Continuar comprando
               </button>
             </div>
           </div>
         ) : (
           <>
             <div className="checkout-header">
-              <h2 id="checkout-title">{t('title')}</h2>
-              <p className="checkout-subtitle">{t('subtitle')}</p>
+              <h2 id="checkout-title">Finalizar Pedido</h2>
+              <p className="checkout-subtitle">Completa tus datos para procesar tu pedido</p>
             </div>
 
             <div className="checkout-content">
               <form onSubmit={handleSubmit}>
                 <div className="form-section">
-                  <h3>{t('contactSection')}</h3>
+                  <h3>Datos de contacto</h3>
                   
                   <div className="form-group">
-                    <label htmlFor="checkout-name">{t('form.name')}</label>
+                    <label htmlFor="checkout-name">Nombre completo *</label>
                     <input
                       type="text"
                       id="checkout-name"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder={t('form.namePlaceholder')}
+                      placeholder="Tu nombre"
                       required
                     />
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="checkout-email">{t('form.email')}</label>
+                    <label htmlFor="checkout-email">Correo electrónico</label>
                     <input
                       type="email"
                       id="checkout-email"
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
-                      placeholder={t('form.emailPlaceholder')}
+                      placeholder="tu@email.com"
                     />
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="checkout-phone">{t('form.phone')}</label>
+                    <label htmlFor="checkout-phone">Teléfono / WhatsApp *</label>
                     <input
                       type="tel"
                       id="checkout-phone"
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
-                      placeholder={t('form.phonePlaceholder')}
+                      placeholder="+53 XXXX XXXX"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="form-section">
-                  <h3>{t('deliverySection')}</h3>
+                  <h3>Dirección de entrega</h3>
                   
                   <div className="form-group">
-                    <label htmlFor="checkout-address">{t('form.address')}</label>
+                    <label htmlFor="checkout-address">Dirección</label>
                     <textarea
                       id="checkout-address"
                       value={customerAddress}
                       onChange={(e) => setCustomerAddress(e.target.value)}
-                      placeholder={t('form.addressPlaceholder')}
+                      placeholder="Calle, número, apartamento, municipio..."
                       rows={3}
                     />
                   </div>
                 </div>
 
                 <div className="form-section">
-                  <h3>{t('summarySection')}</h3>
+                  <h3>Resumen del pedido</h3>
                   <div className="order-items">
                     {items.map(item => (
                       <div key={item.id} className="order-item">
@@ -190,12 +188,12 @@ export function CheckoutModal() {
                   {saving ? (
                     <>
                       <span className="spinner"></span>
-                      {t('submitting')}
+                      Procesando...
                     </>
                   ) : (
                     <>
                       <CreditCard size={20} />
-                      {t('submit')}
+                      Confirmar pedido
                     </>
                   )}
                 </button>

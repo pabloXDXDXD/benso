@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { CheckCircle2, AlertCircle, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useTranslations } from 'next-intl';
 import type { Servicio } from '@/hooks/useData';
 
 type View = 'details' | 'form' | 'success';
@@ -14,19 +13,17 @@ interface ServiceRequestModalProps {
   onClose: () => void;
 }
 
-// Category slug -> i18n filter label key (services.*)
-const CATEGORY_LABEL_KEYS: Record<string, string> = {
-  'contabilidad-finanzas': 'filterFinanzas',
-  'marketing-marca': 'filterMarketing',
-  'soluciones-bi-digital': 'filterBIDigital',
-  'administracion-gestion': 'filterAdmon',
+// Category slug -> display label
+const CATEGORY_LABELS: Record<string, string> = {
+  'contabilidad-finanzas': 'Contabilidad y Finanzas',
+  'marketing-marca': 'Marketing y Marca',
+  'soluciones-bi-digital': 'Soluciones BI y Digital',
+  'administracion-gestion': 'Administración y Gestión',
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestModalProps) {
-  const t = useTranslations('services');
-  const common = useTranslations('common');
   const [view, setView] = useState<View>('details');
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
@@ -48,7 +45,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
     setSaving(false);
   };
 
-  const categoryLabelKey = CATEGORY_LABEL_KEYS[servicio.category];
+  const categoryLabel = CATEGORY_LABELS[servicio.category];
   const whatsappLink = (servicio as Servicio & { whatsappLink?: string }).whatsapp_link ||
     (servicio as Servicio & { whatsappLink?: string }).whatsappLink;
 
@@ -64,11 +61,11 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
     const mail = email.trim();
 
     if (!name || !mail) {
-      setError(t('formError'));
+      setError('Completa los campos obligatorios con datos válidos.');
       return;
     }
     if (!EMAIL_RE.test(mail)) {
-      setError(t('formError'));
+      setError('Completa los campos obligatorios con datos válidos.');
       return;
     }
 
@@ -87,7 +84,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
       });
 
     if (dbError) {
-      setError(t('submitError'));
+      setError('No pudimos enviar tu solicitud. Inténtalo de nuevo.');
       setSaving(false);
       return;
     }
@@ -100,14 +97,14 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
     <>
       <div className="svc-modal-overlay" onClick={handleClose} />
       <div className="svc-modal-panel" role="dialog" aria-modal="true" aria-labelledby="svc-modal-title">
-        <button className="svc-modal-close" onClick={handleClose} aria-label={common('close')}>
+        <button className="svc-modal-close" onClick={handleClose} aria-label="Cerrar">
           ×
         </button>
 
         {view === 'details' && (
           <>
             <div className="svc-modal-head">
-              {categoryLabelKey && <p className="svc-modal-kicker">{t(categoryLabelKey)}</p>}
+              {categoryLabel && <p className="svc-modal-kicker">{categoryLabel}</p>}
               <h3 className="svc-modal-title" id="svc-modal-title">{servicio.title}</h3>
               {servicio.subtitle && <p className="svc-modal-subtitle">{servicio.subtitle}</p>}
             </div>
@@ -115,7 +112,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
               <p className="svc-modal-desc">{servicio.description}</p>
               {servicio.includes && servicio.includes.length > 0 && (
                 <>
-                  <p className="svc-modal-includes-label">{t('whatsIncluded')}</p>
+                  <p className="svc-modal-includes-label">Qué incluye</p>
                   <ul className="svc-modal-includes">
                     {servicio.includes.map((item, index) => (
                       <li key={index}>{item}</li>
@@ -125,17 +122,15 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
               )}
               <button className="svc-modal-btn" onClick={() => setView('form')}>
                 <Send size={16} />
-                {t('requestService')}
+                Solicitar servicio
               </button>
               {whatsappLink && (
                 <p className="svc-modal-note">
-                  {t.rich('whatsappNote', {
-                    whatsapp: (chunks) => (
-                      <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                        {chunks}
-                      </a>
-                    ),
-                  })}
+                  ¿Prefieres hablar directo?{' '}
+                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                    Contáctanos por WhatsApp
+                  </a>{' '}
+                  para resolver dudas antes de solicitar.
                 </p>
               )}
             </div>
@@ -145,15 +140,15 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
         {view === 'form' && (
           <>
             <div className="svc-modal-head">
-              <p className="svc-modal-kicker">{t('requestService')}</p>
+              <p className="svc-modal-kicker">Solicitar servicio</p>
               <h3 className="svc-modal-title" id="svc-modal-title">{servicio.title}</h3>
-              <p className="svc-modal-subtitle">{t('formIntro')}</p>
+              <p className="svc-modal-subtitle">Cuéntanos qué necesitas y un especialista te contactará.</p>
             </div>
             <div className="svc-modal-body svc-modal-form">
               <form onSubmit={handleSubmit} noValidate>
-                <span className="svc-modal-chip">{t('noCommitment')}</span>
+                <span className="svc-modal-chip">Sin compromiso</span>
 
-                <label htmlFor="svc-nombre">{t('form.name')}</label>
+                <label htmlFor="svc-nombre">Nombre completo *</label>
                 <input
                   type="text"
                   id="svc-nombre"
@@ -162,7 +157,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   required
                 />
 
-                <label htmlFor="svc-email">{t('form.email')}</label>
+                <label htmlFor="svc-email">Correo electrónico *</label>
                 <input
                   type="email"
                   id="svc-email"
@@ -171,7 +166,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   required
                 />
 
-                <label htmlFor="svc-telefono">{t('form.phone')}</label>
+                <label htmlFor="svc-telefono">Teléfono / WhatsApp</label>
                 <input
                   type="tel"
                   id="svc-telefono"
@@ -179,7 +174,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   onChange={(e) => setTelefono(e.target.value)}
                 />
 
-                <label htmlFor="svc-mensaje">{t('form.message')}</label>
+                <label htmlFor="svc-mensaje">Mensaje (opcional)</label>
                 <textarea
                   id="svc-mensaje"
                   rows={3}
@@ -200,7 +195,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   disabled={saving}
                 >
                   <Send size={16} />
-                  {t('submitRequest')}
+                  Enviar solicitud
                 </button>
                 <button
                   type="button"
@@ -208,7 +203,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   style={{ marginTop: '0.65rem' }}
                   onClick={() => { setError(null); setView('details'); }}
                 >
-                  ← {t('backToDetails')}
+                  ← Volver a los detalles
                 </button>
               </form>
             </div>
@@ -220,10 +215,10 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
             <div className="svc-modal-success-icon">
               <CheckCircle2 size={36} />
             </div>
-            <h3 id="svc-modal-title">{t('requestSent')}</h3>
-            <p>{t('requestSentDetail', { servicio: servicio.title })}</p>
+            <h3 id="svc-modal-title">¡Solicitud enviada! Te contactaremos en breve.</h3>
+            <p>Hemos recibido tu solicitud para {servicio.title}. Nuestro equipo te contactará en breve.</p>
             <button className="svc-modal-btn" onClick={handleClose}>
-              {common('close')}
+              Cerrar
             </button>
           </div>
         )}

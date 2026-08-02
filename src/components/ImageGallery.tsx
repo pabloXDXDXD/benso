@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useMotionValue } from 'motion/react';
-import { useTranslations } from 'next-intl';
 
 interface ImgData {
   src: string;
@@ -16,17 +15,15 @@ interface ImgData {
 const CANVAS_VW = 220;
 
 export function ImageGallery() {
-  const t = useTranslations('gallery');
-
   const images: ImgData[] = [
-    { src: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80', title: t('items.consulting'), w: 34, h: 48, x: 3, y: 15 },
-    { src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80', title: t('items.teamwork'), w: 22, h: 28, x: 40, y: 59 },
-    { src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', title: t('items.personalized'), w: 28, h: 36, x: 44, y: 19 },
-    { src: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80', title: t('items.results'), w: 32, h: 46, x: 78, y: 19 },
-    { src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80', title: t('items.innovation'), w: 20, h: 30, x: 113, y: 13 },
-    { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80', title: t('items.marketing'), w: 26, h: 32, x: 115, y: 57 },
-    { src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80', title: t('items.vision'), w: 36, h: 50, x: 148, y: 15 },
-    { src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80', title: t('items.growth'), w: 18, h: 24, x: 190, y: 59 },
+    { src: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80', title: 'Consultoría Estratégica', w: 34, h: 48, x: 3, y: 15 },
+    { src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80', title: 'Trabajo en Equipo', w: 22, h: 28, x: 40, y: 59 },
+    { src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', title: 'Atención Personalizada', w: 28, h: 36, x: 44, y: 19 },
+    { src: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80', title: 'Resultados Medibles', w: 32, h: 46, x: 78, y: 19 },
+    { src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80', title: 'Innovación Digital', w: 20, h: 30, x: 113, y: 13 },
+    { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80', title: 'Marketing Digital', w: 26, h: 32, x: 115, y: 57 },
+    { src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80', title: 'Visión Estratégica', w: 36, h: 50, x: 148, y: 15 },
+    { src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80', title: 'Crecimiento', w: 18, h: 24, x: 190, y: 59 },
   ];
   const sectionRef = useRef<HTMLDivElement>(null);
   const translatePxRef = useRef(0);

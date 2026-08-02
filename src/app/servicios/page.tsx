@@ -1,36 +1,21 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ServicesPage } from '@/components/pages/ServicesPage';
 import type { Servicio } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
-import { localizeItems } from '@/lib/supabase-i18n';
 import { withRetry } from '@/lib/withRetry';
-import { routing } from '@/i18n/routing';
 
 export const revalidate = 300;
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+export const metadata: Metadata = {
+  title: 'Servicios de Consultoría y Capacitación para PyMEs',
+  description: 'Descubre nuestros servicios de consultoría estratégica, capacitación y herramientas digitales para PyMEs en Cuba. Agenda tu cita gratis y lleva tu emprendimiento al siguiente nivel.',
+  openGraph: {
+    title: 'Servicios de Consultoría y Capacitación - BENSO',
+    description: 'Consultoría estratégica, capacitación y herramientas digitales para PyMEs en Cuba. Agenda tu cita gratis.',
+  },
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'metadata.servicios' });
-
-  return {
-    title: t('title'),
-    description: t('description'),
-    openGraph: {
-      title: t('ogTitle'),
-      description: t('ogDescription'),
-    },
-  };
-}
-
-export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default async function Page() {
   const { data: servicios, error: serviciosError } = await withRetry(() =>
     supabase
       .from('servicios')
@@ -38,7 +23,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       .eq('is_active', true)
   );
 
-  const items = serviciosError ? undefined : localizeItems((servicios || []) as Servicio[], locale);
+  const items = serviciosError ? undefined : (servicios || []) as Servicio[];
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',

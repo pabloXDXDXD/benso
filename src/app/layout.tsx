@@ -1,6 +1,11 @@
 import type { Viewport, Metadata } from 'next';
 import { cocogoose, ttCommons } from './fonts';
 import './globals.css';
+import { CartProvider } from '@/context/CartContext';
+import { CurrencyProvider } from '@/context/CurrencyContext';
+import { SWRProvider } from '@/components/SWRProvider';
+import { Footer, Cart, TopBarWrapper } from '@/components';
+import { Toaster } from 'react-hot-toast';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -29,11 +34,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: '/',
-    languages: {
-      es: '/es',
-      en: '/en',
-      'x-default': '/es',
-    },
   },
   openGraph: {
     url: 'https://www.bensofcg.com',
@@ -88,7 +88,22 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <CurrencyProvider>
+          <CartProvider>
+            <SWRProvider>
+              <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
+              <TopBarWrapper />
+              <main id="main-content" tabIndex={-1}>
+                {children}
+              </main>
+              <Footer />
+              <Cart />
+              <Toaster position="bottom-left" toastOptions={{ duration: 3000 }} />
+            </SWRProvider>
+          </CartProvider>
+        </CurrencyProvider>
+      </body>
     </html>
   );
 }

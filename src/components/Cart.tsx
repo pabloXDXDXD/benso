@@ -7,12 +7,10 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPriceInCurrency } from '@/lib/currencyUtils';
-import { useTranslations } from 'next-intl';
 
 export function Cart() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice, isOpen, setIsOpen, setIsCheckoutOpen } = useCart();
   const { currency } = useCurrency();
-  const t = useTranslations('cart');
   const prevItemsRef = useRef(items.length);
   const prevTotalRef = useRef(totalItems);
   const lastAddedRef = useRef<string | null>(null);
@@ -49,7 +47,7 @@ export function Cart() {
             className={`cart-toast ${toastVisible.visible ? 'show' : 'hide'}`}
           >
             <Check size={16} />
-            <span>{t('toastAdded', { product: newItem.productTitle, variant: newItem.variant })}</span>
+            <span>&quot;{newItem.productTitle} — {newItem.variant}&quot; añadido</span>
           </div>
         ), { duration: 2500 });
       }
@@ -64,7 +62,7 @@ export function Cart() {
         <button
           className="cart-fab"
           onClick={() => setIsOpen(true)}
-          aria-label={t('fab')}
+          aria-label="Abrir carrito"
         >
           <ShoppingCart size={22} />
           <span className="cart-fab-badge">{totalItems}</span>
@@ -81,11 +79,11 @@ export function Cart() {
         className={`cart-panel${isOpen ? ' open' : ''}`}
         role="dialog"
         aria-modal="true"
-        aria-label={t('dialogLabel')}
+        aria-label="Carrito de compras"
       >
         <div className="cart-panel-header">
-          <h3>{t('panel')}</h3>
-          <button className="cart-panel-close" onClick={() => setIsOpen(false)} aria-label={t('close')}>
+          <h3>Tu carrito</h3>
+          <button className="cart-panel-close" onClick={() => setIsOpen(false)} aria-label="Cerrar carrito">
             <X size={20} />
           </button>
         </div>
@@ -94,13 +92,13 @@ export function Cart() {
           {items.length === 0 ? (
             <div className="cart-empty">
               <ShoppingCart size={48} strokeWidth={1.5} />
-              <p>{t('empty')}</p>
-              <span className="cart-empty-hint">{t('emptyDescription')}</span>
+              <p>Carrito vacío</p>
+              <span className="cart-empty-hint">Explora nuestros productos y agrega lo que necesites</span>
               <button 
                 className="btn-browse"
                 onClick={() => setIsOpen(false)}
               >
-                {t('viewProducts')}
+                Ver productos
               </button>
             </div>
           ) : (
@@ -115,14 +113,14 @@ export function Cart() {
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity - 1)} 
                       disabled={item.quantity <= 1}
-                      aria-label={t('aria.decrease')}
+                      aria-label="Reducir cantidad"
                     >
                       <Minus size={14} />
                     </button>
                     <span>{item.quantity}</span>
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      aria-label={t('aria.increase')}
+                      aria-label="Aumentar cantidad"
                     >
                       <Plus size={14} />
                     </button>
@@ -130,7 +128,7 @@ export function Cart() {
                   <button 
                     className="cart-item-remove" 
                     onClick={() => removeItem(item.id)} 
-                    aria-label={t('aria.remove', { product: item.productTitle })}
+                    aria-label={`Eliminar ${item.productTitle}`}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -143,14 +141,14 @@ export function Cart() {
         {items.length > 0 && (
           <div className="cart-panel-footer">
             <div className="cart-total">
-              <span>{t('total')}</span>
+              <span>Total</span>
                <span className="cart-total-amount">{formatPriceInCurrency(totalPrice, currency)}</span>
             </div>
             <button
               className="cart-checkout-btn"
               onClick={handleCheckout}
             >
-              {t('checkout')}
+              Continuar
               <ArrowRight size={18} />
             </button>
           </div>

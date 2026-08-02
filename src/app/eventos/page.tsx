@@ -1,36 +1,21 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { EventsPage } from '@/components/pages/EventsPage';
 import type { Evento } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
-import { localizeItems } from '@/lib/supabase-i18n';
 import { withRetry } from '@/lib/withRetry';
-import { routing } from '@/i18n/routing';
 
 export const revalidate = 300;
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+export const metadata: Metadata = {
+  title: 'Eventos y Talleres para Emprendedores en Cuba',
+  description: 'Talleres, cursos y eventos para emprendedores en Cuba. Inscríbete y adquiere las habilidades clave para hacer crecer tu negocio con BENSO.',
+  openGraph: {
+    title: 'Eventos y Talleres - BENSO',
+    description: 'Talleres, cursos y eventos para emprendedores en Cuba. Inscríbete ya.',
+  },
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'metadata.eventos' });
-
-  return {
-    title: t('title'),
-    description: t('description'),
-    openGraph: {
-      title: t('ogTitle'),
-      description: t('ogDescription'),
-    },
-  };
-}
-
-export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default async function Page() {
   const { data: eventos, error: eventosError } = await withRetry(() =>
     supabase
       .from('eventos')
@@ -39,7 +24,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       .order('created_at', { ascending: false })
   );
 
-  const items = eventosError ? undefined : localizeItems((eventos || []) as Evento[], locale);
+  const items = eventosError ? undefined : (eventos || []) as Evento[];
 
   const eventJsonLd = {
     '@context': 'https://schema.org',

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { CheckCircle2, Clipboard, AlertCircle, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useTranslations } from 'next-intl';
 
 interface RequestModalItem {
   title: string;
@@ -20,7 +19,6 @@ interface RequestModalProps {
 }
 
 export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
-  const t = useTranslations('requestModal');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -79,7 +77,7 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
       setOrderId(data.id);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || t('error.processError'));
+      setError(err.message || 'Error al procesar la solicitud');
     }
 
     setSaving(false);
@@ -91,7 +89,7 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
     <>
       <div className="request-overlay" onClick={handleClose} />
       <div className="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-title">
-        <button className="request-close" onClick={handleClose} aria-label={t('ariaClose')}>
+        <button className="request-close" onClick={handleClose} aria-label="Cerrar">
           ×
         </button>
 
@@ -100,9 +98,9 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
             <div className="success-icon">
               <CheckCircle2 size={40} />
             </div>
-            <h2 id="request-title">{t('success.title')}</h2>
+            <h2 id="request-title">¡Solicitud recibida!</h2>
             <div className="order-id-box">
-              <span className="order-label">{t('success.orderLabel')}</span>
+              <span className="order-label">Número de solicitud</span>
               <span className="order-number">#{orderId}</span>
               <button
                 className="copy-btn"
@@ -110,19 +108,20 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
                 title="Copiar ID"
               >
                 <Clipboard size={16} />
-{t('success.copy')}
+Copiar
               </button>
             </div>
             <p className="success-message">
-              {t('success.message', { title: item.title })}<strong> {t('success.paymentNote')}</strong>
-              {t('success.paymentDetail').replace(t('success.paymentNote'), '')}
+              Tu solicitud para {item.title} ha sido registrada correctamente.
+              <strong> No es un pago inmediato</strong>
+              {' — el pago se coordinará manualmente una vez que confirmemos los detalles.'}
             </p>
             <p className="success-note">
-              {t('success.contactNote')}
+              Te contactaremos en un plazo de 24-48 horas para confirmar disponibilidad y acordar el pago.
             </p>
             <div className="success-actions">
               <button className="btn-primary" onClick={handleClose}>
-                {t('success.continue')}
+                Continuar navegando
               </button>
             </div>
           </div>
@@ -130,7 +129,7 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
           <>
             <div className="request-header">
               <h2 id="request-title">
-                {item.type === 'evento' ? t('titleEvent') : t('titleDefault')}
+                {item.type === 'evento' ? 'Inscribirse al evento' : 'Solicitar servicio'}
               </h2>
               <p className="request-item-name">{item.title}</p>
               <p className="request-item-price">{item.price}</p>
@@ -139,52 +138,52 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
             <div className="request-content">
               <form onSubmit={handleSubmit}>
                 <div className="form-section">
-                  <h3>{t('contactSection')}</h3>
+                  <h3>Datos de contacto</h3>
 
                   <div className="form-group">
-                    <label htmlFor="request-name">{t('form.name')}</label>
+                    <label htmlFor="request-name">Nombre completo *</label>
                     <input
                       type="text"
                       id="request-name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder={t('form.namePlaceholder')}
+                      placeholder="Tu nombre"
                       required
                     />
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="request-email">{t('form.email')}</label>
+                    <label htmlFor="request-email">Correo electrónico</label>
                     <input
                       type="email"
                       id="request-email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t('form.emailPlaceholder')}
+                      placeholder="tu@email.com"
                     />
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="request-phone">{t('form.phone')}</label>
+                    <label htmlFor="request-phone">Teléfono / WhatsApp *</label>
                     <input
                       type="tel"
                       id="request-phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder={t('form.phonePlaceholder')}
+                      placeholder="+53 XXXX XXXX"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="form-section">
-                  <h3>{t('messageSection')} <span style={{ fontWeight: 400, opacity: 0.6 }}>({t('messageOptional')})</span></h3>
+                  <h3>Mensaje <span style={{ fontWeight: 400, opacity: 0.6 }}>(opcional)</span></h3>
                   <div className="form-group">
                     <textarea
                       id="request-message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder={t('form.messagePlaceholder')}
+                      placeholder="¿Tienes alguna consulta o requerimiento especial?"
                       rows={3}
                     />
                   </div>
@@ -205,12 +204,12 @@ export function RequestModal({ item, isOpen, onClose }: RequestModalProps) {
                   {saving ? (
                     <>
                       <span className="spinner"></span>
-                      {t('submitting')}
+                      Procesando...
                     </>
                   ) : (
                     <>
                       <Send size={20} />
-                      {t('submit')}
+                      Enviar solicitud
                     </>
                   )}
                 </button>

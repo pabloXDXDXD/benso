@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/routing';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { CurrencySelector } from '@/components/CurrencySelector';
-import { LanguageSelector } from '@/components/LanguageSelector';
 
 export function Header() {
-  const t = useTranslations('header');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -81,14 +79,13 @@ export function Header() {
 
         <div className="header-actions">
           <CurrencySelector />
-          <LanguageSelector />
         </div>
 
         <button
           className={`menu-toggle${isMenuOpen ? ' open' : ''}`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-expanded={isMenuOpen}
-          aria-label={isMenuOpen ? t('aria.closeMenu') : t('aria.openMenu')}
+          aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
           aria-controls="main-nav"
         >
           <span></span>
@@ -98,17 +95,16 @@ export function Header() {
 
 <nav id="main-nav" className={isMenuOpen ? 'active' : ''}>
             <ul>
-              <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>{t('nav.home')}</Link></li>
-              <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>{t('nav.services')}</Link></li>
-              <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>{t('nav.products')}</Link></li>
-              <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>{t('nav.events')}</Link></li>
-              <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>{t('nav.about')}</Link></li>
-              <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>{t('nav.contact')}</Link></li>
+              <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>Inicio</Link></li>
+              <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>Servicios</Link></li>
+              <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>Productos</Link></li>
+              <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>Eventos</Link></li>
+              <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>Nosotros</Link></li>
+              <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>Contacto</Link></li>
             </ul>
             <div className="mobile-nav-footer">
               <div className="mobile-nav-toggles">
                 <CurrencySelector />
-                <LanguageSelector />
               </div>
             </div>
           </nav>

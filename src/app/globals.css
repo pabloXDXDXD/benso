@@ -442,7 +442,7 @@ nav ul li a.active::after {
     color: var(--primary);
 }
 
-/* Mobile currency & locale — hidden from top bar, shown in nav footer */
+/* Mobile currency — hidden from top bar, shown in nav footer */
 @media (max-width: 768px) {
     .header-actions {
         display: none !important;

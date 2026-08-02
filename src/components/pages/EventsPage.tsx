@@ -5,7 +5,6 @@ import { motion } from 'motion/react';
 import { Calendar, BadgeCheck, RefreshCw } from 'lucide-react';
 import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, EventRegistrationForm, RequestModal, ShinyText } from '@/components';
 import Grainient from '@/components/Grainient';
-import { useTranslations, useMessages } from 'next-intl';
 import { useEventos, type Evento } from '@/hooks/useData';
 
 interface RequestItem {
@@ -15,6 +14,11 @@ interface RequestItem {
   whatsappLink: string;
   type: 'servicio' | 'producto' | 'evento';
 }
+
+const MONTH_NAMES = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+];
 
 const MONTH_MAP: Record<string, number> = {
   'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
@@ -36,13 +40,13 @@ function getYear(dateStr: string): string {
   return match ? match[1] : '';
 }
 
-function getMonthLabel(dateStr: string, monthNames: string[]): string {
+function getMonthLabel(dateStr: string): string {
   const parts = dateStr.split(' - ').map(s => s.trim());
   const labeled = parts.map(p => {
     const key = Object.keys(MONTH_MAP).find(m => p.toLowerCase().includes(m));
     if (key) {
       const idx = MONTH_MAP[key]! - 1;
-      const name = monthNames[idx];
+      const name = MONTH_NAMES[idx];
       return name.charAt(0).toUpperCase() + name.slice(1);
     }
     return p;
@@ -60,11 +64,6 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [fillTop, setFillTop] = useState(0);
   const [fillHeight, setFillHeight] = useState(0);
-  const t = useTranslations('events');
-  const home = useTranslations('home');
-  const common = useTranslations('common');
-  const messages = useMessages();
-  const monthNames = (messages as any).events.months as string[];
 
   useEffect(() => { setMounted(true); }, []);
   const showLoading = !mounted || (loading && (initialEventos || []).length === 0);
@@ -108,10 +107,10 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
         <div className="container">
           <div className="bento-grid">
             <div className="bento-card">
-              <p>{t('loadError')}</p>
+              <p>No pudimos cargar los eventos. Revisa tu conexión e inténtalo de nuevo.</p>
               <button onClick={retry} className="btn-add-cart btn-add-cart-full">
                 <RefreshCw size={16} />
-                {t('retry')}
+                Reintentar
               </button>
             </div>
           </div>
@@ -123,7 +122,7 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
       <ScrollReveal>
         <div className="container">
           <div className="section-title page-intro-title">
-            <h2>{t('current')}</h2>
+            <h2>Eventos actuales</h2>
           </div>
           
           {showLoading ? (
@@ -135,14 +134,14 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
                 <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
-                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? t('status.inProgress') : t('status.upcoming')}</span>
+                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}</span>
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
                     </span>
                     <span className="event-cert-tag">
                       <BadgeCheck size={13} />
-                      {t('includesCertificate')}
+                      Incluye certificado
                     </span>
                   </div>
                   <p>{event.description}</p>
@@ -154,7 +153,7 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
                         setIsRegistrationOpen(true);
                       }}
                     >
-                      <span>{t('register')}</span>
+                      <span>Inscribirme</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                   </div>
@@ -171,7 +170,7 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
       <ScrollReveal>
         <div className="container">
           <div className="section-title">
-            <h2>{t('upcoming')}</h2>
+            <h2>Próximamente</h2>
           </div>
           
           {showLoading ? (
@@ -183,14 +182,14 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
                 <BentoCard className="interactive-card toned-card">
                   <h3>{event.title}</h3>
                   <div className="event-tags-row">
-                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? t('status.inProgress') : t('status.upcoming')}</span>
+                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}</span>
                     <span className="event-date-tag">
                       <CalendarIcon />
                       {event.date}
                     </span>
                     <span className="event-cert-tag">
                       <BadgeCheck size={13} />
-                      {t('includesCertificate')}
+                      Incluye certificado
                     </span>
                   </div>
                   <p>{event.description}</p>
@@ -202,7 +201,7 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
                         setIsRegistrationOpen(true);
                       }}
                     >
-                      <span>{t('register')}</span>
+                      <span>Inscribirme</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                   </div>
@@ -219,7 +218,7 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
       <ScrollReveal>
         <div className="container">
           <div className="section-title-center">
-            <h2>{t('timeline')}</h2>
+            <h2>Línea del tiempo</h2>
           </div>
 
           <div className="timeline19" ref={timelineRef}>
@@ -240,10 +239,10 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
                   <div className={`timeline19-dot${i < activeCount ? ' filled' : ''}`} />
                 </div>
                 <div className="timeline19-content">
-                  <span className="timeline19-date">{getMonthLabel(event.date, monthNames)}</span>
+                  <span className="timeline19-date">{getMonthLabel(event.date)}</span>
                   <h4 className="timeline19-title">{event.title}</h4>
                   <span className={`timeline19-status${event.status === 'En Curso' ? ' active' : ''}`}>
-                    {event.status === 'En Curso' ? t('status.inProgress') : t('status.upcoming')}
+                    {event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}
                   </span>
                 </div>
               </div>
@@ -258,13 +257,13 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>{home('sections.ctaTitle')}</h2>
-          <p>{home('sections.ctaText')}</p>
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
           <button 
             className="cta-button cta-button--light"
             onClick={() => {
               setRequestItem({
-                title: common('appointmentTitle'),
+                title: 'Cita de consulta',
                 price: '',
                 priceNum: 0,
                 whatsappLink: '',
@@ -274,7 +273,7 @@ export function EventsPage({ initialEventos }: { initialEventos?: Evento[] }) {
             }}
           >
             <Calendar size={18} />
-            {home('sections.ctaButton')}
+            Agendar cita
           </button>
         </div>
       </div>

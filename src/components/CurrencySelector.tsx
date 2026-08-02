@@ -2,12 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { DollarSign } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { useCurrency } from '@/context/CurrencyContext';
 import { CURRENCIES, type Currency } from '@/lib/currencyUtils';
 
 export function CurrencySelector() {
-  const t = useTranslations('currencySelector');
   const { currency, setCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -32,7 +30,7 @@ export function CurrencySelector() {
       <button
         className="currency-dropdown-trigger"
         onClick={() => setOpen(!open)}
-        aria-label={t('ariaLabel', { currency })}
+        aria-label={`Moneda: ${currency}. Click para cambiar`}
         aria-expanded={open}
       >
         <DollarSign size={14} />

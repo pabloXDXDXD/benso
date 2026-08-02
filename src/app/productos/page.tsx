@@ -1,36 +1,21 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ProductsPage } from '@/components/pages/ProductsPage';
 import type { Producto } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
-import { localizeItems } from '@/lib/supabase-i18n';
 import { withRetry } from '@/lib/withRetry';
-import { routing } from '@/i18n/routing';
 
 export const revalidate = 300;
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+export const metadata: Metadata = {
+  title: 'Productos Digitales y Diseño para tu Negocio',
+  description: 'Soluciones digitales, papelería, cartelería y diseño profesional para tu negocio en Cuba. Explora nuestra tienda y encuentra productos que potencien tu marca.',
+  openGraph: {
+    title: 'Productos Digitales y Diseño - BENSO',
+    description: 'Soluciones digitales, papelería y diseño profesional para tu negocio en Cuba.',
+  },
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'metadata.productos' });
-
-  return {
-    title: t('title'),
-    description: t('description'),
-    openGraph: {
-      title: t('ogTitle'),
-      description: t('ogDescription'),
-    },
-  };
-}
-
-export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default async function Page() {
   const { data: productos, error: productosError } = await withRetry(
     () =>
       supabase
@@ -41,7 +26,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     1
   );
 
-  const items = productosError ? undefined : localizeItems((productos || []) as Producto[], locale);
+  const items = productosError ? undefined : (productos || []) as Producto[];
 
   const productJsonLd = {
     '@context': 'https://schema.org',

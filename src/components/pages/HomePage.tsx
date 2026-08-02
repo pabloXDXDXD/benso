@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from '@/i18n/routing';
+import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Calendar, BadgeCheck, ArrowRight } from 'lucide-react';
 import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm, ServiceRequestModal } from '@/components';
 import Grainient from '@/components/Grainient';
-import { useTranslations } from 'next-intl';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useCart } from '@/hooks/useCart';
@@ -34,11 +33,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const [selectedServicio, setSelectedServicio] = useState<Servicio | null>(null);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const { addItem } = useCart();
-  const t = useTranslations('home');
-  const common = useTranslations('common');
-  const products = useTranslations('products');
-  const events = useTranslations('events');
-  const services = useTranslations('services');
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
   const { eventos, loading: eventosLoading } = useEventos();
@@ -93,20 +87,20 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="hero-content">
             <h1>
-              <span>{t('hero.titleLine1')}</span>{' '}
+              <span>Asesoramiento, Herramientas Digitales y Capacitación</span>{' '}
               <span className="hero-highlight">
-                {t('hero.titleLine2')}
+                para Emprendedores
               </span>
             </h1>
             <p className="slogan">
-              {t('hero.slogan')}
+              Hacemos tu negocio rentable y sostenible con automatización financiera, estrategias de marca y formación de equipos
             </p>
             <div className="hero-buttons">
               <Link href="/contacto" className="hero-cta">
-                {t('hero.appointment')}
+                Agendar cita
               </Link>
               <Link href="/nosotros" className="hero-cta-outline">
-                {t('hero.aboutUs')}
+                Conócenos
               </Link>
             </div>
           </div>
@@ -143,9 +137,9 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>{t('sections.services')}</span></h2>
+            <h2><span>Nuestros servicios</span></h2>
             <Link href="/servicios" className="text-cta-link">
-              {common('viewAll')} →
+              Ver todos →
             </Link>
           </div>
           
@@ -153,7 +147,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
             <ServicesGridSkeleton count={3} />
           ) : servicios.length === 0 ? (
             <div className="empty-section">
-              <p>{t('empty.services')}</p>
+              <p>No hay servicios disponibles por el momento.</p>
             </div>
           ) : (
           <div className="bento-grid bento-grid-center">
@@ -173,10 +167,9 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                         setIsServiceModalOpen(true);
                       }}
                     >
-                      {services('viewMoreInfo')}
+                      Ver más info
                       <ArrowRight size={15} />
-                    </button>
-                  </div>
+                    </button>                  </div>
                 </BentoCard>
               </AnimatedCard>
             ))}
@@ -189,9 +182,9 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>{t('sections.featuredProducts')}</span></h2>
+            <h2><span>Productos destacados</span></h2>
             <Link href="/productos" className="text-cta-link">
-              {common('seeMore')} →
+              Ver más →
             </Link>
           </div>
           
@@ -199,22 +192,22 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
             <ProductsGridSkeleton count={3} />
           ) : featuredProducts.length === 0 ? (
             <div className="empty-section">
-              <p>{t('empty.products')}</p>
-              <Link href="/productos" className="text-cta-link">{common('viewAllProducts')} →</Link>
+              <p>No hay productos destacados por el momento.</p>
+              <Link href="/productos" className="text-cta-link">Ver todos los productos →</Link>
             </div>
           ) : (
           <div className="bento-grid bento-grid-center">
             {featuredProducts.map((product, index) => (
               <AnimatedCard key={product.id} index={index}>
                 <BentoCard className="interactive-card service-card">
-                  {product.popular && <span className="popular-tag">{products('popularTag')}</span>}
+                  {product.popular && <span className="popular-tag">#popular</span>}
                   {product.image ? (
                     <div className="product-image-container">
                       <Image src={imgSrc(product.image)} alt={product.title} width={600} height={200} loading="lazy" unoptimized style={{ width: '100%', height: 'auto' }} />
                     </div>
                   ) : (
                     <div className="product-image-placeholder">
-                      <span>{products('imageNotAvailable')}</span>
+                      <span>Imagen no disponible</span>
                     </div>
                   )}
                   <h3>{product.title}</h3>
@@ -232,7 +225,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                       }}
                     >
                       <ShoppingCart size={16} />
-                      <span>{common('addToCart')}</span>
+                      <span>Añadir al carrito</span>
                     </button>
                   </div>
                 </BentoCard>
@@ -247,9 +240,9 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>{t('sections.upcomingEvents')}</span></h2>
+            <h2><span>Próximos eventos</span></h2>
             <Link href="/eventos" className="text-cta-link">
-              {common('seeMore')} →
+              Ver más →
             </Link>
           </div>
           
@@ -257,8 +250,8 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
             <EventsGridSkeleton count={2} />
           ) : upcomingEvents.length === 0 ? (
             <div className="empty-section">
-              <p>{t('empty.events')}</p>
-              <Link href="/eventos" className="text-cta-link">{common('viewHistory')} →</Link>
+              <p>No hay próximos eventos por el momento.</p>
+              <Link href="/eventos" className="text-cta-link">Ver historial de eventos →</Link>
             </div>
           ) : (
           <div className="bento-grid-events">
@@ -274,7 +267,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                     </span>
                     <span className="event-cert-tag">
                       <BadgeCheck size={13} />
-                      {events('includesCertificate')}
+                      Incluye certificado
                     </span>
                   </div>
                   <p>{event.description}</p>
@@ -283,7 +276,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                       className="event-cta-link"
                       onClick={() => openRegistration(event.id, event.title)}
                     >
-                      <span>{events('register')}</span>
+                      <span>Inscribirme</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                   </div>
@@ -299,7 +292,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2>{t('sections.testimonials')}</h2>
+            <h2>Lo que dicen nuestros clientes</h2>
           </div>
 
           <div className="testimonials-section">
@@ -316,7 +309,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         <div className="container">
           <div className="section-title-center">
             <h2 style={{ margin: 0 }}>
-              {t('sections.faq')}
+              Preguntas Frecuentes
             </h2>
           </div>
           
@@ -331,11 +324,11 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>{t('sections.ctaTitle')}</h2>
-          <p>{t('sections.ctaText')}</p>
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
           <Link href="/contacto" className="cta-button cta-button--light">
             <Calendar size={18} />
-            {t('sections.ctaButton')}
+            Agendar cita
           </Link>
         </div>
       </div>

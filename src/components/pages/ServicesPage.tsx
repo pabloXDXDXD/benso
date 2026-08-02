@@ -2,21 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowRight, Calendar, Search, RefreshCw } from 'lucide-react';
-import { Link } from '@/i18n/routing';
+import Link from 'next/link';
 import { BentoCard, Icon, ScrollReveal, AnimatedCard, ServicesGridSkeleton } from '@/components';
 import Grainient from '@/components/Grainient';
-import { useTranslations } from 'next-intl';
 import { useServicios, type Servicio } from '@/hooks/useData';
 import { ServiceRequestModal } from '@/components/ServiceRequestModal';
 
 type CategoryFilter = 'all' | 'contabilidad-finanzas' | 'marketing-marca' | 'soluciones-bi-digital' | 'administracion-gestion';
 
-const FILTERS: { value: CategoryFilter; labelKey: string }[] = [
-  { value: 'all', labelKey: 'filterAll' },
-  { value: 'contabilidad-finanzas', labelKey: 'filterFinanzas' },
-  { value: 'marketing-marca', labelKey: 'filterMarketing' },
-  { value: 'soluciones-bi-digital', labelKey: 'filterBIDigital' },
-  { value: 'administracion-gestion', labelKey: 'filterAdmon' },
+const FILTERS: { value: CategoryFilter; label: string }[] = [
+  { value: 'all', label: 'Todos' },
+  { value: 'contabilidad-finanzas', label: 'Contabilidad y Finanzas' },
+  { value: 'marketing-marca', label: 'Marketing y Marca' },
+  { value: 'soluciones-bi-digital', label: 'Soluciones BI y Digital' },
+  { value: 'administracion-gestion', label: 'Administración y Gestión' },
 ];
 
 export function ServicesPage({ initialServicios }: { initialServicios?: Servicio[] }) {
@@ -26,8 +25,6 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedServicio, setSelectedServicio] = useState<Servicio | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const t = useTranslations('services');
-  const home = useTranslations('home');
   const { servicios, loading, error, retry } = useServicios(initialServicios);
   const showLoading = !mounted || (loading && (initialServicios || []).length === 0);
 
@@ -54,14 +51,14 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
         <div className="container">
           <div className="section-title-row page-intro-title">
             <div className="section-title">
-              <h2>{t('pageTitle')}</h2>
+              <h2>Nuestros servicios</h2>
             </div>
             <div className="filter-controls">
               <div className="search-input-wrapper">
                 <Search size={18} className="search-icon" />
                 <input
                   type="text"
-                  placeholder={t('searchPlaceholder')}
+                  placeholder="Buscar servicios..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
@@ -74,7 +71,7 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
               >
                 {FILTERS.map(filter => (
                   <option key={filter.value} value={filter.value}>
-                    {t(filter.labelKey)}
+                    {filter.label}
                   </option>
                 ))}
               </select>
@@ -86,10 +83,10 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
           ) : error && servicios.length === 0 ? (
             <div className="bento-grid">
               <div className="bento-card">
-                <p>{t('loadError')}</p>
+                <p>No pudimos cargar los servicios. Revisa tu conexión e inténtalo de nuevo.</p>
                 <button onClick={retry} className="btn-add-cart btn-add-cart-full">
                   <RefreshCw size={16} />
-                  {t('retry')}
+                  Reintentar
                 </button>
               </div>
             </div>
@@ -108,7 +105,7 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
                   {service.subtitle && <p className="service-card-subtitle">{service.subtitle}</p>}
                   <div className="card-actions">
                     <button className="btn-view-more" onClick={() => openModal(service)}>
-                      {t('viewMoreInfo')}
+                      Ver más info
                       <ArrowRight size={15} />
                     </button>
                   </div>
@@ -125,11 +122,11 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>{home('sections.ctaTitle')}</h2>
-          <p>{home('sections.ctaText')}</p>
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
           <Link href="/contacto" className="cta-button cta-button--light">
             <Calendar size={18} />
-            {home('sections.ctaButton')}
+            Agendar cita
           </Link>
         </div>
       </div>

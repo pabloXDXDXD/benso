@@ -8,7 +8,6 @@ import Grainient from '@/components/Grainient';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, type Producto } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
-import { useTranslations } from 'next-intl';
 interface RequestItem {
   title: string;
   price: string;
@@ -28,16 +27,13 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
   const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
   const { addItem } = useCart();
   const { productos, loading, error, retry } = useProductos(initialProductos);
-  const t = useTranslations('products');
-  const common = useTranslations('common');
-  const home = useTranslations('home');
   const filters = [
-    { label: t('filterAll'), value: 'all' as CategoryFilter },
-    { label: t('filterAdhesivos'), value: 'adhesivos' as CategoryFilter },
-    { label: t('filterCarteleria'), value: 'carteleria' as CategoryFilter },
-    { label: t('filterPapeleria'), value: 'papeleria' as CategoryFilter },
-    { label: t('filterIndumentaria'), value: 'indumentaria' as CategoryFilter },
-    { label: t('filterMerchandising'), value: 'merchandising' as CategoryFilter },
+    { label: 'Todos', value: 'all' as CategoryFilter },
+    { label: 'Adhesivos', value: 'adhesivos' as CategoryFilter },
+    { label: 'Cartelería', value: 'carteleria' as CategoryFilter },
+    { label: 'Papelería', value: 'papeleria' as CategoryFilter },
+    { label: 'Indumentaria', value: 'indumentaria' as CategoryFilter },
+    { label: 'Merchandising', value: 'merchandising' as CategoryFilter },
   ];
 
   useEffect(() => { setMounted(true); }, []);
@@ -61,14 +57,14 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
       <div className="container">
         <div className="section-title-row page-intro-title">
           <div className="section-title">
-            <h2>{t('pageTitle')}</h2>
+            <h2>Nuestros productos</h2>
           </div>
           <div className="filter-controls">
             <div className="search-input-wrapper">
               <Search size={18} className="search-icon" />
               <input
                 type="text"
-                placeholder={t('searchPlaceholder')}
+                placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
@@ -95,17 +91,17 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
         ) : error && productos.length === 0 ? (
           <div className="bento-grid">
             <div className="bento-card">
-              <p>{t('loadError')}</p>
+              <p>No pudimos cargar los productos. Revisa tu conexión e inténtalo de nuevo.</p>
               <button onClick={retry} className="btn-add-cart btn-add-cart-full">
                 <RefreshCw size={16} />
-                {t('retry')}
+                Reintentar
               </button>
             </div>
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="bento-grid">
             <div className="bento-card">
-              <p>{t('empty')}</p>
+              <p>No hay productos disponibles</p>
             </div>
           </div>
         ) : (
@@ -116,7 +112,7 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
                   className={`interactive-card service-card${product.popular ? ' popular-card' : ''}`}
                   dataCategory={product.category}
                 >
-                  {product.popular && <span className="popular-tag">{t('popularTag')}</span>}
+                  {product.popular && <span className="popular-tag">#popular</span>}
                   {product.image ? (
                     <div className="product-image-container">
                       <Image 
@@ -130,7 +126,7 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
                     </div>
                   ) : (
                     <div className="product-image-placeholder">
-                      <span>{t('imageNotAvailable')}</span>
+                      <span>Imagen no disponible</span>
                     </div>
                   )}
                   <h3>{product.title}</h3>
@@ -148,7 +144,7 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
                         }}
                       >
                         <ShoppingCart size={16} />
-                        <span>{common('addToCart')}</span>
+                        <span>Añadir al carrito</span>
                       </button>
                   </div>
                 </BentoCard>
@@ -165,17 +161,17 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
           <Grainient className="absolute inset-0" />
         </div>
         <div className="container section-cta cta-card-content">
-          <h2>{home('sections.ctaTitle')}</h2>
-          <p>{home('sections.ctaText')}</p>
+          <h2>¿Listo para transformar tu negocio?</h2>
+          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
           <button
             className="cta-button cta-button--light"
             onClick={() => {
-              setRequestItem({ title: common('appointmentTitle'), price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
               setIsRequestOpen(true);
             }}
           >
             <Calendar size={18} />
-            {home('sections.ctaButton')}
+            Agendar cita
           </button>
         </div>
       </div>

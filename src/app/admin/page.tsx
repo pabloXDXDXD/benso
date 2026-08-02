@@ -40,9 +40,7 @@ interface Servicio {
   popular: boolean;
   image?: string;
   subtitle?: string;
-  subtitle_en?: string | null;
   includes?: string[];
-  includes_en?: string[] | null;
 }
 
 interface Evento {
@@ -87,10 +85,8 @@ interface Solicitud {
 interface Testimonial {
   id: number;
   quote: string;
-  quote_en: string;
   author: string;
   position: string;
-  position_en: string;
   image: string;
   is_active: boolean;
   sort_order: number;
@@ -99,9 +95,7 @@ interface Testimonial {
 interface Faq {
   id: number;
   question: string;
-  question_en: string;
   answer: string;
-  answer_en: string;
   is_active: boolean;
   sort_order: number;
 }
