@@ -50,3 +50,6 @@ tmp/
 scripts/
 .playwright-mcp/
 new/
+
+# brainstorming visual companion mockups
+.superpowers/
