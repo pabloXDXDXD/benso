@@ -73,6 +73,7 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
       setFormData(initialFormData);
       setErrors({});
       setSuccess(false);
@@ -82,9 +83,11 @@ export function EventRegistrationForm({ eventoId, eventoTitle, isOpen, onClose }
       mountedRef.current = true;
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [isOpen]);
 

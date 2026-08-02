@@ -1004,6 +1004,7 @@ nav ul li a.active::after {
     background: none;
     border: none;
     cursor: pointer;
+    text-decoration: none;
     color: var(--accent);
     font-weight: 600;
     font-size: 0.9rem;
@@ -1472,11 +1473,12 @@ section.alt-border {
 
 /* Service card — info-first layout (approved mockup Option A) */
 .service-card-subtitle {
-    color: var(--accent);
-    font-size: 0.8rem;
-    font-weight: 600;
-    line-height: 1.45;
-    margin: 0 0 0.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+    margin: 0 0 0.75rem;
+    flex-grow: 1;
 }
 
 .btn-view-more {
@@ -1502,27 +1504,14 @@ section.alt-border {
 }
 
 .skeleton-subtitle {
-    height: 14px;
+    height: 16px;
     width: 55%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 /* ===================================
    Service Request Modal (approved mockup Option A)
 =================================== */
-.svc-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 44, 106, 0.45);
-    z-index: 9998;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-}
-
 .svc-modal-panel {
     position: fixed;
     top: 50%;
@@ -1564,37 +1553,35 @@ section.alt-border {
 }
 
 .svc-modal-head {
-    padding: 1.4rem 1.5rem 0.9rem;
+    padding: 1.4rem 1.5rem 1rem;
     border-bottom: 1px solid #eef1f6;
 }
 
-.svc-modal-kicker {
-    margin: 0 0 0.25rem;
-    color: var(--accent);
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-}
-
 .svc-modal-title {
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.3rem;
     color: var(--secondary);
-    font-size: 1.15rem;
-    font-weight: 600;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
     line-height: 1.3;
-    font-family: var(--font-main);
 }
 
 .svc-modal-subtitle {
     margin: 0;
-    color: var(--accent);
-    font-size: 0.85rem;
-    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.svc-modal-required-note {
+    margin: 0 0 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 .svc-modal-body {
-    padding: 1rem 1.5rem 1.5rem;
+    padding: 1.1rem 1.5rem 1.5rem;
 }
 
 .svc-modal-body .svc-modal-desc {
@@ -1648,35 +1635,16 @@ section.alt-border {
     cursor: pointer;
     font-family: var(--font-main);
     font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.7rem 0.9rem;
-    border-radius: 10px;
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
     background: var(--primary);
     color: var(--white);
-    transition: background 0.2s ease, opacity 0.2s ease;
+    transition: background 0.25s ease, opacity 0.2s ease;
 }
 
-.svc-modal-btn:hover {
-    background: var(--accent);
-}
-
-.svc-modal-btn--secondary {
-    background: #ffffff;
-    color: var(--primary);
-    border: 1.5px solid var(--primary);
-}
-
-.svc-modal-btn--secondary:hover {
-    background: #eef4ff;
-}
-
-.svc-modal-btn--gradient {
-    background: linear-gradient(135deg, var(--accent), var(--secondary));
-}
-
-.svc-modal-btn--gradient:hover {
-    background: linear-gradient(135deg, var(--accent), var(--secondary));
-    opacity: 0.9;
+.svc-modal-btn:hover:not(:disabled) {
+    background: var(--secondary);
 }
 
 .svc-modal-btn:disabled {
@@ -1707,43 +1675,36 @@ section.alt-border {
 /* Form fields */
 .svc-modal-form label {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--secondary);
-    margin: 0.65rem 0 0.25rem;
+    color: #444;
+    margin: 1rem 0 0.4rem;
 }
 
 .svc-modal-form input,
 .svc-modal-form textarea {
     width: 100%;
-    border: 1px solid #d5dde9;
+    border: 2px solid var(--card-border, #e6e6e6);
     border-radius: 8px;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.85rem;
+    padding: 0.85rem 0.9rem;
+    font-size: 0.95rem;
     font-family: var(--font-main);
-    color: var(--text-primary);
+    color: #333;
     background: #ffffff;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
 }
 
 .svc-modal-form input:focus,
 .svc-modal-form textarea:focus {
-    outline: 2px solid rgba(0, 86, 208, 0.35);
+    outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0, 86, 208, 0.15);
 }
 
 .svc-modal-form textarea {
+    min-height: 100px;
     resize: vertical;
-}
-
-.svc-modal-chip {
-    display: inline-block;
-    background: #eef4ff;
-    color: var(--primary);
-    font-size: 0.7rem;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 0.2rem 0.65rem;
-    margin-bottom: 0.25rem;
 }
 
 .svc-modal-error {
@@ -5016,5 +4977,149 @@ footer {
     }
     .gallery-section-wrap .section-title {
         margin-bottom: 0.375rem;
+    }
+}
+
+/* ===================================
+   Service Detail Page
+=================================== */
+.service-detail {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 0 4rem;
+}
+
+.service-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-bottom: 1.75rem;
+}
+
+.service-detail-back:hover {
+    color: var(--accent);
+}
+
+.service-detail-header {
+    margin-bottom: 1.5rem;
+}
+
+.service-detail-title {
+    margin: 0 0 0.75rem;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    line-height: 1.15;
+}
+
+.service-detail-subtitle {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.service-detail-label {
+    margin: 0 0 0.75rem;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.service-detail-desc {
+    margin: 0 0 1.75rem;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.service-detail-includes-label {
+    margin: 0 0 0.75rem;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.service-detail-includes {
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.service-detail-includes li {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.service-detail-includes li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.service-detail-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: var(--radius);
+    margin: 0 0 2rem;
+    object-fit: cover;
+}
+
+.service-detail-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+}
+
+/* Service cards — title links to dedicated detail page */
+.service-card-header h3 a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.service-card-header h3 a:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 640px) {
+    .service-detail {
+        padding: 4rem 0 3rem;
+    }
+
+    .service-detail-title {
+        font-size: 1.9rem;
+    }
+
+    .service-detail-cta-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .service-detail-cta-row .cta-button,
+    .service-detail-cta-row .cta-whatsapp {
+        width: 100%;
     }
 }

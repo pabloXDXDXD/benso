@@ -3,15 +3,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Calendar, BadgeCheck, ArrowRight } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm, ServiceRequestModal } from '@/components';
+import { ShoppingCart, Calendar, BadgeCheck } from 'lucide-react';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
 import Grainient from '@/components/Grainient';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useCart } from '@/hooks/useCart';
 import { useProductos, useServicios, useEventos, useTestimonials, useFaqs } from '@/hooks/useData';
-import type { Producto, Servicio, Variant, Testimonial, Faq } from '@/hooks/useData';
+import type { Producto, Variant, Testimonial, Faq } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
+import { serviceSlug } from '@/lib/slugify';
 
 function getProductImage(category: string, productImage: string): string {
   if (productImage && productImage.trim() !== '') {
@@ -30,8 +31,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const [isVariantOpen, setIsVariantOpen] = useState(false);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const [selectedServicio, setSelectedServicio] = useState<Servicio | null>(null);
-  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const { addItem } = useCart();
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
@@ -160,16 +159,11 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                   </div>
                   {service.subtitle && <p className="service-card-subtitle">{service.subtitle}</p>}
                   <div className="card-actions">
-                    <button
-                      className="btn-view-more"
-                      onClick={() => {
-                        setSelectedServicio(service);
-                        setIsServiceModalOpen(true);
-                      }}
-                    >
-                      Ver más info
-                      <ArrowRight size={15} />
-                    </button>                  </div>
+                    <Link href={`/servicios/${serviceSlug(service, servicios)}`} className="event-cta-link">
+                      <span>Ver más info</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </Link>
+                  </div>
                 </BentoCard>
               </AnimatedCard>
             ))}
@@ -350,12 +344,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           onClose={() => { setIsRegistrationOpen(false); setRegistrationEvent(null); }}
         />
       )}
-
-      <ServiceRequestModal
-        servicio={selectedServicio}
-        open={isServiceModalOpen}
-        onClose={() => setIsServiceModalOpen(false)}
-      />
     </>
   );
 }

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle2, AlertCircle, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Servicio } from '@/hooks/useData';
 
-type View = 'details' | 'form' | 'success';
+type View = 'form' | 'success';
 
 interface ServiceRequestModalProps {
   servicio: Servicio | null;
@@ -13,18 +13,10 @@ interface ServiceRequestModalProps {
   onClose: () => void;
 }
 
-// Category slug -> display label
-const CATEGORY_LABELS: Record<string, string> = {
-  'contabilidad-finanzas': 'Contabilidad y Finanzas',
-  'marketing-marca': 'Marketing y Marca',
-  'soluciones-bi-digital': 'Soluciones BI y Digital',
-  'administracion-gestion': 'Administración y Gestión',
-};
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestModalProps) {
-  const [view, setView] = useState<View>('details');
+  const [view, setView] = useState<View>('form');
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -32,11 +24,25 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Lock background scroll while the modal is open (same behavior as the other modals).
+  // Block both <body> AND <html>: this site sets `html { overflow-x: clip }`, which breaks
+  // body->viewport overflow propagation, so body-only locking does NOT stop scrolling.
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [open]);
+
   if (!open || !servicio) return null;
 
   const handleClose = () => {
     onClose();
-    setView('details');
+    setView('form');
     setNombre('');
     setEmail('');
     setTelefono('');
@@ -44,10 +50,6 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
     setError(null);
     setSaving(false);
   };
-
-  const categoryLabel = CATEGORY_LABELS[servicio.category];
-  const whatsappLink = (servicio as Servicio & { whatsappLink?: string }).whatsapp_link ||
-    (servicio as Servicio & { whatsappLink?: string }).whatsappLink;
 
   // Static JSON ids are display-only and may not match DB ids (sequence drift);
   // only forward a plausible DB id, otherwise snapshot the title with null id.
@@ -101,52 +103,15 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
           ×
         </button>
 
-        {view === 'details' && (
-          <>
-            <div className="svc-modal-head">
-              {categoryLabel && <p className="svc-modal-kicker">{categoryLabel}</p>}
-              <h3 className="svc-modal-title" id="svc-modal-title">{servicio.title}</h3>
-              {servicio.subtitle && <p className="svc-modal-subtitle">{servicio.subtitle}</p>}
-            </div>
-            <div className="svc-modal-body">
-              <p className="svc-modal-desc">{servicio.description}</p>
-              {servicio.includes && servicio.includes.length > 0 && (
-                <>
-                  <p className="svc-modal-includes-label">Qué incluye</p>
-                  <ul className="svc-modal-includes">
-                    {servicio.includes.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              <button className="svc-modal-btn" onClick={() => setView('form')}>
-                <Send size={16} />
-                Solicitar servicio
-              </button>
-              {whatsappLink && (
-                <p className="svc-modal-note">
-                  ¿Prefieres hablar directo?{' '}
-                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                    Contáctanos por WhatsApp
-                  </a>{' '}
-                  para resolver dudas antes de solicitar.
-                </p>
-              )}
-            </div>
-          </>
-        )}
-
         {view === 'form' && (
           <>
             <div className="svc-modal-head">
-              <p className="svc-modal-kicker">Solicitar servicio</p>
-              <h3 className="svc-modal-title" id="svc-modal-title">{servicio.title}</h3>
-              <p className="svc-modal-subtitle">Cuéntanos qué necesitas y un especialista te contactará.</p>
+              <h3 className="svc-modal-title" id="svc-modal-title">Solicitud de servicio</h3>
+              <p className="svc-modal-subtitle">Completa el formulario y un especialista te contactará.</p>
             </div>
             <div className="svc-modal-body svc-modal-form">
               <form onSubmit={handleSubmit} noValidate>
-                <span className="svc-modal-chip">Sin compromiso</span>
+                <p className="svc-modal-required-note">Los campos marcados con * son obligatorios.</p>
 
                 <label htmlFor="svc-nombre">Nombre completo *</label>
                 <input
@@ -191,19 +156,11 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
 
                 <button
                   type="submit"
-                  className="svc-modal-btn svc-modal-btn--gradient"
+                  className="svc-modal-btn"
                   disabled={saving}
                 >
                   <Send size={16} />
                   Enviar solicitud
-                </button>
-                <button
-                  type="button"
-                  className="svc-modal-btn svc-modal-btn--secondary"
-                  style={{ marginTop: '0.65rem' }}
-                  onClick={() => { setError(null); setView('details'); }}
-                >
-                  ← Volver a los detalles
                 </button>
               </form>
             </div>
@@ -223,6 +180,21 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        .svc-modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 9998;
+          backdrop-filter: blur(3px);
+          overscroll-behavior: contain;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+        }
+      `}</style>
     </>
   );
 }
