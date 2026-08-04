@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import useSWR from 'swr';
 import { supabase } from '@/lib/supabase';
+import { mapVariants } from '@/lib/variants';
 
 export interface Variant {
   label: string;
@@ -76,17 +77,7 @@ const EVENTOS_KEY = 'eventos';
 const TESTIMONIALS_KEY = 'testimonials';
 const FAQS_KEY = 'faqs';
 
-function mapVariants(product: any): Producto {
-  if (product.variants && Array.isArray(product.variants)) {
-    product.variants = product.variants.map((v: any) => ({
-      label: v.label,
-      unitPrice: v.unit_price ?? v.unitPrice,
-      totalPrice: v.total_price ?? v.totalPrice,
-      description: v.description,
-    }));
-  }
-  return product as Producto;
-}
+export { mapVariants }; // shared with server components via @/lib/variants
 
 export function useProductos(fallbackData?: Producto[]) {
   const fetcher = useCallback(async () => {

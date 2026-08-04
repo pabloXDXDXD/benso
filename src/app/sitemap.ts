@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
-import type { Servicio } from '@/hooks/useData';
-import { serviceSlug } from '@/lib/slugify';
+import type { Producto, Servicio } from '@/hooks/useData';
+import { productSlug, serviceSlug } from '@/lib/slugify';
 import { supabase } from '@/lib/supabase';
 
 const baseUrl = 'https://www.bensofcg.com';
@@ -42,5 +42,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     serviceEntries = [];
   }
 
-  return [...staticEntries, ...serviceEntries];
+  let productEntries: MetadataRoute.Sitemap = [];
+  try {
+    const { data, error } = await supabase
+      .from('productos')
+      .select('*')
+      .eq('is_active', true);
+    if (!error && data) {
+      const productos = data as Producto[];
+      productEntries = productos.map((product) => ({
+        url: `${baseUrl}/productos/${productSlug(product, productos)}/`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.7,
+      }));
+    }
+  } catch {
+    productEntries = [];
+  }
+
+  return [...staticEntries, ...serviceEntries, ...productEntries];
 }

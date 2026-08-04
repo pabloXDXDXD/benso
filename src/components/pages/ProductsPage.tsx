@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ShoppingCart, Calendar, Search, RefreshCw } from 'lucide-react';
-import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, VariantSelectionDialog, AnimatedCard, ScrollReveal } from '@/components';
+import Link from 'next/link';
+import { ArrowRight, Calendar, Search, RefreshCw } from 'lucide-react';
+import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, AnimatedCard, ScrollReveal } from '@/components';
 import Grainient from '@/components/Grainient';
-import { useCart } from '@/hooks/useCart';
 import { useProductos, type Producto } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
+import { productSlug } from '@/lib/slugify';
 interface RequestItem {
   title: string;
   price: string;
@@ -24,8 +25,6 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
-  const { addItem } = useCart();
   const { productos, loading, error, retry } = useProductos(initialProductos);
   const filters = [
     { label: 'Todos', value: 'all' as CategoryFilter },
@@ -133,19 +132,10 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
                   <p>{product.description}</p>
                   <span className="card-price"><PriceDisplay price={product.price} priceNum={product.price_num} /></span>
                   <div className="card-actions">
-                    <button
-                        className="btn-add-cart btn-add-cart-full"
-                        onClick={() => {
-                          if (product.variants && product.variants.length > 0) {
-                            setSelectedProduct(product);
-                          } else {
-                            addItem(product.title, 'Único', product.price_num);
-                          }
-                        }}
-                      >
-                        <ShoppingCart size={16} />
-                        <span>Añadir al carrito</span>
-                      </button>
+                    <Link href={`/productos/${productSlug(product, productos)}`} className="event-cta-link">
+                      <span>Ver detalles</span>
+                      <ArrowRight size={16} className="arrow-right" />
+                    </Link>
                   </div>
                 </BentoCard>
               </AnimatedCard>
@@ -175,21 +165,6 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
           </button>
         </div>
       </div>
-
-      {selectedProduct && (
-        <VariantSelectionDialog
-          product={{
-            id: selectedProduct.id,
-            title: selectedProduct.title,
-            description: selectedProduct.description,
-            image: selectedProduct.image,
-            variants: selectedProduct.variants,
-            category: selectedProduct.category,
-          }}
-          isOpen={!!selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-        />
-      )}
 
       <RequestModal
         item={requestItem}

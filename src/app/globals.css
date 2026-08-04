@@ -2801,6 +2801,32 @@ section.alt-border {
     height: 16px;
 }
 
+/* Outline "Ver detalles" button on product cards */
+.btn-outline-card {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.55rem 1.3rem;
+    min-height: 42px;
+    line-height: 1;
+}
+
+.btn-outline-card:hover {
+    background: var(--primary);
+    color: #ffffff;
+}
+
 /* ===================================
    Promo Banner
 =================================== */
@@ -5093,6 +5119,227 @@ footer {
     padding-top: 1.5rem;
 }
 
+/* Product detail page — e-commerce layout */
+.product-detail {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 0 4rem;
+}
+
+.product-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-bottom: 1.75rem;
+}
+
+.product-detail-back:hover {
+    color: var(--accent);
+}
+
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.product-detail-media {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #f8f8f8;
+    position: sticky;
+    top: calc(var(--navbar-height, 0px) + 1rem);
+}
+
+.product-detail-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.product-detail-image-placeholder {
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+}
+
+.product-detail-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-detail-title {
+    margin: 0 0 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    line-height: 1.15;
+}
+
+.product-detail-desc {
+    margin: 0 0 1.5rem;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.product-detail-price {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 1.5rem;
+}
+
+/* Product purchase panel (PDP) */
+.pdp-section {
+    margin-bottom: 1.25rem;
+}
+
+.pdp-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pdp-variants {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+}
+
+.pdp-variant {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid #e6e6e6;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: var(--font-main);
+    width: 100%;
+}
+
+.pdp-variant:hover {
+    border-color: var(--accent);
+}
+
+.pdp-variant--sel {
+    border-color: var(--primary);
+    background: rgba(0,65,157,0.04);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.pdp-variant-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.pdp-variant-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.pdp-variant-desc {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.pdp-variant-price {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.pdp-qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.pdp-qty-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+    transition: background 0.2s;
+}
+
+.pdp-qty-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.pdp-qty-btn:not(:disabled):hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+.pdp-qty-val {
+    font-weight: 700;
+    font-size: 1.05rem;
+    min-width: 2.5rem;
+    text-align: center;
+    color: var(--dark);
+}
+
+.pdp-totals {
+    padding-top: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.pdp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.pdp-row--final {
+    border-top: 1px solid #eee;
+    margin-top: 0.3rem;
+    padding-top: 0.7rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.pdp-final {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+}
+
 /* Service cards — title links to dedicated detail page */
 .service-card-header h3 a {
     color: inherit;
@@ -5102,6 +5349,17 @@ footer {
 
 .service-card-header h3 a:hover {
     color: var(--accent);
+}
+
+@media (max-width: 900px) {
+    .product-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+    }
+
+    .product-detail-media {
+        position: static;
+    }
 }
 
 @media (max-width: 640px) {
@@ -5121,5 +5379,22 @@ footer {
     .service-detail-cta-row .cta-button,
     .service-detail-cta-row .cta-whatsapp {
         width: 100%;
+    }
+
+    .product-detail {
+        padding: 4rem 0 3rem;
+    }
+
+    .product-detail-title {
+        font-size: 1.8rem;
+    }
+
+    .pdp-variants {
+        grid-template-columns: 1fr;
+    }
+
+    .product-detail-cta-row {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

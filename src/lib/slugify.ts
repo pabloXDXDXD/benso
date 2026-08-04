@@ -1,4 +1,4 @@
-import type { Servicio } from '@/hooks/useData';
+import type { Producto, Servicio } from '@/hooks/useData';
 
 export function slugify(input: string): string {
   return input
@@ -21,5 +21,19 @@ export function findBySlug(servicios: Servicio[], slug: string): Servicio | unde
   return servicios.find(
     (service) =>
       slug === slugify(service.title) || slug === `${slugify(service.title)}-${service.id}`,
+  );
+}
+
+export function productSlug(product: Producto, all: Producto[]): string {
+  const base = slugify(product.title);
+  const colliding = all.filter((p) => slugify(p.title) === base);
+  if (colliding.length <= 1) return base;
+  return colliding[0].id === product.id ? base : `${base}-${product.id}`;
+}
+
+export function findProductBySlug(productos: Producto[], slug: string): Producto | undefined {
+  return productos.find(
+    (product) =>
+      slug === slugify(product.title) || slug === `${slugify(product.title)}-${product.id}`,
   );
 }
