@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
       // Locale prefixes no longer exist; consolidate to single-language Spanish URLs.
       { source: '/es/:path*', destination: '/:path*', permanent: true },
       { source: '/en/:path*', destination: '/:path*', permanent: true },
+      // Old /eventos route moved under /formacion (categorized by tipo).
+      { source: '/eventos', destination: '/formacion/eventos', permanent: true },
     ];
   },
 };

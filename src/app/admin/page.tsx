@@ -50,6 +50,8 @@ interface Evento {
   date: string;
   status: string;
   image?: string;
+  categoria?: string;
+  icon?: string;
 }
 
 interface Pedido {
@@ -526,6 +528,8 @@ export default function AdminPage() {
       if (createTable === 'eventos') {
         data.date = createData.date || '';
         data.status = createData.status || 'Proximamente';
+        data.categoria = createData.category || 'evento';
+        data.icon = createData.icon || 'calendar';
       }
     }
     try {
@@ -1260,6 +1264,7 @@ export default function AdminPage() {
                         <col style={{ width: getColWidth('ev-desc', colWidths) }} />
                         <col style={{ width: getColWidth('ev-fecha', colWidths) }} />
                         <col style={{ width: getColWidth('ev-estado', colWidths) }} />
+                        <col style={{ width: getColWidth('ev-cat', colWidths) }} />
                         <col style={{ width: getColWidth('ev-acciones', colWidths) }} />
                       </colgroup>
                       <thead>
@@ -1270,6 +1275,7 @@ export default function AdminPage() {
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="ev-desc" /></th>
                           <th style={{position:'relative'}}>Fecha<ColResizeHandle col="ev-fecha" /></th>
                           <th style={{position:'relative'}}>Estado<ColResizeHandle col="ev-estado" /></th>
+                          <th style={{position:'relative'}}>Categoría<ColResizeHandle col="ev-cat" /></th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="ev-acciones" /></th>
                         </tr>
                       </thead>
@@ -1345,6 +1351,31 @@ export default function AdminPage() {
                                 <span className={`status-badge ${e.status}`}>
                                   {e.status === 'En Curso' ? <CalendarCheck size={12} /> : <Clock size={12} />}
                                   {e.status}
+                                </span>
+                              )}
+                            </td>
+                            <td>
+                              {editingId === e.id ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  <select
+                                    value={editData.categoria || 'evento'}
+                                    onChange={(ev) => setEditData({...editData, categoria: ev.target.value})}
+                                    className="edit-select"
+                                  >
+                                    <option value="taller">Taller</option>
+                                    <option value="curso">Curso</option>
+                                    <option value="evento">Evento</option>
+                                  </select>
+                                  <input
+                                    value={editData.icon || ''}
+                                    onChange={(ev) => setEditData({...editData, icon: ev.target.value})}
+                                    className="edit-input"
+                                    placeholder="icono"
+                                  />
+                                </div>
+                              ) : (
+                                <span className="status-badge">
+                                  {e.categoria ? e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1) : 'Evento'}
                                 </span>
                               )}
                             </td>
@@ -1661,6 +1692,18 @@ export default function AdminPage() {
                     <option value="Proximamente">Próximamente</option>
                     <option value="En Curso">En Curso</option>
                   </select>
+                  <label>Categoría</label>
+                  <select value={createData.category || ''} onChange={(e) => setCreateData({...createData, category: e.target.value})}>
+                    <option value="">Seleccionar...</option>
+                    <option value="taller">Taller</option>
+                    <option value="curso">Curso</option>
+                    <option value="evento">Evento</option>
+                  </select>
+                  <label>Icono</label>
+                  <input value={createData.icon || ''} onChange={(e) => setCreateData({...createData, icon: e.target.value})} placeholder="Ej: calendar, tools, graduation" />
+                  <small style={{ display: 'block', color: '#777', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                    Disponibles: calendar, globe, people, chart, tools, graduation, document, star, heart, leaf, bolt, box, money, grid, check, info, computer, trending, quote, starFilled
+                  </small>
                 </>
               )}
 

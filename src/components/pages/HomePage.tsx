@@ -235,7 +235,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         <div className="container">
           <div className="section-title section-title-home">
             <h2><span>Próximos eventos</span></h2>
-            <Link href="/eventos" className="text-cta-link">
+            <Link href="/formacion/eventos" className="text-cta-link">
               Ver más →
             </Link>
           </div>
@@ -245,7 +245,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           ) : upcomingEvents.length === 0 ? (
             <div className="empty-section">
               <p>No hay próximos eventos por el momento.</p>
-              <Link href="/eventos" className="text-cta-link">Ver historial de eventos →</Link>
+              <Link href="/formacion/eventos" className="text-cta-link">Ver historial de eventos →</Link>
             </div>
           ) : (
           <div className="bento-grid-events">

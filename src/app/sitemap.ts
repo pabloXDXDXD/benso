@@ -10,7 +10,9 @@ const pages = [
   { path: '' },
   { path: '/servicios' },
   { path: '/productos' },
-  { path: '/eventos' },
+  { path: '/formacion/talleres' },
+  { path: '/formacion/cursos' },
+  { path: '/formacion/eventos' },
   { path: '/nosotros' },
   { path: '/contacto' },
 ];

@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ChevronDown } from 'lucide-react';
 import { CurrencySelector } from '@/components/CurrencySelector';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFormacionOpen, setIsFormacionOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === '/';
@@ -49,8 +51,16 @@ export function Header() {
     return normalizedPathname === normalizedPath ? 'active' : '';
   };
 
+  const isFormacionActive = pathname.replace(/\/$/, '').startsWith('/formacion');
+
+  // Cierra el submenú de Formación al navegar a otra ruta
+  useEffect(() => {
+    setIsFormacionOpen(false);
+  }, [pathname]);
+
   const closeMenu = () => {
     setIsMenuOpen(false);
+    setIsFormacionOpen(false);
   };
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -101,7 +111,24 @@ export function Header() {
               <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>Inicio</Link></li>
               <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>Servicios</Link></li>
               <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>Productos</Link></li>
-              <li><Link href="/eventos" className={isActive('/eventos')} onClick={closeMenu}>Eventos</Link></li>
+              <li className="nav-dropdown">
+                <button
+                  className={`nav-dropdown-toggle${isFormacionActive ? ' active' : ''}`}
+                  onClick={() => setIsFormacionOpen(!isFormacionOpen)}
+                  aria-haspopup="true"
+                  aria-expanded={isFormacionOpen}
+                >
+                  Formación
+                  <ChevronDown size={14} className={`nav-dropdown-chevron${isFormacionOpen ? ' open' : ''}`} />
+                </button>
+                {isFormacionOpen && (
+                  <ul className="nav-dropdown-menu">
+                    <li><Link href="/formacion/talleres" onClick={closeMenu}>Talleres</Link></li>
+                    <li><Link href="/formacion/cursos" onClick={closeMenu}>Cursos</Link></li>
+                    <li><Link href="/formacion/eventos" onClick={closeMenu}>Eventos</Link></li>
+                  </ul>
+                )}
+              </li>
               <li><Link href="/nosotros" className={isActive('/nosotros')} onClick={closeMenu}>Nosotros</Link></li>
               <li><Link href="/contacto" className={isActive('/contacto')} onClick={closeMenu}>Contacto</Link></li>
             </ul>

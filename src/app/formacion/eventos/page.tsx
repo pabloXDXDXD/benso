@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { EventsPage } from '@/components/pages/EventsPage';
+import { FormacionPage } from '@/components/pages/FormacionPage';
 import type { Evento } from '@/hooks/useData';
 import { supabase } from '@/lib/supabase';
 import { withRetry } from '@/lib/withRetry';
@@ -7,11 +7,11 @@ import { withRetry } from '@/lib/withRetry';
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: 'Eventos y Talleres para Emprendedores en Cuba',
-  description: 'Talleres, cursos y eventos para emprendedores en Cuba. Inscríbete y adquiere las habilidades clave para hacer crecer tu negocio con BENSO.',
+  title: 'Eventos para Emprendedores en Cuba | BENSO',
+  description: 'Eventos para emprendedores en Cuba. Mantente al día con las actividades y encuentros de BENSO.',
   openGraph: {
-    title: 'Eventos y Talleres - BENSO',
-    description: 'Talleres, cursos y eventos para emprendedores en Cuba. Inscríbete ya.',
+    title: 'Eventos para Emprendedores - BENSO',
+    description: 'Eventos para emprendedores en Cuba. Participa ya.',
   },
 };
 
@@ -21,6 +21,7 @@ export default async function Page() {
       .from('eventos')
       .select('*')
       .eq('is_active', true)
+      .eq('categoria', 'evento')
       .order('created_at', { ascending: false })
   );
 
@@ -77,7 +78,7 @@ export default async function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }} />
-      <EventsPage initialEventos={items} />
+      <FormacionPage categoria="evento" initialEventos={items} />
     </>
   );
 }

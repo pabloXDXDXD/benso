@@ -282,6 +282,88 @@ nav ul li a.active::after {
     left: 50%;
 }
 
+/* Nav dropdown "Formación" */
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 500;
+    padding: 0.35rem 0.5rem;
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.nav-dropdown-toggle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.85);
+    transition: width 0.3s ease, left 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-dropdown:hover .nav-dropdown-toggle::after,
+.nav-dropdown-toggle.active::after {
+    width: 60%;
+    left: 50%;
+}
+
+.nav-dropdown-chevron {
+    transition: transform 0.2s ease;
+}
+
+.nav-dropdown-chevron.open {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    min-width: 150px;
+    padding: 0.35rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    z-index: 1000;
+}
+
+.nav-dropdown-menu li a {
+    display: block;
+    padding: 0.6rem 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.nav-dropdown-menu li a::after {
+    content: none;
+}
+
+.nav-dropdown-menu li a:hover {
+    background: #f0f0f0;
+}
+
 .cta-header {
     background: var(--whatsapp);
     color: var(--white);
@@ -1279,6 +1361,19 @@ section.alt-border {
 
 .page-intro-title {
     margin-top: 2.75rem;
+}
+
+.formacion-intro-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.formacion-intro-heading .icon-svg {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    color: var(--primary);
 }
 
 .section-title-center h2 {
@@ -3751,6 +3846,36 @@ footer {
     nav:not(.admin-nav) ul li a:hover::after,
     nav:not(.admin-nav) ul li a.active::after {
         width: 30%;
+    }
+
+    .nav-dropdown-toggle {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 1.2rem 1rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    .nav-dropdown-menu {
+        position: static;
+        transform: none;
+        margin: 0 1rem 0.5rem;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: none;
+        gap: 0;
+    }
+
+    .nav-dropdown-menu li a {
+        display: block;
+        padding: 0.9rem 1rem;
+        color: var(--white);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .nav-dropdown-menu li a:hover {
+        background: rgba(255, 255, 255, 0.08);
     }
 
     .menu-toggle {

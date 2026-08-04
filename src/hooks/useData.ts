@@ -51,6 +51,7 @@ export interface Evento {
   is_active: boolean;
   image: string;
   icon: string;
+  categoria?: string;
 }
 
 export interface Testimonial {
