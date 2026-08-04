@@ -40,11 +40,18 @@ export default async function Page() {
         description: item.description,
         image: item.image ? `https://bensofcg.com${item.image}` : undefined,
         category: item.category,
+        brand: { '@type': 'Brand', name: 'BENSO' },
+        sku: String(item.id),
         offers: {
           '@type': 'Offer',
           price: item.price_num,
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
+          hasMerchantReturnPolicy: {
+            '@type': 'MerchantReturnPolicy',
+            applicableCountry: 'CU',
+            returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+          },
         },
       },
     })),
