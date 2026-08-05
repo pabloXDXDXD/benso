@@ -242,9 +242,9 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
 
             <div className="reg-content">
               <form ref={formRef} onSubmit={handleSubmit} noValidate>
-                <div className="form-section">
-                  <h3>Datos de contacto</h3>
+                <p className="reg-required-note">Los campos marcados con * son obligatorios.</p>
 
+                <div className="form-section">
                   {/* Correo electrónico */}
                   <div className={`form-group ${errors.correo_electronico ? 'reg-field-error' : ''}`}>
                     <label htmlFor="reg-email">Correo electrónico *</label>
@@ -260,7 +260,6 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
                       aria-invalid={!!errors.correo_electronico}
                       aria-describedby={errors.correo_electronico ? 'err-correo_electronico' : undefined}
                     />
-                    <span className="reg-helptext">Te enviaremos los materiales y el acceso al aula.</span>
                     {errors.correo_electronico && (
                       <span className="form-error" id="err-correo_electronico" role="alert">{errors.correo_electronico}</span>
                     )}
@@ -281,7 +280,6 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
                       aria-invalid={!!errors.telefono}
                       aria-describedby={errors.telefono ? 'err-telefono' : undefined}
                     />
-                    <span className="reg-helptext">Facilita una vía de contacto directo.</span>
                     {errors.telefono && (
                       <span className="form-error" id="err-telefono" role="alert">{errors.telefono}</span>
                     )}
@@ -289,8 +287,6 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
                 </div>
 
                 <div className="form-section">
-                  <h3>Sobre ti</h3>
-
                   {/* Nivel de estudios */}
                   <div className={`form-group ${errors.nivel_estudios ? 'reg-field-error' : ''}`}>
                     <label htmlFor="reg-estudios">Nivel de estudios *</label>
@@ -392,8 +388,6 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
                 </div>
 
                 <div className="form-section">
-                  <h3>Motivación</h3>
-
                   {/* Motivación */}
                   <div className={`form-group ${errors.motivacion ? 'reg-field-error' : ''}`}>
                     <label htmlFor="reg-motivacion">¿Qué te motiva a tomar este {tipo}? *</label>
@@ -415,8 +409,6 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
                 </div>
 
                 <div className="form-section">
-                  <h3>Compromiso</h3>
-
                   {/* Acuerdo de aprendizaje */}
                   <div className={`form-group reg-checkbox-field ${errors.acuerdo_aprendizaje ? 'reg-field-error' : ''}`}>
                     <label className="reg-checkbox-label">
@@ -567,14 +559,10 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
         .form-section {
           margin-bottom: 1.5rem;
         }
-        .form-section h3 {
-          font-size: 1rem;
-          color: var(--primary);
-          margin: 0 0 1rem;
-          font-family: var(--font-main);
-          font-weight: 600;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid var(--light-gray);
+        .reg-required-note {
+          font-size: 0.82rem;
+          color: #888;
+          margin: 0 0 1.25rem;
         }
         fieldset.form-group {
           border: none;
@@ -604,12 +592,6 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
         .reg-field-error select {
           border-color: #e74c3c;
         }
-        .reg-helptext {
-          display: block;
-          font-size: 0.82rem;
-          color: #888;
-          margin-top: 0.3rem;
-        }
         .reg-radio-group {
           display: flex;
           gap: 1.5rem;
@@ -626,6 +608,8 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
           margin: 0;
           cursor: pointer;
           accent-color: var(--accent);
+          width: auto;
+          flex: 0 0 auto;
         }
         .reg-checkbox-label {
           display: flex;
@@ -641,6 +625,8 @@ export function EventRegistrationForm({ eventoId, eventoTitle, tipo = 'evento', 
           margin-top: 3px;
           cursor: pointer;
           accent-color: var(--accent);
+          width: auto;
+          flex: 0 0 auto;
         }
         .reg-conditional {
           overflow: hidden;
