@@ -7,7 +7,7 @@ import { RequestModal } from './RequestModal';
 
 export function PromoBanner() {
   const bannerRef = useRef<HTMLButtonElement>(null);
-  const [evento, setEvento] = useState<{ id: number; title: string } | null>(null);
+  const [evento, setEvento] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
   const [isRegOpen, setIsRegOpen] = useState(false);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
 
@@ -26,13 +26,17 @@ export function PromoBanner() {
   useEffect(() => {
     supabase
       .from('eventos')
-      .select('id, title')
+      .select('id, title, categoria')
       .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setEvento(data);
+        if (data) setEvento({
+          id: data.id,
+          title: data.title,
+          tipo: (data.categoria || 'evento') as 'taller' | 'curso' | 'evento',
+        });
       });
   }, []);
 
@@ -65,6 +69,7 @@ export function PromoBanner() {
         <EventRegistrationForm
           eventoId={evento.id}
           eventoTitle={evento.title}
+          tipo={evento.tipo}
           isOpen={isRegOpen}
           onClose={() => setIsRegOpen(false)}
         />

@@ -36,7 +36,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
 } = {}) {
   const [mounted, setMounted] = useState(false);
 
-  const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
+  const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
@@ -47,8 +47,8 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const showProductos = !mounted || productosLoading;
   const showEventos = !mounted || eventosLoading;
 
-  const openRegistration = (eventId: number, eventTitle: string) => {
-    setRegistrationEvent({ id: eventId, title: eventTitle });
+  const openRegistration = (eventId: number, eventTitle: string, tipo: 'taller' | 'curso' | 'evento') => {
+    setRegistrationEvent({ id: eventId, title: eventTitle, tipo });
     setIsRegistrationOpen(true);
   };
 
@@ -269,7 +269,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                   <div className="card-actions event-card-actions">
                     <button
                       className="event-cta-link"
-                      onClick={() => openRegistration(event.id, event.title)}
+                      onClick={() => openRegistration(event.id, event.title, (event.categoria || 'evento') as 'taller' | 'curso' | 'evento')}
                     >
                       <span>Inscribirme</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -333,6 +333,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         <EventRegistrationForm
           eventoId={registrationEvent.id}
           eventoTitle={registrationEvent.title}
+          tipo={registrationEvent.tipo}
           isOpen={isRegistrationOpen}
           onClose={() => { setIsRegistrationOpen(false); setRegistrationEvent(null); }}
         />

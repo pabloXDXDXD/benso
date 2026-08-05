@@ -64,7 +64,7 @@ function getMonthLabel(dateStr: string): string {
 export function FormacionPage({ categoria, initialEventos }: { categoria: 'taller' | 'curso' | 'evento'; initialEventos?: Evento[] }) {
   const [mounted, setMounted] = useState(false);
   const { eventos, loading, error, retry } = useEventos(initialEventos);
-  const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
+  const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
@@ -139,7 +139,7 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
           <button
             className="event-cta-link"
             onClick={() => {
-              setRegistrationEvent({ id: event.id, title: event.title });
+              setRegistrationEvent({ id: event.id, title: event.title, tipo: categoria });
               setIsRegistrationOpen(true);
             }}
           >
@@ -316,6 +316,7 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
       <EventRegistrationForm
         eventoId={registrationEvent?.id ?? 0}
         eventoTitle={registrationEvent?.title ?? ''}
+        tipo={registrationEvent?.tipo ?? 'evento'}
         isOpen={isRegistrationOpen}
         onClose={() => setIsRegistrationOpen(false)}
       />
