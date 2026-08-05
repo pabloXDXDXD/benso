@@ -3,16 +3,25 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Calendar, BadgeCheck } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, VariantSelectionDialog, EventRegistrationForm } from '@/components';
+import { Calendar, BadgeCheck, ArrowRight } from 'lucide-react';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, EventRegistrationForm } from '@/components';
 import Grainient from '@/components/Grainient';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
-import { useCart } from '@/hooks/useCart';
 import { useProductos, useServicios, useEventos, useTestimonials, useFaqs } from '@/hooks/useData';
-import type { Producto, Variant, Testimonial, Faq } from '@/hooks/useData';
+import type { Producto, Testimonial, Faq, Evento } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
-import { serviceSlug } from '@/lib/slugify';
+import { serviceSlug, productSlug } from '@/lib/slugify';
+
+const CATEGORIA_LABELS: Record<string, string> = {
+  taller: 'Taller',
+  curso: 'Curso',
+  evento: 'Evento',
+};
+
+function categoriaLabel(event: Evento): string {
+  return CATEGORIA_LABELS[event.categoria || 'evento'] || 'Evento';
+}
 
 function getProductImage(category: string, productImage: string): string {
   if (productImage && productImage.trim() !== '') {
@@ -27,11 +36,8 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
 } = {}) {
   const [mounted, setMounted] = useState(false);
 
-  const [variantProduct, setVariantProduct] = useState<Producto | null>(null);
-  const [isVariantOpen, setIsVariantOpen] = useState(false);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const { addItem } = useCart();
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
   const { eventos, loading: eventosLoading } = useEventos();
@@ -40,11 +46,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const showServicios = !mounted || serviciosLoading;
   const showProductos = !mounted || productosLoading;
   const showEventos = !mounted || eventosLoading;
-
-  const openVariantDialog = (product: Producto) => {
-    setVariantProduct(product);
-    setIsVariantOpen(true);
-  };
 
   const openRegistration = (eventId: number, eventTitle: string) => {
     setRegistrationEvent({ id: eventId, title: eventTitle });
@@ -193,11 +194,14 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           <div className="bento-grid bento-grid-center">
             {featuredProducts.map((product, index) => (
               <AnimatedCard key={product.id} index={index}>
-                <BentoCard className="interactive-card service-card">
+                <BentoCard
+                  className={`interactive-card service-card${product.popular ? ' popular-card' : ''}`}
+                  dataCategory={product.category}
+                >
                   {product.popular && <span className="popular-tag">#popular</span>}
                   {product.image ? (
                     <div className="product-image-container">
-                      <Image src={imgSrc(product.image)} alt={product.title} width={600} height={200} loading="lazy" unoptimized style={{ width: '100%', height: 'auto' }} />
+                      <Image src={imgSrc(product.image)} alt={product.title} width={600} height={200} loading="lazy" unoptimized />
                     </div>
                   ) : (
                     <div className="product-image-placeholder">
@@ -208,19 +212,10 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                   <p>{product.description}</p>
                   <span className="card-price"><PriceDisplay price={product.price} priceNum={product.price_num} /></span>
                   <div className="card-actions">
-                    <button
-                      className="btn-add-cart btn-add-cart-full"
-                      onClick={() => {
-                        if (product.variants && product.variants.length > 0) {
-                          openVariantDialog(product);
-                        } else {
-                          addItem(product.title, 'Único', product.price_num);
-                        }
-                      }}
-                    >
-                      <ShoppingCart size={16} />
-                      <span>Añadir al carrito</span>
-                    </button>
+                    <Link href={`/productos/${productSlug(product, productos)}`} className="event-cta-link">
+                      <span>Ver detalles</span>
+                      <ArrowRight size={16} className="arrow-right" />
+                    </Link>
                   </div>
                 </BentoCard>
               </AnimatedCard>
@@ -234,8 +229,8 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>Próximos eventos</span></h2>
-            <Link href="/formacion/eventos" className="text-cta-link">
+            <h2><span>Próximas formaciones</span></h2>
+            <Link href="/formacion/talleres" className="text-cta-link">
               Ver más →
             </Link>
           </div>
@@ -244,21 +239,27 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
             <EventsGridSkeleton count={2} />
           ) : upcomingEvents.length === 0 ? (
             <div className="empty-section">
-              <p>No hay próximos eventos por el momento.</p>
-              <Link href="/formacion/eventos" className="text-cta-link">Ver historial de eventos →</Link>
+              <p>No hay próximas formaciones por el momento.</p>
+              <Link href="/formacion/talleres" className="text-cta-link">Ver toda la formación →</Link>
             </div>
           ) : (
           <div className="bento-grid-events">
             {upcomingEvents.map((event, index) => (
               <AnimatedCard key={event.id} index={index}>
                 <BentoCard className="interactive-card toned-card">
-                  <h3>{event.title}</h3>
+                  <div className="service-card-header">
+                    <Icon name={event.icon || 'calendar'} />
+                    <h3>{event.title}</h3>
+                  </div>
                   <div className="event-tags-row">
-                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status}</span>
-                    <span className="event-date-tag">
-                      <CalendarIcon />
-                      {event.date}
-                    </span>
+                    <span className="event-category-tag">{categoriaLabel(event)}</span>
+                    <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}</span>
+                    {event.date && (
+                      <span className="event-date-tag">
+                        <CalendarIcon />
+                        {event.date}
+                      </span>
+                    )}
                     <span className="event-cert-tag">
                       <BadgeCheck size={13} />
                       Incluye certificado
@@ -327,14 +328,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         </div>
       </div>
       </div>
-
-      {variantProduct && (
-        <VariantSelectionDialog
-          product={variantProduct}
-          isOpen={isVariantOpen}
-          onClose={() => { setIsVariantOpen(false); setVariantProduct(null); }}
-        />
-      )}
 
       {registrationEvent && (
         <EventRegistrationForm

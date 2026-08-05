@@ -303,10 +303,14 @@ nav ul li a.active::after {
     transition: var(--transition);
 }
 
-.nav-dropdown-toggle::after {
+.nav-dropdown-label {
+    position: relative;
+}
+
+.nav-dropdown-label::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -0.35rem;
     left: 50%;
     width: 0;
     height: 2px;
@@ -315,8 +319,8 @@ nav ul li a.active::after {
     transform: translateX(-50%);
 }
 
-.nav-dropdown:hover .nav-dropdown-toggle::after,
-.nav-dropdown-toggle.active::after {
+.nav-dropdown:hover .nav-dropdown-label::after,
+.nav-dropdown-toggle.active .nav-dropdown-label::after {
     width: 60%;
     left: 50%;
 }
@@ -1363,17 +1367,22 @@ section.alt-border {
     margin-top: 2.75rem;
 }
 
-.formacion-intro-heading {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+/* Páginas de formación: el título queda pegado a su contenido */
+.section-title.formacion-intro-title {
+    margin-bottom: 1rem;
 }
 
-.formacion-intro-heading .icon-svg {
-    width: 36px;
-    height: 36px;
-    margin: 0;
-    color: var(--primary);
+.reveal-section.formacion-intro {
+    padding-bottom: 0;
+}
+
+.reveal-section.formacion-block {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.reveal-section.formacion-block + .reveal-section.formacion-block {
+    margin-top: 3rem;
 }
 
 .section-title-center h2 {
@@ -2124,6 +2133,21 @@ section.alt-border {
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.08);
     color: var(--text-muted);
+}
+
+.event-category-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+    background: rgba(0, 65, 157, 0.08);
+    border: 1px solid rgba(0, 65, 157, 0.25);
+    color: var(--primary);
 }
 
 .event-status-tag {
@@ -3855,6 +3879,10 @@ footer {
         padding: 1.2rem 1rem;
         font-size: 1.35rem;
         font-weight: 700;
+    }
+
+    .nav-dropdown-label::after {
+        bottom: -1.2rem;
     }
 
     .nav-dropdown-menu {

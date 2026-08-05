@@ -13,6 +13,10 @@ export function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 
+  // Solo en dispositivos con hover real: el menú se abre al pasar el cursor.
+  // En táctil (hover: none) se mantiene el toggle por click.
+  const hoverCapable = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -111,14 +115,23 @@ export function Header() {
               <li><Link href="/" className={isActive('/')} onClick={handleHomeClick}>Inicio</Link></li>
               <li><Link href="/servicios" className={isActive('/servicios')} onClick={closeMenu}>Servicios</Link></li>
               <li><Link href="/productos" className={isActive('/productos')} onClick={closeMenu}>Productos</Link></li>
-              <li className="nav-dropdown">
+              <li
+                className="nav-dropdown"
+                onMouseEnter={() => { if (hoverCapable()) setIsFormacionOpen(true); }}
+                onMouseLeave={() => { if (hoverCapable()) setIsFormacionOpen(false); }}
+              >
                 <button
                   className={`nav-dropdown-toggle${isFormacionActive ? ' active' : ''}`}
-                  onClick={() => setIsFormacionOpen(!isFormacionOpen)}
+                  onClick={() => setIsFormacionOpen(prev => (hoverCapable() ? true : !prev))}
+                  onBlur={(e) => {
+                    const next = e.relatedTarget as Node | null;
+                    if (next && e.currentTarget.contains(next)) return;
+                    setIsFormacionOpen(false);
+                  }}
                   aria-haspopup="true"
                   aria-expanded={isFormacionOpen}
                 >
-                  Formación
+                  <span className="nav-dropdown-label">Formación</span>
                   <ChevronDown size={14} className={`nav-dropdown-chevron${isFormacionOpen ? ' open' : ''}`} />
                 </button>
                 {isFormacionOpen && (

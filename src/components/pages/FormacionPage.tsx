@@ -21,12 +21,6 @@ const CATEGORY_TITLES: Record<'taller' | 'curso' | 'evento', string> = {
   evento: 'Eventos',
 };
 
-const CATEGORY_ICONS: Record<'taller' | 'curso' | 'evento', string> = {
-  taller: 'tools',
-  curso: 'graduation',
-  evento: 'calendar',
-};
-
 const MONTH_NAMES = [
   'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
@@ -80,7 +74,6 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
 
   const isEvento = categoria === 'evento';
   const title = CATEGORY_TITLES[categoria];
-  const iconName = CATEGORY_ICONS[categoria];
 
   useEffect(() => { setMounted(true); }, []);
   const showLoading = !mounted || (loading && (initialEventos || []).length === 0);
@@ -91,12 +84,10 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
   const currentEvents = categoryEventos.filter(e => e.status === 'En Curso');
   const upcomingEvents = categoryEventos.filter(e => e.status === 'Proximamente');
 
-  const timelineEvents = isEvento
-    ? [
-        ...currentEvents.slice().sort((a, b) => getDateValue(b.date) - getDateValue(a.date)),
-        ...upcomingEvents.slice().sort((a, b) => getDateValue(a.date) - getDateValue(b.date)),
-      ]
-    : [];
+  const timelineEvents = [
+    ...currentEvents.slice().sort((a, b) => getDateValue(b.date) - getDateValue(a.date)),
+    ...upcomingEvents.slice().sort((a, b) => getDateValue(a.date) - getDateValue(b.date)),
+  ];
   const activeCount = timelineEvents.filter(e => e.status === 'En Curso').length;
 
   // Measure: track top (first dot center) + fill height (to last active dot center)
@@ -178,21 +169,24 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
       </ScrollReveal>
       )}
 
-      <ScrollReveal>
-        <div className="container">
-          <div className="section-title page-intro-title">
-            <h2 className="formacion-intro-heading">
-              <Icon name={iconName} />
-              {title}
-            </h2>
-          </div>
-        </div>
-      </ScrollReveal>
-
       {isEvento ? (
         <>
+          <ScrollReveal className="formacion-intro">
+            <div className="container">
+              <div className="section-title page-intro-title formacion-intro-title">
+                <h2>{title}</h2>
+              </div>
+
+              {!showLoading && currentEvents.length === 0 && upcomingEvents.length === 0 && (
+                <div className="empty-section">
+                  <p>No hay eventos por el momento.</p>
+                </div>
+              )}
+            </div>
+          </ScrollReveal>
+
           {currentEvents.length > 0 && (
-          <ScrollReveal>
+          <ScrollReveal className="formacion-block">
             <div className="container">
               <div className="section-title">
                 <h2>Eventos actuales</h2>
@@ -210,7 +204,7 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
           )}
 
           {upcomingEvents.length > 0 && (
-          <ScrollReveal>
+          <ScrollReveal className="formacion-block">
             <div className="container">
               <div className="section-title">
                 <h2>Próximamente</h2>
@@ -226,59 +220,69 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
             </div>
           </ScrollReveal>
           )}
-
-          {timelineEvents.length > 0 && (
-          <ScrollReveal>
+        </>
+      ) : (
+        <>
+          <ScrollReveal className="formacion-intro">
             <div className="container">
-              <div className="section-title-center">
-                <h2>Línea del tiempo</h2>
-              </div>
-
-              <div className="timeline19" ref={timelineRef}>
-                {/* Track fill — animated blue */}
-                {activeCount > 0 && (
-                  <motion.div
-                    className="timeline19-fill"
-                    initial={{ height: 0 }}
-                    animate={{ height: fillHeight }}
-                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                    style={{ position: 'absolute', left: '15px', top: fillTop, width: '2px', background: 'var(--primary)', borderRadius: '2px', transformOrigin: 'top', pointerEvents: 'none' }}
-                  />
-                )}
-
-                {timelineEvents.map((event, i) => (
-                  <div key={event.id} className="timeline19-item">
-                    <div className="timeline19-dot-col">
-                      <div className={`timeline19-dot${i < activeCount ? ' filled' : ''}`} />
-                    </div>
-                    <div className="timeline19-content">
-                      <span className="timeline19-date">{getMonthLabel(event.date)}</span>
-                      <h4 className="timeline19-title">{event.title}</h4>
-                      <span className={`timeline19-status${event.status === 'En Curso' ? ' active' : ''}`}>
-                        {event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <div className="section-title page-intro-title formacion-intro-title">
+                <h2>{title}</h2>
               </div>
             </div>
           </ScrollReveal>
-          )}
+
+          <ScrollReveal className="formacion-block">
+            <div className="container">
+              {showLoading ? (
+                <EventsGridSkeleton count={3} />
+              ) : categoryEventos.length > 0 ? (
+                <div className="bento-grid-events">
+                  {categoryEventos.map((event, index) => renderCard(event, index))}
+                </div>
+              ) : (
+                <div className="empty-section">
+                  <p>No hay {title.toLowerCase()} por el momento.</p>
+                </div>
+              )}
+            </div>
+          </ScrollReveal>
         </>
-      ) : (
-        <ScrollReveal>
+      )}
+
+      {timelineEvents.length > 0 && (
+        <ScrollReveal className="formacion-block">
           <div className="container">
-            {showLoading ? (
-              <EventsGridSkeleton count={3} />
-            ) : categoryEventos.length > 0 ? (
-              <div className="bento-grid-events">
-                {categoryEventos.map((event, index) => renderCard(event, index))}
-              </div>
-            ) : (
-              <div className="empty-section">
-                <p>No hay {title.toLowerCase()} por el momento.</p>
-              </div>
-            )}
+            <div className="section-title-center">
+              <h2>Línea del tiempo</h2>
+            </div>
+
+            <div className="timeline19" ref={timelineRef}>
+              {/* Track fill — animated blue */}
+              {activeCount > 0 && (
+                <motion.div
+                  className="timeline19-fill"
+                  initial={{ height: 0 }}
+                  animate={{ height: fillHeight }}
+                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                  style={{ position: 'absolute', left: '15px', top: fillTop, width: '2px', background: 'var(--primary)', borderRadius: '2px', transformOrigin: 'top', pointerEvents: 'none' }}
+                />
+              )}
+
+              {timelineEvents.map((event, i) => (
+                <div key={event.id} className="timeline19-item">
+                  <div className="timeline19-dot-col">
+                    <div className={`timeline19-dot${i < activeCount ? ' filled' : ''}`} />
+                  </div>
+                  <div className="timeline19-content">
+                    <span className="timeline19-date">{getMonthLabel(event.date)}</span>
+                    <h4 className="timeline19-title">{event.title}</h4>
+                    <span className={`timeline19-status${event.status === 'En Curso' ? ' active' : ''}`}>
+                      {event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </ScrollReveal>
       )}
