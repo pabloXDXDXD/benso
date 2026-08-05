@@ -327,7 +327,7 @@ nav ul li a.active::after {
 
 .nav-dropdown-chevron {
     margin-left: 0.35rem;
-    vertical-align: middle;
+    vertical-align: -0.1em;
     transition: transform 0.2s ease;
 }
 

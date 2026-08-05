@@ -119,6 +119,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   id="svc-nombre"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Tu nombre completo"
                   required
                 />
 
@@ -128,6 +129,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   id="svc-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="tu@email.com"
                   required
                 />
 
@@ -137,6 +139,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   id="svc-telefono"
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
+                  placeholder="+53 XXXX XXXX"
                 />
 
                 <label htmlFor="svc-mensaje">Mensaje (opcional)</label>
@@ -145,6 +148,7 @@ export function ServiceRequestModal({ servicio, open, onClose }: ServiceRequestM
                   rows={3}
                   value={mensaje}
                   onChange={(e) => setMensaje(e.target.value)}
+                  placeholder="Cuéntanos brevemente qué necesitas…"
                 />
 
                 {error && (
