@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Calendar, BadgeCheck, RefreshCw } from 'lucide-react';
 import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, EventRegistrationForm, RequestModal, Icon } from '@/components';
+import { NotificacionForm } from '@/components/NotificacionForm';
 import Grainient from '@/components/Grainient';
 import { useEventos, type Evento } from '@/hooks/useData';
+import { eventoSlug } from '@/lib/slugify';
 
 interface RequestItem {
   title: string;
@@ -66,6 +69,8 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
   const { eventos, loading, error, retry } = useEventos(initialEventos);
   const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const [notifyEvent, setNotifyEvent] = useState<{ id: number; title: string } | null>(null);
+  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -122,7 +127,7 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
           <h3>{event.title}</h3>
         </div>
         <div className="event-tags-row">
-          <span className="event-status-tag"><StatusIcon status={event.status} />{event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}</span>
+          <span className="event-status-tag"><StatusIcon status={event.status} />{event.status || 'Proximamente'}</span>
           {event.date && (
             <span className="event-date-tag">
               <CalendarIcon />
@@ -136,21 +141,37 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
         </div>
         <p>{event.description}</p>
         <div className="card-actions event-card-actions">
-          <button
-            className="event-cta-link"
-            onClick={() => {
-              setRegistrationEvent({ id: event.id, title: event.title, tipo: categoria });
-              setIsRegistrationOpen(true);
-            }}
-          >
-            <span>Inscribirme</span>
+          <Link href={`/formacion/${eventoSlug(event, eventos)}`} className="event-cta-link">
+            <span>Ver detalles</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </button>
+          </Link>
+          {event.status === 'En desarrollo' ? (
+            <button
+              className="event-cta-link"
+              onClick={() => {
+                setNotifyEvent({ id: event.id, title: event.title });
+                setIsNotifyOpen(true);
+              }}
+            >
+              <span>Avísame de este programa</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          ) : (
+            <button
+              className="event-cta-link"
+              onClick={() => {
+                setRegistrationEvent({ id: event.id, title: event.title, tipo: categoria });
+                setIsRegistrationOpen(true);
+              }}
+            >
+              <span>Inscribirme</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          )}
         </div>
       </BentoCard>
     </AnimatedCard>
   );
-
   return (
     <>
       {error && eventos.length === 0 && (
@@ -277,7 +298,7 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
                     <span className="timeline19-date">{getMonthLabel(event.date)}</span>
                     <h4 className="timeline19-title">{event.title}</h4>
                     <span className={`timeline19-status${event.status === 'En Curso' ? ' active' : ''}`}>
-                      {event.status === 'En Curso' ? 'En Curso' : 'Proximamente'}
+                      {event.status || 'Proximamente'}
                     </span>
                   </div>
                 </div>
@@ -319,6 +340,13 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
         tipo={registrationEvent?.tipo ?? 'evento'}
         isOpen={isRegistrationOpen}
         onClose={() => setIsRegistrationOpen(false)}
+      />
+
+      <NotificacionForm
+        eventoId={notifyEvent?.id ?? 0}
+        eventoTitle={notifyEvent?.title ?? ''}
+        isOpen={isNotifyOpen}
+        onClose={() => setIsNotifyOpen(false)}
       />
 
       <RequestModal

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
-import type { Producto, Servicio } from '@/hooks/useData';
-import { productSlug, serviceSlug } from '@/lib/slugify';
+import type { Evento, Producto, Servicio } from '@/hooks/useData';
+import { eventoSlug, productSlug, serviceSlug } from '@/lib/slugify';
 import { supabase } from '@/lib/supabase';
 
 const baseUrl = 'https://www.bensofcg.com';
@@ -63,5 +63,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     productEntries = [];
   }
 
-  return [...staticEntries, ...serviceEntries, ...productEntries];
+  let eventoEntries: MetadataRoute.Sitemap = [];
+  try {
+    const { data, error } = await supabase
+      .from('eventos')
+      .select('*')
+      .eq('is_active', true);
+    if (!error && data) {
+      const eventos = data as Evento[];
+      eventoEntries = eventos.map((event) => ({
+        url: `${baseUrl}/formacion/${eventoSlug(event, eventos)}/`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.7,
+      }));
+    }
+  } catch {
+    eventoEntries = [];
+  }
+
+  return [...staticEntries, ...serviceEntries, ...productEntries, ...eventoEntries];
 }

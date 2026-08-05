@@ -52,6 +52,10 @@ export interface Evento {
   image: string;
   icon: string;
   categoria?: string;
+  duracion?: string;
+  modalidad?: string;
+  modulos?: { title: string; description: string }[];
+  disclaimer?: string;
 }
 
 export interface Testimonial {
