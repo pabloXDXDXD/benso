@@ -321,6 +321,30 @@ export function NotificacionForm({ eventoId, eventoTitle, isOpen, onClose }: Not
           margin-bottom: 1rem;
           font-size: 0.9rem;
         }
+        .btn-submit {
+          width: 100%;
+          padding: 1rem;
+          background: var(--primary);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          font-family: var(--font-main);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          transition: var(--transition);
+        }
+        .btn-submit:hover:not(:disabled) {
+          background: var(--secondary);
+        }
+        .btn-submit:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
         .reg-spinner {
           width: 20px;
           height: 20px;

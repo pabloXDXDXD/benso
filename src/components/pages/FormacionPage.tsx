@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Calendar, BadgeCheck, RefreshCw } from 'lucide-react';
-import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, EventRegistrationForm, RequestModal, Icon } from '@/components';
-import { NotificacionForm } from '@/components/NotificacionForm';
+import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, RequestModal, Icon } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useEventos, type Evento } from '@/hooks/useData';
 import { eventoSlug } from '@/lib/slugify';
@@ -67,10 +66,6 @@ function getMonthLabel(dateStr: string): string {
 export function FormacionPage({ categoria, initialEventos }: { categoria: 'taller' | 'curso' | 'evento'; initialEventos?: Evento[] }) {
   const [mounted, setMounted] = useState(false);
   const { eventos, loading, error, retry } = useEventos(initialEventos);
-  const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
-  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const [notifyEvent, setNotifyEvent] = useState<{ id: number; title: string } | null>(null);
-  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -145,29 +140,6 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
             <span>Ver detalles</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </Link>
-          {event.status === 'En desarrollo' ? (
-            <button
-              className="event-cta-link"
-              onClick={() => {
-                setNotifyEvent({ id: event.id, title: event.title });
-                setIsNotifyOpen(true);
-              }}
-            >
-              <span>Avísame de este programa</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </button>
-          ) : (
-            <button
-              className="event-cta-link"
-              onClick={() => {
-                setRegistrationEvent({ id: event.id, title: event.title, tipo: categoria });
-                setIsRegistrationOpen(true);
-              }}
-            >
-              <span>Inscribirme</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </button>
-          )}
         </div>
       </BentoCard>
     </AnimatedCard>
@@ -333,21 +305,6 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
           </button>
         </div>
       </div>
-
-      <EventRegistrationForm
-        eventoId={registrationEvent?.id ?? 0}
-        eventoTitle={registrationEvent?.title ?? ''}
-        tipo={registrationEvent?.tipo ?? 'evento'}
-        isOpen={isRegistrationOpen}
-        onClose={() => setIsRegistrationOpen(false)}
-      />
-
-      <NotificacionForm
-        eventoId={notifyEvent?.id ?? 0}
-        eventoTitle={notifyEvent?.title ?? ''}
-        isOpen={isNotifyOpen}
-        onClose={() => setIsNotifyOpen(false)}
-      />
 
       <RequestModal
         item={requestItem}

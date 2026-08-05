@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { BadgeCheck, Info } from 'lucide-react';
+import { BadgeCheck, Clock, Info, Monitor } from 'lucide-react';
 import { CalendarIcon, StatusIcon } from '@/components';
 import { EventRegistrationButton } from '@/components/EventRegistrationButton';
 import { NotifyMeButton } from '@/components/NotifyMeButton';
@@ -119,21 +119,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               {event.date && (<span className="event-date-tag"><CalendarIcon />{event.date}</span>)}
               <span className="event-cert-tag"><BadgeCheck size={13} />Incluye certificado</span>
             </div>
+            {(event.duracion || event.modalidad) && (
+              <div className="service-detail-meta">
+                {event.duracion && (
+                  <span className="service-detail-meta-item"><Clock size={14} />Duración: {event.duracion}</span>
+                )}
+                {event.modalidad && (
+                  <span className="service-detail-meta-item"><Monitor size={14} />Modalidad: {event.modalidad}</span>
+                )}
+              </div>
+            )}
           </div>
           <p className="service-detail-label">Descripción</p>
           <p className="service-detail-desc">{event.description}</p>
-          {event.duracion && (
-            <>
-              <p className="service-detail-label">Duración</p>
-              <p className="service-detail-desc">{event.duracion}</p>
-            </>
-          )}
-          {event.modalidad && (
-            <>
-              <p className="service-detail-label">Modalidad</p>
-              <p className="service-detail-desc">{event.modalidad}</p>
-            </>
-          )}
           {event.modulos && event.modulos.length > 0 && (
             <>
               <p className="service-detail-includes-label">Plan temático</p>
@@ -145,12 +143,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                   </li>
                 ))}
               </ol>
-            </>
-          )}
-          {event.date && (
-            <>
-              <p className="service-detail-label">Fecha de inicio</p>
-              <p className="service-detail-desc">{event.date}</p>
             </>
           )}
           {imageUrl && (
