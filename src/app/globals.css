@@ -5294,7 +5294,6 @@ footer {
     padding: 0.35rem 0.8rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--accent) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
     color: var(--text-muted, #555);
     font-size: 0.85rem;
     font-weight: 500;
