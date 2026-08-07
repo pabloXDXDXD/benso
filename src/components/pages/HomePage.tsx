@@ -4,14 +4,14 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, BadgeCheck, ArrowRight } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton, EventRegistrationForm } from '@/components';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton } from '@/components';
 import Grainient from '@/components/Grainient';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
 import { useProductos, useServicios, useEventos, useTestimonials, useFaqs } from '@/hooks/useData';
 import type { Producto, Testimonial, Faq, Evento } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
-import { serviceSlug, productSlug } from '@/lib/slugify';
+import { serviceSlug, productSlug, eventoSlug } from '@/lib/slugify';
 
 const CATEGORIA_LABELS: Record<string, string> = {
   taller: 'Taller',
@@ -36,8 +36,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
 } = {}) {
   const [mounted, setMounted] = useState(false);
 
-  const [registrationEvent, setRegistrationEvent] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
-  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
   const { eventos, loading: eventosLoading } = useEventos();
@@ -46,11 +44,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const showServicios = !mounted || serviciosLoading;
   const showProductos = !mounted || productosLoading;
   const showEventos = !mounted || eventosLoading;
-
-  const openRegistration = (eventId: number, eventTitle: string, tipo: 'taller' | 'curso' | 'evento') => {
-    setRegistrationEvent({ id: eventId, title: eventTitle, tipo });
-    setIsRegistrationOpen(true);
-  };
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -75,6 +68,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
 
   const upcomingEvents = eventos
     .filter(e => e.status === 'Proximamente')
+    .filter(e => e.categoria === 'taller')
     .slice(0, 2);
 
   return (
@@ -229,9 +223,9 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
       <ScrollReveal>
         <div className="container">
           <div className="section-title section-title-home">
-            <h2><span>Próximas formaciones</span></h2>
+            <h2><span>Próximos talleres</span></h2>
             <Link href="/formacion/talleres" className="text-cta-link">
-              Ver más →
+              Ver más talleres →
             </Link>
           </div>
           
@@ -267,13 +261,10 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
                   </div>
                   <p>{event.description}</p>
                   <div className="card-actions event-card-actions">
-                    <button
-                      className="event-cta-link"
-                      onClick={() => openRegistration(event.id, event.title, (event.categoria || 'evento') as 'taller' | 'curso' | 'evento')}
-                    >
-                      <span>Inscribirme</span>
+                    <Link href={`/formacion/${eventoSlug(event, eventos)}`} className="event-cta-link">
+                      <span>Ver detalles</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </button>
+                    </Link>
                   </div>
                 </BentoCard>
               </AnimatedCard>
@@ -328,16 +319,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         </div>
       </div>
       </div>
-
-      {registrationEvent && (
-        <EventRegistrationForm
-          eventoId={registrationEvent.id}
-          eventoTitle={registrationEvent.title}
-          tipo={registrationEvent.tipo}
-          isOpen={isRegistrationOpen}
-          onClose={() => { setIsRegistrationOpen(false); setRegistrationEvent(null); }}
-        />
-      )}
     </>
   );
 }
