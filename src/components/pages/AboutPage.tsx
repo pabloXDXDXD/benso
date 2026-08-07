@@ -13,15 +13,70 @@ interface RequestItem {
   type: 'servicio' | 'producto' | 'evento';
 }
 
-const coloredCardStyle = {
-  primary: { background: 'var(--primary)', color: 'var(--white)', textShadow: '0 1px 2px rgba(0,0,0,0.2)' },
-  secondary: { background: 'var(--secondary)', color: 'var(--white)', textShadow: '0 1px 2px rgba(0,0,0,0.2)' },
-  accent: { background: 'var(--accent)', color: 'var(--white)', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }
-};
+interface Commitment {
+  icon: string;
+  title: string;
+  description: string;
+}
 
-const whiteH3Style = { color: 'var(--white)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' };
-const whitePStyle = { color: 'var(--white)', textShadow: '0 1px 2px rgba(0,0,0,0.2)' };
-const whiteIconStyle = { color: 'var(--white)', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' };
+const commitments: Commitment[] = [
+  {
+    icon: 'money',
+    title: 'Rentabilidad sostenible',
+    description:
+      'El arte de construir negocios que sigan generando valor dentro de 20 años, para sus clientes y sus equipos.'
+  },
+  {
+    icon: 'graduation',
+    title: 'Formación profesional',
+    description:
+      'El conocimiento es el primer paso para cambiar cualquier aspecto de la realidad. Nuestro método de enseñanza está puesto a fomentar el pensamiento crítico en los sectores que liderarán el futuro empresarial.'
+  },
+  {
+    icon: 'heart',
+    title: 'Impacto social real',
+    description:
+      'Cada negocio que crece con nuestro acompañamiento genera empleo, dinamiza la economía y mejora la calidad de vida de toda su comunidad, porque toma las decisiones correctas.'
+  }
+];
+
+interface Stat {
+  icon: string;
+  value: string;
+  title: string;
+  description: string;
+}
+
+const stats: Stat[] = [
+  {
+    icon: 'graduation',
+    value: '+300',
+    title: 'Emprendedores',
+    description:
+      'Formados en todo el país, con programas que van desde el marketing digital hasta la contabilidad básica y el liderazgo.'
+  },
+  {
+    icon: 'trending',
+    value: 'Récords',
+    title: 'en ventas',
+    description:
+      'Clientes que baten récords luego de recibir asesorías personalizadas para el desarrollo visual y logístico de sus marcas.'
+  },
+  {
+    icon: 'people',
+    value: 'Comunidad',
+    title: 'en crecimiento',
+    description:
+      'Nuestros alumnos se convierten en clientes y nuestros clientes en aliados de largo plazo.'
+  },
+  {
+    icon: 'heart',
+    value: '3',
+    title: 'Alianzas de impacto social',
+    description:
+      'Hemos conectado con ONG nacionales que suman la red de apoyo local al bienestar animal y la salud mental en jóvenes y niños.'
+  }
+];
 
 export function AboutPage() {
   const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
@@ -29,44 +84,74 @@ export function AboutPage() {
 
   return (
     <>
-      <ScrollReveal className="cards-wrap">
-        <div className="container cards-section">
+      <ScrollReveal>
+        <div className="container">
           <div className="section-title page-intro-title">
-            <h2>¿Por qué elegirnos?</h2>
+            <h2>Lo que nos mueve</h2>
           </div>
 
+          <p className="about-intro">
+            Trabajamos para que los emprendedores cubanos tengan la oportunidad de construir proyectos
+            sólidos, sostenibles y con un acompañamiento profesional dedicado. Por eso, nuestra razón de
+            ser no cabe en una misión ni en una visión tradicionales: nuestro equipo de jóvenes
+            profesionales busca marcar la diferencia a través de un alto compromiso con:
+          </p>
+
           <div className="bento-grid">
-            <AnimatedCard>
-              <BentoCard style={coloredCardStyle.secondary as any}>
-                <Icon name="money" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Inversión Accesible</h3>
-                <p style={whitePStyle}>Ofrecemos servicios de máxima calidad con facilidades de pago justas y personalizables.</p>
-              </BentoCard>
-            </AnimatedCard>
+            {commitments.map((commitment, index) => (
+              <AnimatedCard key={commitment.title} index={index}>
+                <BentoCard className="toned-card about-commitment">
+                  <Icon name={commitment.icon} />
+                  <h3>{commitment.title}</h3>
+                  <p>{commitment.description}</p>
+                </BentoCard>
+              </AnimatedCard>
+            ))}
+          </div>
+        </div>
+      </ScrollReveal>
 
-            <AnimatedCard index={1}>
-              <BentoCard style={coloredCardStyle.accent as any}>
-                <Icon name="people" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Atención Personalizada</h3>
-                <p style={whitePStyle}>Nuestro asesoramiento se basa en conocer tu negocio en profundidad y ajustar las estrategias a tu realidad única.</p>
-              </BentoCard>
-            </AnimatedCard>
+      <ScrollReveal>
+        <div className="container">
+          <div className="section-title">
+            <h2>Somos un equipo joven, por eso estamos doblemente comprometidos</h2>
+          </div>
 
-            <AnimatedCard index={2}>
-              <BentoCard style={coloredCardStyle.primary as any}>
-                <Icon name="check" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Acompañamiento Continuo</h3>
-                <p style={whitePStyle}>Te mostramos el camino y te acompañamos en cada paso de la implementación.</p>
-              </BentoCard>
-            </AnimatedCard>
+          <div className="about-story">
+            <p className="about-story-text">
+              La idea del proyecto nació en 2023. Cursando la Licenciatura en Economía, Yissel, nuestra
+              fundadora, entendió que el mundo no se cambia con grandes discursos, sino con acciones
+              concretas. Inspirada en el modelo de las Big Four, inició dando los primeros pasos y, 2
+              años después, el equipo del Proyecto ya ha formado a más de 300 emprendedores en el país y
+              ha ampliado sus proyecciones hacia el desarrollo de herramientas automáticas para construir
+              futuros rentables en el sector empresarial cubano.
+            </p>
 
-            <AnimatedCard index={3}>
-              <BentoCard style={coloredCardStyle.secondary as any}>
-                <Icon name="chart" style={whiteIconStyle} />
-                <h3 style={whiteH3Style}>Resultados Medibles</h3>
-                <p style={whitePStyle}>Medimos el rendimiento de nuestras estrategias por el impacto real que tengan sobre tu proyecto.</p>
-              </BentoCard>
-            </AnimatedCard>
+            <figure className="about-story-quote">
+              <Icon name="quote" />
+              <h3>El mundo no se cambia con grandes discursos, sino con acciones concretas.</h3>
+              <figcaption className="about-story-author">— Yissel, fundadora de BENSO</figcaption>
+            </figure>
+          </div>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <div className="container">
+          <div className="section-title">
+            <h2>En 2 años</h2>
+          </div>
+
+          <div className="about-stats">
+            {stats.map(stat => (
+              <div className="about-stat" key={stat.title}>
+                <Icon name={stat.icon} />
+                <h3 className="about-stat-title">
+                  <span className="about-stat-value">{stat.value}</span> {stat.title}
+                </h3>
+                <p className="about-stat-desc">{stat.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </ScrollReveal>
@@ -74,10 +159,16 @@ export function AboutPage() {
       <section className="gallery-section-wrap">
         <div className="container">
           <div className="section-title">
-            <h2>Galería</h2>
+            <h2>Historias</h2>
           </div>
         </div>
         <ImageGallery />
+        <div className="container">
+          <p className="story-gallery-subtitle">
+            Estas historias son un memorable viaje por los hitos, los talleres, los rostros y las
+            experiencias que han marcado el camino del Proyecto BENSO.
+          </p>
+        </div>
       </section>
 
       <div className="cta-card">
