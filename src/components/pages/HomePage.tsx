@@ -35,6 +35,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   fallbackFaqs?: Faq[];
 } = {}) {
   const [mounted, setMounted] = useState(false);
+  const [scrollIndicatorHidden, setScrollIndicatorHidden] = useState(false);
 
   const { productos, loading: productosLoading } = useProductos();
   const { servicios, loading: serviciosLoading } = useServicios();
@@ -46,6 +47,18 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
   const showEventos = !mounted || eventosLoading;
 
   useEffect(() => { setMounted(true); }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setScrollIndicatorHidden(true);
+      } else {
+        setScrollIndicatorHidden(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const featuredProducts = useMemo(() => {
     const hasImage = (p: Producto) => p.image && p.image.trim() !== '';
@@ -100,6 +113,12 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
           </div>
         </div>
 
+        <div className={`scroll-down-indicator${scrollIndicatorHidden ? ' hidden' : ''}`} aria-hidden="true">
+          <span className="scroll-down-text">Desliza</span>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
       </section>
 
       {/* ✨ HIDDEN — Brands Marquee Section (restore by removing the comment wrapper)
