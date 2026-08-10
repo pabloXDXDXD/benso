@@ -12,6 +12,7 @@ const SITE_URL = 'https://www.bensofcg.com';
 export const metadata: Metadata = {
   title: 'Productos Digitales y Diseño para tu Negocio',
   description: 'Soluciones digitales, papelería, cartelería y diseño profesional para tu negocio en Cuba. Explora nuestra tienda y encuentra productos que potencien tu marca.',
+  alternates: { canonical: '/productos/' },
   openGraph: {
     title: 'Productos Digitales y Diseño - BENSO',
     description: 'Soluciones digitales, papelería y diseño profesional para tu negocio en Cuba.',

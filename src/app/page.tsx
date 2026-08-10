@@ -6,6 +6,7 @@ import type { Testimonial, Faq } from '@/hooks/useData';
 export const metadata: Metadata = {
   title: 'Consultoría y Soluciones Digitales para PyMEs en Cuba',
   description: 'Consultoría empresarial, marketing digital y automatización para PyMEs en Cuba. Agenda tu cita gratis y recibe asesoría personalizada para impulsar tu rentabilidad.',
+  alternates: { canonical: '/' },
   openGraph: {
     title: 'BENSO | Consultoría y Soluciones Digitales para PyMEs en Cuba',
     description: 'Consultoría empresarial, marketing digital y automatización para PyMEs en Cuba. Agenda tu cita gratis.',

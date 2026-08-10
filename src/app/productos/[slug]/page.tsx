@@ -48,7 +48,7 @@ export async function generateMetadata({
   const productos = await getActiveProductos();
   const product = findProductBySlug(productos, slug);
   if (!product) notFound();
-  const canonicalUrl = `/productos/${slug}`;
+  const canonicalUrl = `/productos/${slug}/`;
   const description = truncate(product.description);
   return {
     title: product.title,
@@ -69,7 +69,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const product = findProductBySlug(productos, slug);
   if (!product) notFound();
 
-  const canonicalUrl = `${SITE_URL}/productos/${slug}`;
+  const canonicalUrl = `${SITE_URL}/productos/${slug}/`;
   const imageUrl = product.image ? imgSrc(product.image) : '';
 
   const jsonLd = {

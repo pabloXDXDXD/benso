@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const eventos = await getActiveEventos();
   const event = findEventoBySlug(eventos, slug);
   if (!event) notFound();
-  const canonicalUrl = `/formacion/${slug}`;
+  const canonicalUrl = `/formacion/${slug}/`;
   const description = truncate(event.description);
   return {
     title: event.title,
@@ -71,7 +71,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const event = findEventoBySlug(eventos, slug);
   if (!event) notFound();
 
-  const canonicalUrl = `${SITE_URL}/formacion/${slug}`;
+  const canonicalUrl = `${SITE_URL}/formacion/${slug}/`;
   const categoria = event.categoria || 'evento';
   const back = CATEGORY_BACK[categoria] ?? CATEGORY_BACK.evento;
   const imageUrl = event.image ? imgSrc(event.image) : '';

@@ -9,6 +9,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: 'Talleres para Emprendedores en Cuba | BENSO',
   description: 'Talleres prácticos para emprendedores en Cuba. Aprende habilidades clave para hacer crecer tu negocio con BENSO.',
+  alternates: { canonical: '/formacion/talleres/' },
   openGraph: {
     title: 'Talleres para Emprendedores - BENSO',
     description: 'Talleres prácticos para emprendedores en Cuba. Inscríbete ya.',

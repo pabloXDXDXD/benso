@@ -13,6 +13,7 @@ const SITE_URL = 'https://www.bensofcg.com';
 export const metadata: Metadata = {
   title: 'Eventos para Emprendedores en Cuba | BENSO',
   description: 'Eventos para emprendedores en Cuba. Mantente al día con las actividades y encuentros de BENSO.',
+  alternates: { canonical: '/formacion/eventos/' },
   openGraph: {
     title: 'Eventos para Emprendedores - BENSO',
     description: 'Eventos para emprendedores en Cuba. Participa ya.',

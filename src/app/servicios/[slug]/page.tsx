@@ -52,7 +52,7 @@ export async function generateMetadata({
   const servicios = await getActiveServicios();
   const service = findBySlug(servicios, slug);
   if (!service) notFound();
-  const canonicalUrl = `/servicios/${slug}`;
+  const canonicalUrl = `/servicios/${slug}/`;
   const description = truncate(service.subtitle || service.description);
   return {
     title: service.title,
@@ -73,7 +73,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const service = findBySlug(servicios, slug);
   if (!service) notFound();
 
-  const canonicalUrl = `${SITE_URL}/servicios/${slug}`;
+  const canonicalUrl = `${SITE_URL}/servicios/${slug}/`;
   const categoryLabel = CATEGORY_LABELS[service.category];
   const imageUrl = service.image ? imgSrc(service.image) : '';
 

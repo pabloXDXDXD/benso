@@ -9,6 +9,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: 'Servicios de Consultoría y Capacitación para PyMEs',
   description: 'Descubre nuestros servicios de consultoría estratégica, capacitación y herramientas digitales para PyMEs en Cuba. Agenda tu cita gratis y lleva tu emprendimiento al siguiente nivel.',
+  alternates: { canonical: '/servicios/' },
   openGraph: {
     title: 'Servicios de Consultoría y Capacitación - BENSO',
     description: 'Consultoría estratégica, capacitación y herramientas digitales para PyMEs en Cuba. Agenda tu cita gratis.',

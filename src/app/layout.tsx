@@ -32,9 +32,6 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     url: 'https://www.bensofcg.com',
     siteName: 'BENSO',

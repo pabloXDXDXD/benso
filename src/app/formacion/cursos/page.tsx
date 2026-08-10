@@ -9,6 +9,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: 'Cursos para Emprendedores en Cuba | BENSO',
   description: 'Cursos para emprendedores en Cuba. Formación especializada para llevar tu negocio al siguiente nivel con BENSO.',
+  alternates: { canonical: '/formacion/cursos/' },
   openGraph: {
     title: 'Cursos para Emprendedores - BENSO',
     description: 'Cursos para emprendedores en Cuba. Inscríbete ya.',
