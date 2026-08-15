@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, type FormEvent } from 'react';
-import { BentoCard, FAQAccordion, ScrollReveal, AnimatedSection, ShinyText } from '@/components';
+import { BentoCard, FAQAccordion, ScrollReveal } from '@/components';
 import { supabase } from '@/lib/supabase';
 import { useFaqs } from '@/hooks/useData';
 
@@ -282,9 +282,7 @@ export function ContactPage({ servicesData = { featured: [], all: [] } }: { serv
             <h2>Preguntas frecuentes</h2>
           </div>
           
-          <AnimatedSection>
-            <FAQAccordion items={faqItems} />
-          </AnimatedSection>
+          <FAQAccordion items={faqItems} />
         </div>
       </ScrollReveal>
 

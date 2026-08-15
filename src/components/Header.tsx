@@ -125,7 +125,10 @@ export function Header() {
                   onClick={() => setIsFormacionOpen(prev => (hoverCapable() ? true : !prev))}
                   onBlur={(e) => {
                     const next = e.relatedTarget as Node | null;
-                    if (next && e.currentTarget.contains(next)) return;
+                    // El foco puede moverse a un item del submenú (hermano del botón):
+                    // solo cerrar cuando el foco sale del dropdown completo.
+                    const dropdown = e.currentTarget.closest('.nav-dropdown');
+                    if (next && dropdown?.contains(next)) return;
                     setIsFormacionOpen(false);
                   }}
                   aria-haspopup="true"

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Search, RefreshCw } from 'lucide-react';
-import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, AnimatedCard, ScrollReveal } from '@/components';
+import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, AnimatedCard, AnimatedSection, StaggerReveal, ScrollReveal } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useProductos, type Producto } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
@@ -58,6 +58,7 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
           <div className="section-title">
             <h2>Nuestros productos</h2>
           </div>
+
           <div className="filter-controls">
             <div className="search-input-wrapper">
               <Search size={18} className="search-icon" />
@@ -146,25 +147,29 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
 
       </ScrollReveal>
 
-      <div className="cta-card">
-        <div className="cta-card-grainient">
-          <Grainient className="absolute inset-0" />
+      <AnimatedSection>
+        <div className="cta-card">
+          <div className="cta-card-grainient">
+            <Grainient className="absolute inset-0" />
+          </div>
+          <div className="container section-cta cta-card-content">
+            <StaggerReveal>
+              <h2>¿Listo para transformar tu negocio?</h2>
+              <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
+              <button
+                className="cta-button cta-button--light"
+                onClick={() => {
+                  setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+                  setIsRequestOpen(true);
+                }}
+              >
+                <Calendar size={18} />
+                Agendar cita
+              </button>
+            </StaggerReveal>
+          </div>
         </div>
-        <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-          <button
-            className="cta-button cta-button--light"
-            onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
-            <Calendar size={18} />
-            Agendar cita
-          </button>
-        </div>
-      </div>
+      </AnimatedSection>
 
       <RequestModal
         item={requestItem}

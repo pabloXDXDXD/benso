@@ -1,27 +1,42 @@
 'use client';
 
-import { type CSSProperties, type ReactNode, useEffect, useRef } from 'react';
-import { motion, useAnimation, useInView } from 'motion/react';
+import { Children, type CSSProperties, type ReactNode, useEffect, useRef } from 'react';
+import { motion, useAnimation, useInView, useReducedMotion } from 'motion/react';
 
 const SAFETY_TIMEOUT_MS = 1500;
+
+const REVEAL_CONFIG = {
+  amount: 0.2,
+  duration: 0.6,
+  ease: [0.22, 1, 0.36, 1] as const,
+  y: 40,
+};
 
 function useRevealControls(amount: number) {
   const ref = useRef<HTMLDivElement | null>(null);
   const controls = useAnimation();
   const inView = useInView(ref, { once: true, amount });
+  const reduce = useReducedMotion();
 
   useEffect(() => {
+    if (reduce) {
+      controls.start({ opacity: 1, y: 0 });
+      return;
+    }
     if (inView) {
       controls.start({ opacity: 1, y: 0 });
       return;
     }
     const timer = setTimeout(() => {
-      controls.start({ opacity: 1, y: 0 });
+      const rect = ref.current?.getBoundingClientRect();
+      if (rect && rect.top < window.innerHeight) {
+        controls.start({ opacity: 1, y: 0 });
+      }
     }, SAFETY_TIMEOUT_MS);
     return () => clearTimeout(timer);
-  }, [controls, inView]);
+  }, [controls, inView, reduce]);
 
-  return { ref, controls };
+  return { ref, controls, reduced: reduce };
 }
 
 interface ScrollRevealProps {
@@ -35,7 +50,7 @@ export function ScrollReveal({
   className = '',
   style
 }: ScrollRevealProps) {
-  const { ref, controls } = useRevealControls(0.25);
+  const { ref, controls, reduced } = useRevealControls(REVEAL_CONFIG.amount);
 
   return (
     <motion.section
@@ -43,9 +58,9 @@ export function ScrollReveal({
       className={`reveal-section ${className}`.trim()}
       style={style}
       suppressHydrationWarning
-      initial={{ opacity: 0, y: 60 }}
+      initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_CONFIG.y }}
       animate={controls}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: REVEAL_CONFIG.duration, ease: REVEAL_CONFIG.ease }}
     >
       {children}
     </motion.section>
@@ -63,18 +78,18 @@ export function AnimatedSection({
   className = '',
   delay = 0
 }: AnimatedSectionProps) {
-  const { ref, controls } = useRevealControls(0.2);
+  const { ref, controls, reduced } = useRevealControls(REVEAL_CONFIG.amount);
 
   return (
     <motion.div
       ref={ref}
       className={className}
       suppressHydrationWarning
-      initial={{ opacity: 0, y: 40 }}
+      initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_CONFIG.y }}
       animate={controls}
       transition={{
-        duration: 0.5,
-        ease: 'easeOut',
+        duration: REVEAL_CONFIG.duration,
+        ease: REVEAL_CONFIG.ease,
         delay
       }}
     >
@@ -94,22 +109,66 @@ export function AnimatedCard({
   className = '',
   index = 0
 }: AnimatedCardProps) {
-  const { ref, controls } = useRevealControls(0.15);
+  const { ref, controls, reduced } = useRevealControls(REVEAL_CONFIG.amount);
 
   return (
     <motion.div
       ref={ref}
       className={className}
       suppressHydrationWarning
-      initial={{ opacity: 0, y: 40 }}
+      initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_CONFIG.y }}
       animate={controls}
       transition={{
-        duration: 0.5,
-        ease: 'easeOut',
+        duration: REVEAL_CONFIG.duration,
+        ease: REVEAL_CONFIG.ease,
         delay: index * 0.08
       }}
     >
       {children}
     </motion.div>
+  );
+}
+
+interface StaggerRevealProps {
+  children: ReactNode;
+  className?: string;
+  /** Delay before the FIRST child starts (seconds). */
+  delay?: number;
+  /** Stagger between consecutive children (seconds). */
+  gap?: number;
+}
+
+/**
+ * Reveals each direct child in sequence (fade + rise) as the group
+ * scrolls into view. Wraps every child in a plain motion.div — safe for
+ * block-level stacks (CTA content, headers + copy + buttons).
+ */
+export function StaggerReveal({
+  children,
+  className = '',
+  delay = 0,
+  gap = 0.12
+}: StaggerRevealProps) {
+  const reduce = useReducedMotion();
+  const items = Children.toArray(children);
+
+  return (
+    <div className={className}>
+      {items.map((child, index) => (
+        <motion.div
+          key={index}
+          initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{
+            duration: REVEAL_CONFIG.duration,
+            ease: REVEAL_CONFIG.ease,
+            delay: delay + index * gap
+          }}
+        >
+          {child}
+        </motion.div>
+      ))}
+    </div>
   );
 }

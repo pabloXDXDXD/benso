@@ -28,6 +28,7 @@ export default async function Page() {
       .eq('is_active', true)
       .eq('categoria', 'evento')
       .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
   );
 
   const items = eventosError ? undefined : (eventos || []) as Evento[];

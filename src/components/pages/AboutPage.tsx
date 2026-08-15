@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Calendar } from 'lucide-react';
-import { ScrollReveal, AnimatedCard, BentoCard, Icon, ImageGallery, RequestModal } from '@/components';
+import { ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal, BentoCard, Icon, ImageGallery, RequestModal } from '@/components';
 import Grainient from '@/components/Grainient';
 
 interface RequestItem {
@@ -143,53 +143,59 @@ export function AboutPage() {
           </div>
 
           <div className="about-stats">
-            {stats.map(stat => (
-              <div className="about-stat" key={stat.title}>
+            {stats.map((stat, index) => (
+              <AnimatedCard className="about-stat" key={stat.title} index={index}>
                 <Icon name={stat.icon} />
                 <h3 className="about-stat-title">
                   <span className="about-stat-value">{stat.value}</span> {stat.title}
                 </h3>
                 <p className="about-stat-desc">{stat.description}</p>
-              </div>
+              </AnimatedCard>
             ))}
           </div>
         </div>
       </ScrollReveal>
 
-      <section className="gallery-section-wrap">
-        <div className="container">
-          <div className="section-title">
-            <h2>Historias</h2>
+      <ScrollReveal>
+        <section className="gallery-section-wrap">
+          <div className="container">
+            <div className="section-title">
+              <h2>Historias</h2>
+            </div>
+          </div>
+          <ImageGallery />
+          <div className="container">
+            <p className="story-gallery-subtitle">
+              Estas historias son un memorable viaje por los hitos, los talleres, los rostros y las
+              experiencias que han marcado el camino del Proyecto BENSO.
+            </p>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      <AnimatedSection>
+        <div className="cta-card">
+          <div className="cta-card-grainient">
+            <Grainient className="absolute inset-0" />
+          </div>
+          <div className="container section-cta after-gallery cta-card-content">
+            <StaggerReveal>
+              <h2>¿Listo para transformar tu negocio?</h2>
+              <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
+              <button
+                className="cta-button cta-button--light"
+                onClick={() => {
+                  setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
+                  setIsRequestOpen(true);
+                }}
+              >
+                <Calendar size={18} />
+                Agendar cita
+              </button>
+            </StaggerReveal>
           </div>
         </div>
-        <ImageGallery />
-        <div className="container">
-          <p className="story-gallery-subtitle">
-            Estas historias son un memorable viaje por los hitos, los talleres, los rostros y las
-            experiencias que han marcado el camino del Proyecto BENSO.
-          </p>
-        </div>
-      </section>
-
-      <div className="cta-card">
-        <div className="cta-card-grainient">
-          <Grainient className="absolute inset-0" />
-        </div>
-        <div className="container section-cta after-gallery cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-          <button
-            className="cta-button cta-button--light"
-            onClick={() => {
-              setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-              setIsRequestOpen(true);
-            }}
-          >
-            <Calendar size={18} />
-            Agendar cita
-          </button>
-        </div>
-      </div>
+      </AnimatedSection>
 
       <RequestModal
         item={requestItem}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Search, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { BentoCard, Icon, ScrollReveal, AnimatedCard, ServicesGridSkeleton } from '@/components';
+import { BentoCard, Icon, ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal, ServicesGridSkeleton } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useServicios, type Servicio } from '@/hooks/useData';
 import { serviceSlug } from '@/lib/slugify';
@@ -46,6 +46,7 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
             <div className="section-title">
               <h2>Nuestros servicios</h2>
             </div>
+
             <div className="filter-controls">
               <div className="search-input-wrapper">
                 <Search size={18} className="search-icon" />
@@ -70,7 +71,6 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
               </select>
             </div>
           </div>
-
           {loading ? (
             <ServicesGridSkeleton count={6} />
           ) : error && servicios.length === 0 ? (
@@ -110,19 +110,23 @@ export function ServicesPage({ initialServicios }: { initialServicios?: Servicio
         </div>
       </ScrollReveal>
 
-      <div className="cta-card">
-        <div className="cta-card-grainient">
-          <Grainient className="absolute inset-0" />
+      <AnimatedSection>
+        <div className="cta-card">
+          <div className="cta-card-grainient">
+            <Grainient className="absolute inset-0" />
+          </div>
+          <div className="container section-cta cta-card-content">
+            <StaggerReveal>
+              <h2>¿Listo para transformar tu negocio?</h2>
+              <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
+              <Link href="/contacto" className="cta-button cta-button--light">
+                <Calendar size={18} />
+                Agendar cita
+              </Link>
+            </StaggerReveal>
+          </div>
         </div>
-        <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-          <Link href="/contacto" className="cta-button cta-button--light">
-            <Calendar size={18} />
-            Agendar cita
-          </Link>
-        </div>
-      </div>
+      </AnimatedSection>
     </>
   );
 }

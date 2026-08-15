@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Calendar, BadgeCheck, RefreshCw } from 'lucide-react';
-import { BentoCard, ScrollReveal, AnimatedCard, StatusIcon, CalendarIcon, EventsGridSkeleton, RequestModal, Icon } from '@/components';
+import { BentoCard, ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal, StatusIcon, CalendarIcon, EventsGridSkeleton, RequestModal, Icon } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useEventos, type Evento } from '@/hooks/useData';
 import { eventoSlug } from '@/lib/slugify';
@@ -255,7 +255,8 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
                 <motion.div
                   className="timeline19-fill"
                   initial={{ height: 0 }}
-                  animate={{ height: fillHeight }}
+                  whileInView={{ height: fillHeight }}
+                  viewport={{ once: true, amount: 0.4 }}
                   transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                   style={{ position: 'absolute', left: '15px', top: fillTop, width: '2px', background: 'var(--primary)', borderRadius: '2px', transformOrigin: 'top', pointerEvents: 'none' }}
                 />
@@ -280,31 +281,35 @@ export function FormacionPage({ categoria, initialEventos }: { categoria: 'talle
         </ScrollReveal>
       )}
 
-      <div className="cta-card">
-        <div className="cta-card-grainient">
-          <Grainient className="absolute inset-0" />
+      <AnimatedSection>
+        <div className="cta-card">
+          <div className="cta-card-grainient">
+            <Grainient className="absolute inset-0" />
+          </div>
+          <div className="container section-cta cta-card-content">
+            <StaggerReveal>
+              <h2>¿Listo para transformar tu negocio?</h2>
+              <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
+              <button 
+                className="cta-button cta-button--light"
+                onClick={() => {
+                  setRequestItem({
+                    title: 'Cita de consulta',
+                    price: '',
+                    priceNum: 0,
+                    whatsappLink: '',
+                    type: 'servicio'
+                  });
+                  setIsRequestOpen(true);
+                }}
+              >
+                <Calendar size={18} />
+                Agendar cita
+              </button>
+            </StaggerReveal>
+          </div>
         </div>
-        <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-          <button 
-            className="cta-button cta-button--light"
-            onClick={() => {
-              setRequestItem({
-                title: 'Cita de consulta',
-                price: '',
-                priceNum: 0,
-                whatsappLink: '',
-                type: 'servicio'
-              });
-              setIsRequestOpen(true);
-            }}
-          >
-            <Calendar size={18} />
-            Agendar cita
-          </button>
-        </div>
-      </div>
+      </AnimatedSection>
 
       <RequestModal
         item={requestItem}

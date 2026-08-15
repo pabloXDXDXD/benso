@@ -16,7 +16,7 @@ export { ProductSkeleton, ProductsGridSkeleton, ServiceSkeleton, ServicesGridSke
 export { PromoBanner } from './PromoBanner';
 export { RequestModal } from './RequestModal';
 export { ServiceRequestModal } from './ServiceRequestModal';
-export { ScrollReveal, AnimatedCard, AnimatedSection } from './ScrollReveal';
+export { ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal } from './ScrollReveal';
 export { default as ShinyText } from './ShinyText';
 export { default as SplitText } from './SplitText';
 export { StatusIcon } from './StatusIcon';

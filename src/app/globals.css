@@ -5731,8 +5731,9 @@ footer {
 }
 
 /* The mobile rule `#main-content > section > .container` adds padding-top: 5rem
-   to every section container; the subtitle container does not need it. */
-#main-content > .gallery-section-wrap > .container {
+   to every section container; the subtitle container does not need it.
+   (Descendant selector: the gallery section may be wrapped in a reveal wrapper.) */
+#main-content .gallery-section-wrap > .container {
     padding-top: 0;
 }
 

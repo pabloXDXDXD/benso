@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, BadgeCheck, ArrowRight } from 'lucide-react';
-import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton } from '@/components';
+import { BentoCard, Icon, FAQAccordion, ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal, StatusIcon, CalendarIcon, PriceDisplay, LogoLoop, ProductsGridSkeleton, ServicesGridSkeleton, EventsGridSkeleton } from '@/components';
 import Grainient from '@/components/Grainient';
 
 import TestimonialsLoop from '@/components/TestimonialsLoop';
@@ -318,25 +318,27 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
             </h2>
           </div>
           
-          <AnimatedSection>
-            <FAQAccordion items={faqItems} />
-          </AnimatedSection>
+          <FAQAccordion items={faqItems} />
         </div>
       </ScrollReveal>
 
-      <div className="cta-card">
-        <div className="cta-card-grainient">
-          <Grainient className="absolute inset-0" />
+      <AnimatedSection>
+        <div className="cta-card">
+          <div className="cta-card-grainient">
+            <Grainient className="absolute inset-0" />
+          </div>
+          <div className="container section-cta cta-card-content">
+            <StaggerReveal>
+              <h2>¿Listo para transformar tu negocio?</h2>
+              <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
+              <Link href="/contacto" className="cta-button cta-button--light">
+                <Calendar size={18} />
+                Agendar cita
+              </Link>
+            </StaggerReveal>
+          </div>
         </div>
-        <div className="container section-cta cta-card-content">
-          <h2>¿Listo para transformar tu negocio?</h2>
-          <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-          <Link href="/contacto" className="cta-button cta-button--light">
-            <Calendar size={18} />
-            Agendar cita
-          </Link>
-        </div>
-      </div>
+      </AnimatedSection>
       </div>
     </>
   );
