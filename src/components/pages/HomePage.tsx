@@ -105,6 +105,7 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
             <div className="hero-buttons">
               <Link href="/contacto" className="hero-cta">
                 Agendar cita
+                <ArrowRight size={18} strokeWidth={2.5} className="arrow-right" aria-hidden="true" />
               </Link>
               <Link href="/nosotros" className="hero-cta-outline">
                 Conócenos
@@ -114,7 +115,6 @@ export function HomePage({ fallbackTestimonials, fallbackFaqs }: {
         </div>
 
         <div className={`scroll-down-indicator${scrollIndicatorHidden ? ' hidden' : ''}`} aria-hidden="true">
-          <span className="scroll-down-text">Desliza</span>
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="6 9 12 15 18 9" />
           </svg>
