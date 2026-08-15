@@ -59,7 +59,7 @@ export default function TeamLoginPage() {
   // Show loading while checking initial auth state
   if (authLoading) {
     return (
-      <div className="login-screen">
+      <div id="main-content" tabIndex={-1} className="login-screen">
         <div className="team-loading">
           <motion.div
             animate={{ rotate: 360 }}
@@ -79,7 +79,7 @@ export default function TeamLoginPage() {
   }
 
   return (
-    <div className="login-screen">
+    <div id="main-content" tabIndex={-1} className="login-screen">
       <div className="login-card">
         {/* BENSO Logo */}
         <div className="login-logo">

@@ -209,7 +209,7 @@ header:not(.admin-header) {
     transition: background-color 0.6s ease, box-shadow 0.4s ease;
 }
 
-#main-content {
+#main-content.site-main {
     padding-top: var(--navbar-height, 0px);
 }
 
@@ -667,7 +667,7 @@ nav ul li a.active::after {
     margin-top: calc(-1 * var(--navbar-height, 0px));
 }
 
-#main-content > .hero {
+#main-content.site-main > .hero {
     padding-left: max(20px, calc((100vw - 1200px) / 2 + 20px));
     padding-right: max(20px, calc((100vw - 1200px) / 2 + 20px));
 }
@@ -3756,12 +3756,12 @@ footer {
         position: relative;
     }
 
-    #main-content {
+    #main-content.site-main {
         padding-top: 0;
     }
 
-    #main-content > section > .container,
-    #main-content > .container {
+    #main-content.site-main > section > .container,
+    #main-content.site-main > .container {
         padding-top: 5rem;
     }
 
@@ -3950,7 +3950,7 @@ footer {
         padding-top: 4.5rem;
     }
 
-    #main-content > .hero {
+    #main-content.site-main > .hero {
         padding-left: 1rem;
         padding-right: 1rem;
     }
@@ -4172,7 +4172,7 @@ footer {
         padding-bottom: 3rem;
     }
 
-    #main-content > .hero {
+    #main-content.site-main > .hero {
         padding-left: 20px;
         padding-right: 20px;
     }
@@ -5722,10 +5722,10 @@ footer {
     margin: 1.25rem 0 0;
 }
 
-/* The mobile rule `#main-content > section > .container` adds padding-top: 5rem
+/* The mobile rule `#main-content.site-main > section > .container` adds padding-top: 5rem
    to every section container; the subtitle container does not need it.
    (Descendant selector: the gallery section may be wrapped in a reveal wrapper.) */
-#main-content .gallery-section-wrap > .container {
+#main-content.site-main .gallery-section-wrap > .container {
     padding-top: 0;
 }
 

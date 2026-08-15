@@ -4,8 +4,7 @@ import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { SWRProvider } from '@/components/SWRProvider';
-import { Footer, Cart, TopBarWrapper } from '@/components';
-import { Toaster } from 'react-hot-toast';
+import { SiteChrome } from '@/components/SiteChrome';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -90,13 +89,7 @@ export default function RootLayout({
           <CartProvider>
             <SWRProvider>
               <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
-              <TopBarWrapper />
-              <main id="main-content" tabIndex={-1}>
-                {children}
-              </main>
-              <Footer />
-              <Cart />
-              <Toaster position="bottom-left" toastOptions={{ duration: 3000 }} />
+              <SiteChrome>{children}</SiteChrome>
             </SWRProvider>
           </CartProvider>
         </CurrencyProvider>

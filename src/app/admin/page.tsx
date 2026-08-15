@@ -628,7 +628,7 @@ export default function AdminPage() {
   return (
     <div className="admin-container">
       {!isAuthenticated ? (
-        <div className="login-screen">
+        <div id="main-content" tabIndex={-1} className="login-screen">
           <div className="login-card">
             <div className="login-logo">
               <BensoLogo height={48} className="login-logo-svg" />
@@ -716,7 +716,7 @@ export default function AdminPage() {
           </div>
           )}
 
-          <main className="admin-main">
+          <main id="main-content" tabIndex={-1} className="admin-main">
             {loading ? (
               <div className="loading"><Loader className="spin" size={32} /></div>
             ) : (

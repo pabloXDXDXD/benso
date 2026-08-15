@@ -409,7 +409,7 @@ export default function TeamPage() {
           )}
 
           {/* Content: View routing */}
-          <main className="team-main">
+          <main id="main-content" tabIndex={-1} className="team-main">
             {view === 'reports' && (
               <TeamReports
                 monthlyReport={monthlyReport}
