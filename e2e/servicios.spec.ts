@@ -25,9 +25,9 @@ test.describe('Servicios catalog (S1, S3, S8)', () => {
   test('renders 13 info-first cards without price or cart elements', async ({ page }) => {
     const cards = page.locator('.bento-grid .service-card');
     await expect(cards).toHaveCount(13);
-    // every card shows subtitle + "Ver más info"
+    // every card shows subtitle + "Ver información"
     await expect(cards.locator('.service-card-subtitle')).toHaveCount(13);
-    await expect(cards.locator('.btn-view-more').first()).toHaveText(/Ver más info/);
+    await expect(cards.locator('.btn-view-more').first()).toHaveText(/Ver información/);
     // no price or cart elements in the services catalog (R1/R6)
     await expect(cards.locator('.card-price')).toHaveCount(0);
     await expect(cards.locator('.btn-add-cart')).toHaveCount(0);
@@ -68,7 +68,7 @@ test.describe('ServiceRequestModal (S4, S6, S7)', () => {
     await expect(page.locator('.service-card:has(.btn-view-more)')).toHaveCount(13, { timeout: 20000 });
   });
 
-  test('opens on "Ver más info" with kicker, title, subtitle, description and includes (S4)', async ({ page }) => {
+  test('opens on "Ver información" with kicker, title, subtitle, description and includes (S4)', async ({ page }) => {
     // Target by title: the catalog fetch has no ORDER BY, so grid order is not guaranteed
     const card = page.locator('.service-card', { hasText: 'Modelos Contables a Medida' });
     await card.locator('.btn-view-more').click();
