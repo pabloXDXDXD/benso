@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { EventRegistrationForm } from './EventRegistrationForm';
-import { RequestModal } from './RequestModal';
 
 export function PromoBanner() {
   const bannerRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
   const [evento, setEvento] = useState<{ id: number; title: string; tipo: 'taller' | 'curso' | 'evento' } | null>(null);
   const [isRegOpen, setIsRegOpen] = useState(false);
-  const [isRequestOpen, setIsRequestOpen] = useState(false);
 
   // Measure banner height for layout
   useEffect(() => {
@@ -44,7 +44,7 @@ export function PromoBanner() {
     if (evento) {
       setIsRegOpen(true);
     } else {
-      setIsRequestOpen(true);
+      router.push('/contacto');
     }
   };
 
@@ -74,18 +74,6 @@ export function PromoBanner() {
           onClose={() => setIsRegOpen(false)}
         />
       )}
-
-      <RequestModal
-        item={{
-          title: 'Cita de consulta',
-          price: '',
-          priceNum: 0,
-          whatsappLink: '',
-          type: 'servicio' as const,
-        }}
-        isOpen={isRequestOpen}
-        onClose={() => setIsRequestOpen(false)}
-      />
     </>
   );
 }

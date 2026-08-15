@@ -13,11 +13,12 @@ import {
   MessageSquare,
   HelpCircle,
   Inbox,
+  UserPlus,
   RefreshCw,
   LogOut,
 } from 'lucide-react';
 
-export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs';
+export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs';
 
 export interface AppSidebarProps {
   activeTab: AdminTab;
@@ -55,6 +56,7 @@ const navSections: NavSection[] = [
       { tab: 'pedidos', label: 'Pedidos', icon: Package, countKey: 'pedidos' },
       { tab: 'citas', label: 'Citas', icon: Calendar, countKey: 'citas' },
       { tab: 'solicitudes', label: 'Solicitudes', icon: Inbox, countKey: 'servicio_solicitudes' },
+      { tab: 'inscripciones', label: 'Inscripciones', icon: UserPlus, countKey: 'evento_inscripciones' },
     ],
   },
   {

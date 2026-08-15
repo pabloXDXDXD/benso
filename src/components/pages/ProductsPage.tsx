@@ -4,26 +4,17 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Search, RefreshCw } from 'lucide-react';
-import { BentoCard, PriceDisplay, RequestModal, ProductsGridSkeleton, AnimatedCard, AnimatedSection, StaggerReveal, ScrollReveal } from '@/components';
+import { BentoCard, PriceDisplay, ProductsGridSkeleton, AnimatedCard, AnimatedSection, StaggerReveal, ScrollReveal } from '@/components';
 import Grainient from '@/components/Grainient';
 import { useProductos, type Producto } from '@/hooks/useData';
 import { imgSrc } from '@/lib/imageLoader';
 import { productSlug } from '@/lib/slugify';
-interface RequestItem {
-  title: string;
-  price: string;
-  priceNum: number;
-  whatsappLink: string;
-  type: 'servicio' | 'producto' | 'evento';
-}
 
 type CategoryFilter = 'all' | 'adhesivos' | 'carteleria' | 'papeleria' | 'indumentaria' | 'merchandising';
 
 export function ProductsPage({ initialProductos }: { initialProductos?: Producto[] }) {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
-  const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
-  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { productos, loading, error, retry } = useProductos(initialProductos);
   const filters = [
@@ -36,11 +27,6 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
   ];
 
   useEffect(() => { setMounted(true); }, []);
-
-  const openRequest = (item: RequestItem) => {
-    setRequestItem(item);
-    setIsRequestOpen(true);
-  };
 
   const filteredProducts = productos.filter(
     product => (activeFilter === 'all' || product.category === activeFilter) &&
@@ -156,26 +142,14 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
             <StaggerReveal>
               <h2>¿Listo para transformar tu negocio?</h2>
               <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-              <button
-                className="cta-button cta-button--light"
-                onClick={() => {
-                  setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-                  setIsRequestOpen(true);
-                }}
-              >
+              <Link href="/contacto" className="cta-button cta-button--light">
                 <Calendar size={18} />
                 Agendar cita
-              </button>
+              </Link>
             </StaggerReveal>
           </div>
         </div>
       </AnimatedSection>
-
-      <RequestModal
-        item={requestItem}
-        isOpen={isRequestOpen}
-        onClose={() => setIsRequestOpen(false)}
-      />
     </>
   );
 }

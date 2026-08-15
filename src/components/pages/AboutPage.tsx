@@ -1,17 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import Link from 'next/link';
 import { Calendar } from 'lucide-react';
-import { ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal, BentoCard, Icon, ImageGallery, RequestModal } from '@/components';
+import { ScrollReveal, AnimatedCard, AnimatedSection, StaggerReveal, BentoCard, Icon, ImageGallery } from '@/components';
 import Grainient from '@/components/Grainient';
-
-interface RequestItem {
-  title: string;
-  price: string;
-  priceNum: number;
-  whatsappLink: string;
-  type: 'servicio' | 'producto' | 'evento';
-}
 
 interface Commitment {
   icon: string;
@@ -79,9 +71,6 @@ const stats: Stat[] = [
 ];
 
 export function AboutPage() {
-  const [requestItem, setRequestItem] = useState<RequestItem | null>(null);
-  const [isRequestOpen, setIsRequestOpen] = useState(false);
-
   return (
     <>
       <ScrollReveal>
@@ -182,26 +171,14 @@ export function AboutPage() {
             <StaggerReveal>
               <h2>¿Listo para transformar tu negocio?</h2>
               <p>Agenda una cita y descubre cómo podemos ayudarte a escalar tus proyectos.</p>
-              <button
-                className="cta-button cta-button--light"
-                onClick={() => {
-                  setRequestItem({ title: 'Cita de consulta', price: '', priceNum: 0, whatsappLink: '', type: 'servicio' });
-                  setIsRequestOpen(true);
-                }}
-              >
+              <Link href="/contacto" className="cta-button cta-button--light">
                 <Calendar size={18} />
                 Agendar cita
-              </button>
+              </Link>
             </StaggerReveal>
           </div>
         </div>
       </AnimatedSection>
-
-      <RequestModal
-        item={requestItem}
-        isOpen={isRequestOpen}
-        onClose={() => setIsRequestOpen(false)}
-      />
     </>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -84,6 +84,23 @@ interface Solicitud {
   created_at: string;
 }
 
+interface Inscripcion {
+  id: number;
+  evento_id: number | null;
+  evento_titulo: string;
+  correo_electronico: string;
+  telefono: string;
+  nivel_estudios?: string | null;
+  tiene_negocio?: boolean | null;
+  nombre_negocio?: string | null;
+  sector?: string | null;
+  motivacion?: string | null;
+  acuerdo_aprendizaje?: boolean | null;
+  notificaciones?: boolean | null;
+  tipo_solicitud: string;
+  created_at: string;
+}
+
 interface Testimonial {
   id: number;
   quote: string;
@@ -126,7 +143,7 @@ function formatId(id: number): string {
 
 const COLUMN_DEFAULTS: Record<string, number> = {
   id: 70, acciones: 100, popular: 80, estado: 130,
-  precio: 120, fecha: 120, contactos: 200, items: 220,
+  precio: 120, fecha: 120, contactos: 200, items: 220, formacion: 110,
   total: 110, cliente: 150, nombre: 150, titulo: 200,
   desc: 250, mensaje: 250, msj: 250,
   subtitle: 200, includes: 240,
@@ -142,12 +159,13 @@ export default function AdminPage() {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('dashboard');
   const [productos, setProductos] = useState<Producto[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [citas, setCitas] = useState<Cita[]>([]);
+  const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [faqs, setFaqs] = useState<Faq[]>([]);
   // loading is derived from queries below — kept as var name for JSX compatibility
@@ -242,6 +260,12 @@ export default function AdminPage() {
     enabled: authEnabled,
   });
 
+  const inscripcionesQuery = useQuery({
+    queryKey: ['admin', 'inscripciones'],
+    queryFn: () => adminFetch('select', { table: 'evento_inscripciones', orderBy: 'created_at', ascending: false }),
+    enabled: authEnabled,
+  });
+
   const testimonialsQuery = useQuery({
     queryKey: ['admin', 'testimonials'],
     queryFn: () => adminFetch('select', { table: 'testimonials', orderBy: 'sort_order', ascending: true }),
@@ -271,6 +295,9 @@ export default function AdminPage() {
     if (citasQuery.data?.data) setCitas(citasQuery.data.data);
   }, [citasQuery.data]);
   useEffect(() => {
+    if (inscripcionesQuery.data?.data) setInscripciones(inscripcionesQuery.data.data);
+  }, [inscripcionesQuery.data]);
+  useEffect(() => {
     if (testimonialsQuery.data?.data) setTestimonials(testimonialsQuery.data.data);
   }, [testimonialsQuery.data]);
   useEffect(() => {
@@ -289,7 +316,7 @@ export default function AdminPage() {
   const loading = isAuthenticated
     ? productosQuery.isLoading || serviciosQuery.isLoading
       || eventosQuery.isLoading || pedidosQuery.isLoading || citasQuery.isLoading
-      || solicitudesQuery.isLoading || testimonialsQuery.isLoading || faqsQuery.isLoading
+      || solicitudesQuery.isLoading || inscripcionesQuery.isLoading || testimonialsQuery.isLoading || faqsQuery.isLoading
     : false;
 
   function handleColResizeStart(col: string, e: React.MouseEvent) {
@@ -550,6 +577,28 @@ export default function AdminPage() {
   }
 
   const solicitudesData = (solicitudesQuery.data?.data || []) as Solicitud[];
+  const inscripcionesData = (inscripcionesQuery.data?.data || []) as Inscripcion[];
+
+  // Mapa evento_id → categoria para distinguir el tipo de formación (taller/curso/evento/...)
+  const eventoCategoriaMap = useMemo(() => {
+    const m = new Map<number, string>();
+    (eventosQuery.data?.data || []).forEach((e: any) => {
+      if (e?.id != null && e?.categoria) m.set(e.id, e.categoria);
+    });
+    return m;
+  }, [eventosQuery.data]);
+
+  const CATEGORIA_FORMACION_LABELS: Record<string, string> = {
+    taller: 'Taller',
+    curso: 'Curso',
+    evento: 'Evento',
+    masterclass: 'Masterclass',
+  };
+
+  function categoriaFormacion(cat?: string): string {
+    if (!cat) return '—';
+    return CATEGORIA_FORMACION_LABELS[cat] ?? cat.charAt(0).toUpperCase() + cat.slice(1);
+  }
 
   const filteredData = {
     pedidos: pedidos.filter(p => p.customer_name?.toLowerCase().includes(searchTerm.toLowerCase())),
@@ -557,6 +606,11 @@ export default function AdminPage() {
     solicitudes: solicitudesData.filter(s =>
       s.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
       || s.servicio_titulo?.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    inscripciones: inscripcionesData.filter(i =>
+      i.correo_electronico?.toLowerCase().includes(searchTerm.toLowerCase())
+      || i.evento_titulo?.toLowerCase().includes(searchTerm.toLowerCase())
+      || i.telefono?.toLowerCase().includes(searchTerm.toLowerCase())
     ),
     productos: productos.filter(p => {
       const matchesSearch = p.title?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -596,7 +650,7 @@ export default function AdminPage() {
   pedidos.forEach(p => {
     if (p.items && Array.isArray(p.items)) {
       p.items.forEach((item: any) => {
-        const title = item.title || item.name || '';
+        const title = item.title || item.name || item.productTitle || '';
         const qty = Number(item.quantity || 1);
         if (title) itemCounts[title] = (itemCounts[title] || 0) + qty;
       });
@@ -618,6 +672,7 @@ export default function AdminPage() {
     pedidos: pedidos.length,
     citas: citas.length,
     servicio_solicitudes: solicitudesData.length,
+    evento_inscripciones: inscripcionesData.length,
     productos: productos.length,
     servicios: servicios.length,
     eventos: eventos.length,
@@ -707,7 +762,7 @@ export default function AdminPage() {
               </span>
             </div>
             <div className="toolbar-right">
-              {activeTab !== 'pedidos' && activeTab !== 'citas' && activeTab !== 'solicitudes' && (
+              {activeTab !== 'pedidos' && activeTab !== 'citas' && activeTab !== 'solicitudes' && activeTab !== 'inscripciones' && (
                 <button onClick={() => { setShowCreateModal(true); setCreateTable(activeTab as 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'); }} className="btn-add">
                   <Plus size={18} /> Añadir
                 </button>
@@ -831,7 +886,7 @@ export default function AdminPage() {
                                   const showAll = expandedCells[itemsKey];
                                   const itemsToShow = showAll ? p.items : p.items?.slice(0, 3);
                                   return (itemsToShow || []).map((i: any, idx: number) => (
-                                    <span key={idx}>• {i.title} x{i.quantity}</span>
+                                    <span key={idx}>• {i.title || i.productTitle || i.name} x{i.quantity}</span>
                                   ));
                                 })()}
                                 {p.items?.length > 3 && (
@@ -857,7 +912,7 @@ export default function AdminPage() {
                             <td>
                               <div className="actions-cell">
                                 <button onClick={() => {
-                                  const items = (p.items || []).map((i: any) => `  • ${i.title} x${i.quantity} — ${i.price} CUP`).join('\n');
+                                  const items = (p.items || []).map((i: any) => `  • ${i.title || i.productTitle || i.name} x${i.quantity} — ${i.price} CUP`).join('\n');
                                   copyToClipboard('Pedido', `Pedido #${p.id} — ${p.customer_name}\nEmail: ${p.customer_email}\nItems:\n${items}\nTotal: ${p.total_price?.toLocaleString()} CUP\nEstado: ${p.status}\nFecha: ${new Date(p.created_at).toLocaleDateString('es-ES')}`);
                                 }} className="btn-icon-sm" title="Copiar info del pedido">
                                   <Copy size={14} />
@@ -997,6 +1052,73 @@ export default function AdminPage() {
                             </td>
                             <td className="messaje-cell"><TruncatedCell text={sol.mensaje || ''} cellKey={`msg-sol-${sol.id}`} /></td>
                             <td className="date-cell">{new Date(sol.created_at).toLocaleString('es-ES')}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {activeTab === 'inscripciones' && (
+                  <div className="table-container">
+                    <table className="data-table">
+                      <colgroup>
+                        <col style={{ width: getColWidth('insc-id', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-evento', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-formacion', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-email', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-telefono', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-nivel', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-negocio', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-nombre-negocio', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-sector', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-motivacion', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-notificaciones', colWidths) }} />
+                        <col style={{ width: getColWidth('insc-fecha', colWidths) }} />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th style={{position:'relative'}}>ID<ColResizeHandle col="insc-id" /></th>
+                          <th style={{position:'relative'}}>Evento<ColResizeHandle col="insc-evento" /></th>
+                          <th style={{position:'relative'}}>Formación<ColResizeHandle col="insc-formacion" /></th>
+                          <th style={{position:'relative'}}>Correo<ColResizeHandle col="insc-email" /></th>
+                          <th style={{position:'relative'}}>Teléfono<ColResizeHandle col="insc-telefono" /></th>
+                          <th style={{position:'relative'}}>Nivel de estudios<ColResizeHandle col="insc-nivel" /></th>
+                          <th style={{position:'relative'}}>Tiene negocio<ColResizeHandle col="insc-negocio" /></th>
+                          <th style={{position:'relative'}}>Nombre del negocio<ColResizeHandle col="insc-nombre-negocio" /></th>
+                          <th style={{position:'relative'}}>Sector<ColResizeHandle col="insc-sector" /></th>
+                          <th style={{position:'relative'}}>Motivación<ColResizeHandle col="insc-motivacion" /></th>
+                          <th style={{position:'relative'}}>Notificaciones<ColResizeHandle col="insc-notificaciones" /></th>
+                          <th style={{position:'relative'}}>Fecha<ColResizeHandle col="insc-fecha" /></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredData.inscripciones.map(i => (
+                          <tr key={i.id}>
+                            <td className="id-cell">{formatId(i.id)}</td>
+                            <td className="name-cell">{i.evento_titulo}</td>
+                            <td>
+                              <span className="status-badge">
+                                {categoriaFormacion(i.evento_id != null ? eventoCategoriaMap.get(i.evento_id) : undefined)}
+                              </span>
+                            </td>
+                            <td className="name-cell">{i.correo_electronico}</td>
+                            <td>{i.telefono}</td>
+                            <td>{i.nivel_estudios || '-'}</td>
+                            <td>
+                              <span className={`status-badge ${i.tiene_negocio ? 'completado' : 'pendiente'}`}>
+                                {i.tiene_negocio ? 'Sí' : 'No'}
+                              </span>
+                            </td>
+                            <td>{i.nombre_negocio || '-'}</td>
+                            <td>{i.sector || '-'}</td>
+                            <td className="messaje-cell"><TruncatedCell text={i.motivacion || ''} cellKey={`mot-insc-${i.id}`} /></td>
+                            <td>
+                              <span className={`status-badge ${i.notificaciones ? 'completado' : 'pendiente'}`}>
+                                {i.notificaciones ? 'Sí' : 'No'}
+                              </span>
+                            </td>
+                            <td className="date-cell">{new Date(i.created_at).toLocaleString('es-ES')}</td>
                           </tr>
                         ))}
                       </tbody>
