@@ -611,6 +611,15 @@ export default function AdminPage() {
     queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
 
+  async function toggleServiceActive(s: Servicio) {
+    const next = !s.is_active;
+    setServicios(prev => prev.map(item => item.id === s.id ? { ...item, is_active: next } : item));
+    toast.success(next ? 'Servicio visible en la web' : 'Servicio oculto de la web');
+    const json = await adminFetch('update', { table: 'servicios', id: s.id, data: { is_active: next } });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
   // ── Modal de edición de servicio (detalles) ──
   function openServiceEdit(s: Servicio) {
     setEditingId(s.id);
@@ -1415,6 +1424,7 @@ export default function AdminPage() {
                         <col style={{ width: getColWidth('serv-subtitle', colWidths) }} />
                         <col style={{ width: getColWidth('serv-desc', colWidths) }} />
                         <col style={{ width: getColWidth('serv-includes', colWidths) }} />
+                        <col style={{ width: getColWidth('serv-estado', colWidths) }} />
                         <col style={{ width: getColWidth('serv-acciones', colWidths) }} />
                       </colgroup>
                       <thead>
@@ -1424,6 +1434,7 @@ export default function AdminPage() {
                           <th style={{position:'relative'}}>Subtítulo</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="serv-desc" /></th>
                           <th style={{position:'relative'}}>Incluye</th>
+                          <th style={{position:'relative'}}>Estado</th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="serv-acciones" /></th>
                         </tr>
                       </thead>
@@ -1438,6 +1449,16 @@ export default function AdminPage() {
                             </td>
                             <td className="desc-cell">
                               <TruncatedCell text={(s.includes || []).join(' • ')} cellKey={`inc-s-${s.id}`} />
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => toggleServiceActive(s)}
+                                className={`btn-icon-sm ${s.is_active ? 'success' : 'warning'}`}
+                                title={s.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                                aria-label={s.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                              >
+                                {s.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                              </button>
                             </td>
                             <td>
                               <div className="actions-cell">
