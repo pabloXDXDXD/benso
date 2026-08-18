@@ -64,7 +64,7 @@ const navSections: NavSection[] = [
     items: [
       { tab: 'productos', label: 'Productos', icon: Tag, countKey: 'productos' },
       { tab: 'servicios', label: 'Servicios', icon: Wrench, countKey: 'servicios' },
-      { tab: 'eventos', label: 'Eventos', icon: CalendarDays, countKey: 'eventos' },
+      { tab: 'eventos', label: 'Formaciones', icon: CalendarDays, countKey: 'eventos' },
     ],
   },
   {

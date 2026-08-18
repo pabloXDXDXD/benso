@@ -151,6 +151,12 @@ const SERVICE_CATEGORY_LABELS: Record<string, string> = {
   'soluciones-bi-digital': 'Soluciones BI y Digital',
   'administracion-gestion': 'Administración y Gestión',
 };
+const EVENT_CATEGORIES = ['taller', 'curso', 'evento'];
+const EVENT_CATEGORY_LABELS: Record<string, string> = {
+  taller: 'Taller',
+  curso: 'Curso',
+  evento: 'Evento',
+};
 
 function extractNumberFromPrice(price: string): number {
   const match = price.match(/[\d,.]+/);
@@ -834,7 +840,11 @@ export default function AdminPage() {
       const matchesCategory = !categoryFilter || s.category === categoryFilter;
       return matchesSearch && matchesCategory;
     }),
-    eventos: eventos.filter(e => e.title?.toLowerCase().includes(searchTerm.toLowerCase())),
+    eventos: eventos.filter(e => {
+      const matchesSearch = e.title?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = !categoryFilter || e.categoria === categoryFilter;
+      return matchesSearch && matchesCategory;
+    }),
     testimonials: testimonials.filter(t => t.author?.toLowerCase().includes(searchTerm.toLowerCase())),
     faqs: faqs.filter(f => f.question?.toLowerCase().includes(searchTerm.toLowerCase())),
   };
@@ -1128,18 +1138,20 @@ export default function AdminPage() {
                     className="search-input"
                   />
                 </div>
-              {(activeTab === 'productos' || activeTab === 'servicios') && (
+              {(activeTab === 'productos' || activeTab === 'servicios' || activeTab === 'eventos') && (
                 <select 
                   className="filter-select"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                 >
                   <option value="">Todas las categorías</option>
-                  {(activeTab === 'productos' ? PRODUCT_CATEGORIES : SERVICE_CATEGORIES).map(cat => (
+                  {(activeTab === 'productos' ? PRODUCT_CATEGORIES : activeTab === 'servicios' ? SERVICE_CATEGORIES : EVENT_CATEGORIES).map(cat => (
                     <option key={cat} value={cat}>
                       {activeTab === 'productos'
                         ? (PRODUCT_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1))
-                        : (SERVICE_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1))}
+                        : activeTab === 'servicios'
+                          ? (SERVICE_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1))
+                          : (EVENT_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1))}
                     </option>
                   ))}
                 </select>
@@ -1493,7 +1505,7 @@ export default function AdminPage() {
                       <thead>
                         <tr>
                           <th style={{position:'relative'}}>ID<ColResizeHandle col="ev-id" /></th>
-                          <th style={{position:'relative'}}>Evento<ColResizeHandle col="ev-titulo" /></th>
+                          <th style={{position:'relative'}}>Formación<ColResizeHandle col="ev-titulo" /></th>
                           <th style={{position:'relative'}}>Imagen</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="ev-desc" /></th>
                           <th style={{position:'relative'}}>Fecha<ColResizeHandle col="ev-fecha" /></th>
@@ -1874,7 +1886,7 @@ export default function AdminPage() {
         <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Nuevo {createTable === 'productos' ? 'Producto' : createTable === 'servicios' ? 'Servicio' : createTable === 'eventos' ? 'Evento' : createTable === 'testimonials' ? 'Testimonio' : 'FAQ'}</h2>
+              <h2>Nuevo {createTable === 'productos' ? 'Producto' : createTable === 'servicios' ? 'Servicio' : createTable === 'eventos' ? 'Formación' : createTable === 'testimonials' ? 'Testimonio' : 'FAQ'}</h2>
               <button onClick={() => setShowCreateModal(false)} className="btn-close">&times;</button>
             </div>
             <div className="modal-body">
