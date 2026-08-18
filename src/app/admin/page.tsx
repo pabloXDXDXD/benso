@@ -16,6 +16,14 @@ import {
   Eye, EyeOff, ShoppingCart, DollarSign, CheckCircle, CalendarCheck,
   MessageSquare, HelpCircle, ImageUp, Upload
 } from 'lucide-react';
+import AdminDataTable, { AdminTableCustomizer, AdminTableColumn, AdminTablePref, defaultAdminTablePref } from '@/components/admin/AdminDataTable';
+
+interface ProductVariant {
+  label: string;
+  unit_price: number;
+  total_price: number;
+  description?: string;
+}
 
 interface Producto {
   id: number;
@@ -27,6 +35,10 @@ interface Producto {
   icon: string;
   popular: boolean;
   image?: string;
+  whatsapp_link?: string;
+  price_type?: string;
+  is_active?: boolean;
+  variants?: ProductVariant[];
 }
 
 interface Servicio {
@@ -119,7 +131,16 @@ interface Faq {
   sort_order: number;
 }
 
-const PRODUCT_CATEGORIES = ['pegatinas', 'posters', 'cuadros', 'tarjetas', 'lonas', 'otros'];
+const PRODUCT_CATEGORIES = ['adhesivos', 'carteleria', 'papeleria', 'indumentaria', 'merchandising', 'lonas', 'otros'];
+const PRODUCT_CATEGORY_LABELS: Record<string, string> = {
+  adhesivos: 'Adhesivos',
+  carteleria: 'Cartelería',
+  papeleria: 'Papelería',
+  indumentaria: 'Indumentaria',
+  merchandising: 'Merchandising',
+  lonas: 'Lonas',
+  otros: 'Otros',
+};
 const SERVICE_CATEGORIES = ['contabilidad-finanzas', 'marketing-marca', 'soluciones-bi-digital', 'administracion-gestion'];
 const SERVICE_CATEGORY_LABELS: Record<string, string> = {
   'contabilidad-finanzas': 'Contabilidad y Finanzas',
@@ -142,11 +163,12 @@ function formatId(id: number): string {
 }
 
 const COLUMN_DEFAULTS: Record<string, number> = {
-  id: 70, acciones: 100, popular: 80, estado: 130,
+  id: 70, acciones: 100, popular: 80, estado: 80,
   precio: 120, fecha: 120, contactos: 200, items: 220, formacion: 110,
   total: 110, cliente: 150, nombre: 150, titulo: 200,
   desc: 250, mensaje: 250, msj: 250,
   subtitle: 200, includes: 240,
+  categoria: 110, variantes: 110,
 };
 
 function getColWidth(key: string, overrides: Record<string, number>): number {
@@ -171,6 +193,7 @@ export default function AdminPage() {
   // loading is derived from queries below — kept as var name for JSX compatibility
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>(null);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createTable, setCreateTable] = useState<'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('productos');
@@ -185,6 +208,29 @@ export default function AdminPage() {
   const mouseUpRef = useRef<((ev: MouseEvent) => void) | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // ── Preferencias de tabla (columnas visibles, filtros, orden) ──
+  const TABLE_PREFS_KEY = 'admin-table-prefs-v1';
+  const [tablePrefs, setTablePrefs] = useState<Record<string, AdminTablePref>>(() => {
+    try {
+      const raw = localStorage.getItem(TABLE_PREFS_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+      return {};
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(TABLE_PREFS_KEY, JSON.stringify(tablePrefs));
+    } catch {
+      // localStorage no disponible: ignorar
+    }
+  }, [tablePrefs]);
+
+  const getTablePref = (tab: string): AdminTablePref => tablePrefs[tab] || defaultAdminTablePref();
+  const updateTablePref = (tab: string, pref: AdminTablePref) =>
+    setTablePrefs(prev => ({ ...prev, [tab]: pref }));
 
   // ── Admin API helper ──
   async function adminFetch(action: string, payload: Record<string, any> = {}): Promise<any> {
@@ -467,6 +513,100 @@ export default function AdminPage() {
     setEditData(null);
   }
 
+  // ── Modal de edición de producto (detalles + variantes) ──
+  function openProductEdit(p: Producto) {
+    setEditingId(p.id);
+    setEditData({
+      ...p,
+      variants: Array.isArray(p.variants) ? p.variants.map(v => ({ ...v })) : [],
+    });
+    setShowEditProductModal(true);
+  }
+
+  function closeProductEdit() {
+    setShowEditProductModal(false);
+    setEditingId(null);
+    setEditData(null);
+  }
+
+  function updateVariantField(index: number, field: keyof ProductVariant, value: string | number) {
+    setEditData((prev: any) => {
+      const variants = [...(prev.variants || [])];
+      variants[index] = { ...variants[index], [field]: value };
+      return { ...prev, variants };
+    });
+  }
+
+  function addVariant() {
+    setEditData((prev: any) => ({
+      ...prev,
+      variants: [...(prev.variants || []), { label: '', unit_price: 0, total_price: 0, description: '' }],
+    }));
+  }
+
+  function removeVariant(index: number) {
+    setEditData((prev: any) => {
+      const variants = (prev.variants || []).filter((_: any, i: number) => i !== index);
+      return { ...prev, variants };
+    });
+  }
+
+  async function saveProductEdit() {
+    if (!editData) return;
+    if (!editData.title?.trim()) {
+      toast.error('El título es obligatorio');
+      return;
+    }
+    const newId = Number(editData.id) || editingId;
+    if (newId !== editingId && productos.some(item => item.id === newId)) {
+      toast.error(`Ya existe un producto con el ID ${newId}`);
+      return;
+    }
+    const variants = (editData.variants || [])
+      .map((v: any) => ({
+        label: String(v.label || '').trim(),
+        unit_price: Number(v.unit_price) || 0,
+        total_price: Number(v.total_price) || 0,
+        description: String(v.description || '').trim(),
+      }))
+      .filter((v: any) => v.label);
+
+    const priceNum = extractNumberFromPrice(editData.price);
+    const updateData: any = {
+      title: editData.title,
+      description: editData.description || '',
+      price: editData.price,
+      price_num: priceNum,
+      category: editData.category || 'otros',
+      icon: editData.icon || 'box',
+      popular: !!editData.popular,
+      image: editData.image || '',
+      whatsapp_link: editData.whatsapp_link || '',
+      price_type: editData.price_type || 'fijo',
+      is_active: !!editData.is_active,
+      variants,
+    };
+    if (newId !== editingId) updateData.id = newId;
+
+    // Optimistic update
+    setProductos(prev => prev.map(item => item.id === editingId ? { ...item, ...updateData, id: newId } : item));
+    closeProductEdit();
+    toast.success('Producto guardado');
+
+    const json = await adminFetch('update', { table: 'productos', id: editingId, data: updateData });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  async function toggleProductActive(p: Producto) {
+    const next = !p.is_active;
+    setProductos(prev => prev.map(item => item.id === p.id ? { ...item, is_active: next } : item));
+    toast.success(next ? 'Producto visible en la web' : 'Producto oculto de la web');
+    const json = await adminFetch('update', { table: 'productos', id: p.id, data: { is_active: next } });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
   async function handleImageUpload(file: File): Promise<string | null> {
     const token = sessionStorage.getItem('admin-token');
     if (!token) return null;
@@ -627,6 +767,177 @@ export default function AdminPage() {
     faqs: faqs.filter(f => f.question?.toLowerCase().includes(searchTerm.toLowerCase())),
   };
 
+  const pedidosColumns: AdminTableColumn<Pedido>[] = [
+    { key: 'id', label: 'ID', sortValue: p => p.id, filterValue: p => String(p.id), render: p => <td className="id-cell">{formatId(p.id)}</td> },
+    { key: 'cliente', label: 'Cliente', sortValue: p => p.customer_name || '', filterValue: p => p.customer_name || '', render: p => <td className="name-cell">{p.customer_name}</td> },
+    {
+      key: 'contactos', label: 'Contactos',
+      filterValue: p => p.customer_email || '',
+      render: p => (
+        <td>
+          <div className="contact-cell">
+            {p.customer_email && <span><Mail size={14} /> {p.customer_email}</span>}
+          </div>
+        </td>
+      ),
+    },
+    {
+      key: 'items', label: 'Items',
+      render: p => (
+        <td className="items-cell">
+          <div className="items-list">
+            {(() => {
+              const itemsKey = `items-${p.id}`;
+              const showAll = expandedCells[itemsKey];
+              const itemsToShow = showAll ? p.items : p.items?.slice(0, 3);
+              return (itemsToShow || []).map((i: any, idx: number) => (
+                <span key={idx}>• {i.title || i.productTitle || i.name} x{i.quantity}</span>
+              ));
+            })()}
+            {p.items?.length > 3 && (
+              <button onClick={() => toggleCell(`items-${p.id}`)} className="expand-toggle more">
+                {expandedCells[`items-${p.id}`] ? 'Ver menos' : `Ver +${p.items.length - 3} más`}
+              </button>
+            )}
+          </div>
+        </td>
+      ),
+    },
+    { key: 'total', label: 'Total', sortValue: p => Number(p.total_price || 0), filterValue: p => String(p.total_price ?? ''), render: p => <td className="price-cell">{p.total_price?.toLocaleString()} CUP</td> },
+    {
+      key: 'estado', label: 'Estado',
+      sortValue: p => p.status || '',
+      filterValue: p => p.status || '',
+      render: p => (
+        <td>
+          <select
+            value={p.status}
+            onChange={e => updateStatus(p.id, e.target.value)}
+            className={`status-select ${p.status}`}
+          >
+            <option value="pendiente">Pendiente</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="completado">Completado</option>
+          </select>
+        </td>
+      ),
+    },
+    { key: 'fecha', label: 'Fecha', sortValue: p => new Date(p.created_at).getTime(), filterValue: p => new Date(p.created_at).toLocaleDateString('es-ES'), render: p => <td className="date-cell">{new Date(p.created_at).toLocaleDateString('es-ES')}</td> },
+    {
+      key: 'acciones', label: 'Acciones', alwaysVisible: true,
+      render: p => (
+        <td>
+          <div className="actions-cell">
+            <button onClick={() => {
+              const items = (p.items || []).map((i: any) => `  • ${i.title || i.productTitle || i.name} x${i.quantity} — ${i.price} CUP`).join('\n');
+              copyToClipboard('Pedido', `Pedido #${p.id} — ${p.customer_name}\nEmail: ${p.customer_email}\nItems:\n${items}\nTotal: ${p.total_price?.toLocaleString()} CUP\nEstado: ${p.status}\nFecha: ${new Date(p.created_at).toLocaleDateString('es-ES')}`);
+            }} className="btn-icon-sm" title="Copiar info del pedido">
+              <Copy size={14} />
+            </button>
+          </div>
+        </td>
+      ),
+    },
+  ];
+
+  const citasColumns: AdminTableColumn<Cita>[] = [
+    { key: 'id', label: 'ID', sortValue: c => c.id, filterValue: c => String(c.id), render: c => <td className="id-cell">{formatId(c.id)}</td> },
+    { key: 'nombre', label: 'Nombre', sortValue: c => c.nombre || '', filterValue: c => c.nombre || '', render: c => <td className="name-cell">{c.nombre}</td> },
+    {
+      key: 'contactos', label: 'Contactos',
+      filterValue: c => `${c.email || ''} ${c.telefono || ''}`,
+      render: c => (
+        <td>
+          <div className="contact-cell">
+            {c.email && <span><Mail size={14} /> {c.email}</span>}
+            {c.telefono && <span><Phone size={14} /> {c.telefono}</span>}
+          </div>
+        </td>
+      ),
+    },
+    { key: 'mensaje', label: 'Mensaje', filterValue: c => c.mensaje || '', render: c => <td className="messaje-cell"><TruncatedCell text={c.mensaje} cellKey={`msg-c-${c.id}`} /></td> },
+    { key: 'fecha', label: 'Fecha', sortValue: c => new Date(c.fecha_creacion).getTime(), filterValue: c => new Date(c.fecha_creacion).toLocaleString('es-ES'), render: c => <td className="date-cell">{new Date(c.fecha_creacion).toLocaleString('es-ES')}</td> },
+    {
+      key: 'acciones', label: 'Acciones', alwaysVisible: true,
+      render: c => (
+        <td>
+          <div className="actions-cell">
+            <button onClick={() => {
+              copyToClipboard('Cita', `Cita #${c.id} — ${c.nombre}\nEmail: ${c.email || '—'}\nTeléfono: ${c.telefono || '—'}\nMensaje: ${c.mensaje || '—'}\nFecha: ${new Date(c.fecha_creacion).toLocaleString('es-ES')}`);
+            }} className="btn-icon-sm" title="Copiar info de la cita">
+              <Copy size={14} />
+            </button>
+          </div>
+        </td>
+      ),
+    },
+  ];
+
+  const solicitudesColumns: AdminTableColumn<Solicitud>[] = [
+    { key: 'id', label: 'ID', sortValue: s => s.id, filterValue: s => String(s.id), render: s => <td className="id-cell">{formatId(s.id)}</td> },
+    { key: 'servicio', label: 'Servicio', sortValue: s => s.servicio_titulo || '', filterValue: s => s.servicio_titulo || '', render: s => <td className="name-cell">{s.servicio_titulo}</td> },
+    { key: 'nombre', label: 'Nombre', sortValue: s => s.nombre || '', filterValue: s => s.nombre || '', render: s => <td className="name-cell">{s.nombre}</td> },
+    {
+      key: 'contactos', label: 'Contactos',
+      filterValue: s => `${s.email || ''} ${s.telefono || ''}`,
+      render: s => (
+        <td>
+          <div className="contact-cell">
+            {s.email && <span><Mail size={14} /> {s.email}</span>}
+            {s.telefono && <span><Phone size={14} /> {s.telefono}</span>}
+          </div>
+        </td>
+      ),
+    },
+    { key: 'mensaje', label: 'Mensaje', filterValue: s => s.mensaje || '', render: s => <td className="messaje-cell"><TruncatedCell text={s.mensaje || ''} cellKey={`msg-sol-${s.id}`} /></td> },
+    { key: 'fecha', label: 'Fecha', sortValue: s => new Date(s.created_at).getTime(), filterValue: s => new Date(s.created_at).toLocaleString('es-ES'), render: s => <td className="date-cell">{new Date(s.created_at).toLocaleString('es-ES')}</td> },
+  ];
+
+  const inscripcionesColumns: AdminTableColumn<Inscripcion>[] = [
+    { key: 'id', label: 'ID', sortValue: i => i.id, filterValue: i => String(i.id), render: i => <td className="id-cell">{formatId(i.id)}</td> },
+    { key: 'evento', label: 'Evento', sortValue: i => i.evento_titulo || '', filterValue: i => i.evento_titulo || '', render: i => <td className="name-cell">{i.evento_titulo}</td> },
+    {
+      key: 'formacion', label: 'Formación',
+      filterValue: i => categoriaFormacion(i.evento_id != null ? eventoCategoriaMap.get(i.evento_id) : undefined).toLowerCase(),
+      render: i => (
+        <td>
+          <span className="status-badge">
+            {categoriaFormacion(i.evento_id != null ? eventoCategoriaMap.get(i.evento_id) : undefined)}
+          </span>
+        </td>
+      ),
+    },
+    { key: 'email', label: 'Correo', sortValue: i => i.correo_electronico || '', filterValue: i => i.correo_electronico || '', render: i => <td className="name-cell">{i.correo_electronico}</td> },
+    { key: 'telefono', label: 'Teléfono', sortValue: i => i.telefono || '', filterValue: i => i.telefono || '', render: i => <td>{i.telefono}</td> },
+    { key: 'nivel', label: 'Nivel de estudios', filterValue: i => i.nivel_estudios || '', render: i => <td>{i.nivel_estudios || '-'}</td> },
+    {
+      key: 'negocio', label: 'Tiene negocio',
+      filterValue: i => (i.tiene_negocio ? 'si' : 'no'),
+      render: i => (
+        <td>
+          <span className={`status-badge ${i.tiene_negocio ? 'completado' : 'pendiente'}`}>
+            {i.tiene_negocio ? 'Sí' : 'No'}
+          </span>
+        </td>
+      ),
+    },
+    { key: 'nombre-negocio', label: 'Nombre del negocio', filterValue: i => i.nombre_negocio || '', render: i => <td>{i.nombre_negocio || '-'}</td> },
+    { key: 'sector', label: 'Sector', filterValue: i => i.sector || '', render: i => <td>{i.sector || '-'}</td> },
+    { key: 'motivacion', label: 'Motivación', filterValue: i => i.motivacion || '', render: i => <td className="messaje-cell"><TruncatedCell text={i.motivacion || ''} cellKey={`mot-insc-${i.id}`} /></td> },
+    {
+      key: 'notificaciones', label: 'Notificaciones',
+      filterValue: i => (i.notificaciones ? 'si' : 'no'),
+      render: i => (
+        <td>
+          <span className={`status-badge ${i.notificaciones ? 'completado' : 'pendiente'}`}>
+            {i.notificaciones ? 'Sí' : 'No'}
+          </span>
+        </td>
+      ),
+    },
+    { key: 'fecha', label: 'Fecha', sortValue: i => new Date(i.created_at).getTime(), filterValue: i => new Date(i.created_at).toLocaleString('es-ES'), render: i => <td className="date-cell">{new Date(i.created_at).toLocaleString('es-ES')}</td> },
+  ];
+
   // Dashboard computations
   const totalPedidos = pedidos.length;
   const pedidosPendientes = pedidos.filter(p => p.status === 'pendiente').length;
@@ -753,7 +1064,11 @@ export default function AdminPage() {
                 >
                   <option value="">Todas las categorías</option>
                   {(activeTab === 'productos' ? PRODUCT_CATEGORIES : SERVICE_CATEGORIES).map(cat => (
-                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                    <option key={cat} value={cat}>
+                      {activeTab === 'productos'
+                        ? (PRODUCT_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1))
+                        : (SERVICE_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1))}
+                    </option>
                   ))}
                 </select>
               )}
@@ -762,6 +1077,18 @@ export default function AdminPage() {
               </span>
             </div>
             <div className="toolbar-right">
+              {(activeTab === 'pedidos' || activeTab === 'citas' || activeTab === 'solicitudes' || activeTab === 'inscripciones') && (
+                <AdminTableCustomizer
+                  columns={
+                    activeTab === 'pedidos' ? pedidosColumns
+                    : activeTab === 'citas' ? citasColumns
+                    : activeTab === 'solicitudes' ? solicitudesColumns
+                    : inscripcionesColumns
+                  }
+                  pref={getTablePref(activeTab)}
+                  onPrefChange={p => updateTablePref(activeTab, p)}
+                />
+              )}
               {activeTab !== 'pedidos' && activeTab !== 'citas' && activeTab !== 'solicitudes' && activeTab !== 'inscripciones' && (
                 <button onClick={() => { setShowCreateModal(true); setCreateTable(activeTab as 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'); }} className="btn-add">
                   <Plus size={18} /> Añadir
@@ -845,86 +1172,16 @@ export default function AdminPage() {
                   </div>
                 )}
                 {activeTab === 'pedidos' && (
-                  <div className="table-container">
-                    <table className="data-table">
-                      <colgroup>
-                        <col style={{ width: getColWidth('pedidos-id', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-cliente', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-contactos', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-items', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-total', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-estado', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-fecha', colWidths) }} />
-                        <col style={{ width: getColWidth('pedidos-acciones', colWidths) }} />
-                      </colgroup>
-                      <thead>
-                        <tr>
-                          <th style={{position:'relative'}}>ID<ColResizeHandle col="pedidos-id" /></th>
-                          <th style={{position:'relative'}}>Cliente<ColResizeHandle col="pedidos-cliente" /></th>
-                          <th style={{position:'relative'}}>Contactos<ColResizeHandle col="pedidos-contactos" /></th>
-                          <th style={{position:'relative'}}>Items<ColResizeHandle col="pedidos-items" /></th>
-                          <th style={{position:'relative'}}>Total<ColResizeHandle col="pedidos-total" /></th>
-                          <th style={{position:'relative'}}>Estado<ColResizeHandle col="pedidos-estado" /></th>
-                          <th style={{position:'relative'}}>Fecha<ColResizeHandle col="pedidos-fecha" /></th>
-                          <th style={{position:'relative'}}>Acciones<ColResizeHandle col="pedidos-acciones" /></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredData.pedidos.map(p => (
-                          <tr key={p.id}>
-                            <td className="id-cell">{formatId(p.id)}</td>
-                            <td className="name-cell">{p.customer_name}</td>
-                            <td>
-                              <div className="contact-cell">
-                                {p.customer_email && <span><Mail size={14} /> {p.customer_email}</span>}
-                              </div>
-                            </td>
-                            <td className="items-cell">
-                              <div className="items-list">
-                                {(() => {
-                                  const itemsKey = `items-${p.id}`;
-                                  const showAll = expandedCells[itemsKey];
-                                  const itemsToShow = showAll ? p.items : p.items?.slice(0, 3);
-                                  return (itemsToShow || []).map((i: any, idx: number) => (
-                                    <span key={idx}>• {i.title || i.productTitle || i.name} x{i.quantity}</span>
-                                  ));
-                                })()}
-                                {p.items?.length > 3 && (
-                                  <button onClick={() => toggleCell(`items-${p.id}`)} className="expand-toggle more">
-                                    {expandedCells[`items-${p.id}`] ? 'Ver menos' : `Ver +${p.items.length - 3} más`}
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                            <td className="price-cell">{p.total_price?.toLocaleString()} CUP</td>
-                            <td>
-                              <select 
-                                value={p.status} 
-                                onChange={(e) => updateStatus(p.id, e.target.value)}
-                                className={`status-select ${p.status}`}
-                              >
-                                <option value="pendiente">Pendiente</option>
-                                <option value="confirmado">Confirmado</option>
-                                <option value="completado">Completado</option>
-                              </select>
-                            </td>
-                            <td className="date-cell">{new Date(p.created_at).toLocaleDateString('es-ES')}</td>
-                            <td>
-                              <div className="actions-cell">
-                                <button onClick={() => {
-                                  const items = (p.items || []).map((i: any) => `  • ${i.title || i.productTitle || i.name} x${i.quantity} — ${i.price} CUP`).join('\n');
-                                  copyToClipboard('Pedido', `Pedido #${p.id} — ${p.customer_name}\nEmail: ${p.customer_email}\nItems:\n${items}\nTotal: ${p.total_price?.toLocaleString()} CUP\nEstado: ${p.status}\nFecha: ${new Date(p.created_at).toLocaleDateString('es-ES')}`);
-                                }} className="btn-icon-sm" title="Copiar info del pedido">
-                                  <Copy size={14} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {/* Paginación pedidos */}
-                    {(() => {
+                  <AdminDataTable
+                    prefix="pedidos"
+                    columns={pedidosColumns}
+                    rows={filteredData.pedidos}
+                    pref={getTablePref('pedidos')}
+                    onPrefChange={p => updateTablePref('pedidos', p)}
+                    colWidths={colWidths}
+                    getColWidth={getColWidth}
+                    renderResizeHandle={col => <ColResizeHandle col={`pedidos-${col}`} />}
+                    footer={(() => {
                       const total = pedidosQuery.data?.data?.total;
                       if (!total) return null;
                       const totalPages = Math.ceil(total / 50);
@@ -964,166 +1221,46 @@ export default function AdminPage() {
                         </div>
                       );
                     })()}
-                  </div>
+                  />
                 )}
 
                 {activeTab === 'citas' && (
-                  <div className="table-container">
-                    <table className="data-table">
-                      <colgroup>
-                        <col style={{ width: getColWidth('citas-id', colWidths) }} />
-                        <col style={{ width: getColWidth('citas-nombre', colWidths) }} />
-                        <col style={{ width: getColWidth('citas-contactos', colWidths) }} />
-                        <col style={{ width: getColWidth('citas-mensaje', colWidths) }} />
-                        <col style={{ width: getColWidth('citas-fecha', colWidths) }} />
-                        <col style={{ width: getColWidth('citas-acciones', colWidths) }} />
-                      </colgroup>
-                      <thead>
-                        <tr>
-                          <th style={{position:'relative'}}>ID<ColResizeHandle col="citas-id" /></th>
-                          <th style={{position:'relative'}}>Nombre<ColResizeHandle col="citas-nombre" /></th>
-                          <th style={{position:'relative'}}>Contactos<ColResizeHandle col="citas-contactos" /></th>
-                          <th style={{position:'relative'}}>Mensaje<ColResizeHandle col="citas-mensaje" /></th>
-                          <th style={{position:'relative'}}>Fecha<ColResizeHandle col="citas-fecha" /></th>
-                          <th style={{position:'relative'}}>Acciones<ColResizeHandle col="citas-acciones" /></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredData.citas.map(c => (
-                          <tr key={c.id}>
-                            <td className="id-cell">{formatId(c.id)}</td>
-                            <td className="name-cell">{c.nombre}</td>
-                            <td>
-                              <div className="contact-cell">
-                                {c.email && <span><Mail size={14} /> {c.email}</span>}
-                                {c.telefono && <span><Phone size={14} /> {c.telefono}</span>}
-                              </div>
-                            </td>
-                            <td className="messaje-cell"><TruncatedCell text={c.mensaje} cellKey={`msg-c-${c.id}`} /></td>
-                            <td className="date-cell">{new Date(c.fecha_creacion).toLocaleString('es-ES')}</td>
-                            <td>
-                              <div className="actions-cell">
-                                <button onClick={() => {
-                                  copyToClipboard('Cita', `Cita #${c.id} — ${c.nombre}\nEmail: ${c.email || '—'}\nTeléfono: ${c.telefono || '—'}\nMensaje: ${c.mensaje || '—'}\nFecha: ${new Date(c.fecha_creacion).toLocaleString('es-ES')}`);
-                                }} className="btn-icon-sm" title="Copiar info de la cita">
-                                  <Copy size={14} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminDataTable
+                    prefix="citas"
+                    columns={citasColumns}
+                    rows={filteredData.citas}
+                    pref={getTablePref('citas')}
+                    onPrefChange={p => updateTablePref('citas', p)}
+                    colWidths={colWidths}
+                    getColWidth={getColWidth}
+                    renderResizeHandle={col => <ColResizeHandle col={`citas-${col}`} />}
+                  />
                 )}
 
                 {activeTab === 'solicitudes' && (
-                  <div className="table-container">
-                    <table className="data-table">
-                      <colgroup>
-                        <col style={{ width: getColWidth('sol-id', colWidths) }} />
-                        <col style={{ width: getColWidth('sol-servicio', colWidths) }} />
-                        <col style={{ width: getColWidth('sol-nombre', colWidths) }} />
-                        <col style={{ width: getColWidth('sol-contactos', colWidths) }} />
-                        <col style={{ width: getColWidth('sol-mensaje', colWidths) }} />
-                        <col style={{ width: getColWidth('sol-fecha', colWidths) }} />
-                      </colgroup>
-                      <thead>
-                        <tr>
-                          <th style={{position:'relative'}}>ID</th>
-                          <th style={{position:'relative'}}>Servicio</th>
-                          <th style={{position:'relative'}}>Nombre</th>
-                          <th style={{position:'relative'}}>Contactos</th>
-                          <th style={{position:'relative'}}>Mensaje</th>
-                          <th style={{position:'relative'}}>Fecha</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredData.solicitudes.map(sol => (
-                          <tr key={sol.id}>
-                            <td className="id-cell">{formatId(sol.id)}</td>
-                            <td className="name-cell">{sol.servicio_titulo}</td>
-                            <td className="name-cell">{sol.nombre}</td>
-                            <td>
-                              <div className="contact-cell">
-                                {sol.email && <span><Mail size={14} /> {sol.email}</span>}
-                                {sol.telefono && <span><Phone size={14} /> {sol.telefono}</span>}
-                              </div>
-                            </td>
-                            <td className="messaje-cell"><TruncatedCell text={sol.mensaje || ''} cellKey={`msg-sol-${sol.id}`} /></td>
-                            <td className="date-cell">{new Date(sol.created_at).toLocaleString('es-ES')}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminDataTable
+                    prefix="sol"
+                    columns={solicitudesColumns}
+                    rows={filteredData.solicitudes}
+                    pref={getTablePref('solicitudes')}
+                    onPrefChange={p => updateTablePref('solicitudes', p)}
+                    colWidths={colWidths}
+                    getColWidth={getColWidth}
+                    renderResizeHandle={col => <ColResizeHandle col={`sol-${col}`} />}
+                  />
                 )}
 
                 {activeTab === 'inscripciones' && (
-                  <div className="table-container">
-                    <table className="data-table">
-                      <colgroup>
-                        <col style={{ width: getColWidth('insc-id', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-evento', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-formacion', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-email', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-telefono', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-nivel', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-negocio', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-nombre-negocio', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-sector', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-motivacion', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-notificaciones', colWidths) }} />
-                        <col style={{ width: getColWidth('insc-fecha', colWidths) }} />
-                      </colgroup>
-                      <thead>
-                        <tr>
-                          <th style={{position:'relative'}}>ID<ColResizeHandle col="insc-id" /></th>
-                          <th style={{position:'relative'}}>Evento<ColResizeHandle col="insc-evento" /></th>
-                          <th style={{position:'relative'}}>Formación<ColResizeHandle col="insc-formacion" /></th>
-                          <th style={{position:'relative'}}>Correo<ColResizeHandle col="insc-email" /></th>
-                          <th style={{position:'relative'}}>Teléfono<ColResizeHandle col="insc-telefono" /></th>
-                          <th style={{position:'relative'}}>Nivel de estudios<ColResizeHandle col="insc-nivel" /></th>
-                          <th style={{position:'relative'}}>Tiene negocio<ColResizeHandle col="insc-negocio" /></th>
-                          <th style={{position:'relative'}}>Nombre del negocio<ColResizeHandle col="insc-nombre-negocio" /></th>
-                          <th style={{position:'relative'}}>Sector<ColResizeHandle col="insc-sector" /></th>
-                          <th style={{position:'relative'}}>Motivación<ColResizeHandle col="insc-motivacion" /></th>
-                          <th style={{position:'relative'}}>Notificaciones<ColResizeHandle col="insc-notificaciones" /></th>
-                          <th style={{position:'relative'}}>Fecha<ColResizeHandle col="insc-fecha" /></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredData.inscripciones.map(i => (
-                          <tr key={i.id}>
-                            <td className="id-cell">{formatId(i.id)}</td>
-                            <td className="name-cell">{i.evento_titulo}</td>
-                            <td>
-                              <span className="status-badge">
-                                {categoriaFormacion(i.evento_id != null ? eventoCategoriaMap.get(i.evento_id) : undefined)}
-                              </span>
-                            </td>
-                            <td className="name-cell">{i.correo_electronico}</td>
-                            <td>{i.telefono}</td>
-                            <td>{i.nivel_estudios || '-'}</td>
-                            <td>
-                              <span className={`status-badge ${i.tiene_negocio ? 'completado' : 'pendiente'}`}>
-                                {i.tiene_negocio ? 'Sí' : 'No'}
-                              </span>
-                            </td>
-                            <td>{i.nombre_negocio || '-'}</td>
-                            <td>{i.sector || '-'}</td>
-                            <td className="messaje-cell"><TruncatedCell text={i.motivacion || ''} cellKey={`mot-insc-${i.id}`} /></td>
-                            <td>
-                              <span className={`status-badge ${i.notificaciones ? 'completado' : 'pendiente'}`}>
-                                {i.notificaciones ? 'Sí' : 'No'}
-                              </span>
-                            </td>
-                            <td className="date-cell">{new Date(i.created_at).toLocaleString('es-ES')}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminDataTable
+                    prefix="insc"
+                    columns={inscripcionesColumns}
+                    rows={filteredData.inscripciones}
+                    pref={getTablePref('inscripciones')}
+                    onPrefChange={p => updateTablePref('inscripciones', p)}
+                    colWidths={colWidths}
+                    getColWidth={getColWidth}
+                    renderResizeHandle={col => <ColResizeHandle col={`insc-${col}`} />}
+                  />
                 )}
 
                 {activeTab === 'productos' && (
@@ -1132,18 +1269,24 @@ export default function AdminPage() {
                       <colgroup>
                         <col style={{ width: getColWidth('prod-id', colWidths) }} />
                         <col style={{ width: getColWidth('prod-titulo', colWidths) }} />
+                        <col style={{ width: getColWidth('prod-categoria', colWidths) }} />
                         <col style={{ width: 60 }} />
                         <col style={{ width: getColWidth('prod-desc', colWidths) }} />
                         <col style={{ width: getColWidth('prod-precio', colWidths) }} />
+                        <col style={{ width: getColWidth('prod-variantes', colWidths) }} />
+                        <col style={{ width: getColWidth('prod-estado', colWidths) }} />
                         <col style={{ width: getColWidth('prod-acciones', colWidths) }} />
                       </colgroup>
                       <thead>
                         <tr>
                           <th style={{position:'relative'}}>ID<ColResizeHandle col="prod-id" /></th>
                           <th style={{position:'relative'}}>Producto<ColResizeHandle col="prod-titulo" /></th>
+                          <th style={{position:'relative'}}>Categoría<ColResizeHandle col="prod-categoria" /></th>
                           <th style={{position:'relative'}}>Imagen</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="prod-desc" /></th>
                           <th style={{position:'relative'}}>Precio<ColResizeHandle col="prod-precio" /></th>
+                          <th style={{position:'relative'}}>Variantes<ColResizeHandle col="prod-variantes" /></th>
+                          <th style={{position:'relative'}}>Estado<ColResizeHandle col="prod-estado" /></th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="prod-acciones" /></th>
                         </tr>
                       </thead>
@@ -1151,83 +1294,46 @@ export default function AdminPage() {
                         {filteredData.productos.map(p => (
                           <tr key={p.id}>
                             <td className="id-cell">{formatId(p.id)}</td>
+                            <td>{p.title}</td>
                             <td>
-                              {editingId === p.id ? (
-                                <input 
-                                  value={editData.title} 
-                                  onChange={(e) => setEditData({...editData, title: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : p.title}
+                              <span className="cat-badge">{PRODUCT_CATEGORY_LABELS[p.category] || p.category || '—'}</span>
                             </td>
                             <td>
-                              {editingId === p.id ? (
-                                <label className="upload-btn-sm" title="Subir imagen">
-                                  <ImageUp size={16} />
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    onChange={async (e) => {
-                                      const file = e.target.files?.[0];
-                                      if (!file) return;
-                                      const url = await handleImageUpload(file);
-                                      if (url) setEditData({...editData, image: url});
-                                    }}
-                                  />
-                                </label>
+                              {p.image ? (
+                                <img src={p.image} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
                               ) : (
-                                p.image ? (
-                                  <img src={p.image} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
-                                ) : (
-                                  <span className="no-image-placeholder"><ImageUp size={16} /></span>
-                                )
+                                <span className="no-image-placeholder"><ImageUp size={16} /></span>
                               )}
                             </td>
                             <td className="desc-cell">
-                              {editingId === p.id ? (
-                                <textarea 
-                                  value={editData.description} 
-                                  onChange={(e) => setEditData({...editData, description: e.target.value})}
-                                  className="edit-textarea"
-                                  rows={2}
-                                />
-                              ) : (
-                                <TruncatedCell text={p.description} cellKey={`desc-p-${p.id}`} />
-                              )}
+                              <TruncatedCell text={p.description} cellKey={`desc-p-${p.id}`} />
                             </td>
                             <td>
-                              {editingId === p.id ? (
-                                <input 
-                                  value={editData.price} 
-                                  onChange={(e) => setEditData({...editData, price: e.target.value})}
-                                  className="edit-input price-input"
-                                />
-                              ) : (
-                                <span className="price-display">{p.price}</span>
-                              )}
+                              <span className="price-display">{p.price}</span>
+                            </td>
+                            <td>
+                              <span className={`variants-count${p.variants?.length ? '' : ' empty'}`}>
+                                {p.variants?.length ? `${p.variants.length} variante${p.variants.length > 1 ? 's' : ''}` : 'Sin variantes'}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => toggleProductActive(p)}
+                                className={`btn-icon-sm ${p.is_active ? 'success' : 'warning'}`}
+                                title={p.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                                aria-label={p.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                              >
+                                {p.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                              </button>
                             </td>
                             <td>
                               <div className="actions-cell">
-                                {editingId === p.id ? (
-                                  <>
-                                    <button onClick={() => saveEdit('productos')} className="btn-icon-sm success" title="Guardar">
-                                      <Save size={14} />
-                                    </button>
-                                    <button onClick={cancelEdit} className="btn-icon-sm danger" title="Cancelar">
-                                      <X size={14} />
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <button onClick={() => startEdit(p, 'productos')} className="btn-icon-sm" title="Editar">
-                                      <Edit2 size={14} />
-                                    </button>
-                                    <button onClick={() => handleDeleteClick('productos', p.id)} className="btn-icon-sm danger" title="Eliminar">
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </>
-                                )}
+                                <button onClick={() => openProductEdit(p)} className="btn-icon-sm" title="Editar detalles y variantes">
+                                  <Edit2 size={14} />
+                                </button>
+                                <button onClick={() => handleDeleteClick('productos', p.id)} className="btn-icon-sm danger" title="Eliminar">
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -1799,7 +1905,9 @@ export default function AdminPage() {
                       ? PRODUCT_CATEGORIES
                       : SERVICE_CATEGORIES
                     ).map(cat => (
-                    <option key={cat} value={cat}>{SERVICE_CATEGORY_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                    <option key={cat} value={cat}>
+                      {(createTable === 'productos' ? PRODUCT_CATEGORY_LABELS : SERVICE_CATEGORY_LABELS)[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </option>
                     ))}
                   </select>
                 </>
@@ -1859,6 +1967,204 @@ export default function AdminPage() {
             <div className="modal-footer">
               <button onClick={() => setShowCreateModal(false)} className="btn-cancel">Cancelar</button>
               <button onClick={handleCreate} className="btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Product Edit Modal (detalles + variantes) ── */}
+      {showEditProductModal && editData && (
+        <div className="modal-overlay" onClick={closeProductEdit}>
+          <div className="modal-content modal-content--wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar Producto</h2>
+              <button onClick={closeProductEdit} className="btn-close">&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-row">
+                <div className="form-col">
+                  <label>ID</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.id ?? ''}
+                    onChange={(e) => setEditData({ ...editData, id: parseInt(e.target.value, 10) || 0 })}
+                    placeholder="Número de ID"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Título *</label>
+                  <input
+                    value={editData.title || ''}
+                    onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                    placeholder="Nombre del producto"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Categoría</label>
+                  <select
+                    value={editData.category || 'otros'}
+                    onChange={(e) => setEditData({ ...editData, category: e.target.value })}
+                  >
+                    {PRODUCT_CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{PRODUCT_CATEGORY_LABELS[cat] || cat}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-col">
+                  <label>Precio</label>
+                  <input
+                    value={editData.price || ''}
+                    onChange={(e) => setEditData({ ...editData, price: e.target.value })}
+                    placeholder="Ej: $500.00 CUP"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Tipo de precio</label>
+                  <select
+                    value={editData.price_type || 'fijo'}
+                    onChange={(e) => setEditData({ ...editData, price_type: e.target.value })}
+                  >
+                    <option value="fijo">Fijo</option>
+                    <option value="desde">Desde</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-col">
+                  <label>Icono</label>
+                  <input
+                    value={editData.icon || ''}
+                    onChange={(e) => setEditData({ ...editData, icon: e.target.value })}
+                    placeholder="Ej: box, star, sticker"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>WhatsApp Link</label>
+                  <input
+                    value={editData.whatsapp_link || ''}
+                    onChange={(e) => setEditData({ ...editData, whatsapp_link: e.target.value })}
+                    placeholder="https://wa.me/5355609099?text=..."
+                  />
+                </div>
+              </div>
+
+              <div className="form-row form-row--checks">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={!!editData.popular}
+                    onChange={(e) => setEditData({ ...editData, popular: e.target.checked })}
+                  />
+                  Popular (destacado)
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={editData.is_active !== false}
+                    onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                  />
+                  Visible en la web
+                </label>
+              </div>
+
+              <label>Imagen</label>
+              <div className="image-edit-row">
+                {editData.image ? (
+                  <img src={editData.image} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
+                ) : (
+                  <span className="no-image-placeholder"><ImageUp size={16} /></span>
+                )}
+                <label className="upload-btn-sm" title="Subir imagen">
+                  <ImageUp size={16} />
+                  <span>Cambiar imagen</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const url = await handleImageUpload(file);
+                      if (url) setEditData({ ...editData, image: url });
+                    }}
+                  />
+                </label>
+              </div>
+
+              <label>Descripción</label>
+              <textarea
+                value={editData.description || ''}
+                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                placeholder="Descripción del producto"
+                rows={3}
+              />
+
+              <div className="variants-section">
+                <div className="variants-header">
+                  <label>Variantes</label>
+                  <button type="button" onClick={addVariant} className="btn-add-sm">
+                    <Plus size={14} /> Añadir variante
+                  </button>
+                </div>
+                <p className="variants-hint">
+                  Cada variante es una presentación distinta (tamaño, lote, acabado). El precio unitario y el total se
+                  muestran al cliente al elegirla.
+                </p>
+                {(!editData.variants || editData.variants.length === 0) ? (
+                  <div className="variants-empty">Sin variantes — el producto se vende con su precio base.</div>
+                ) : (
+                  <div className="variants-list">
+                    {editData.variants.map((v: any, i: number) => (
+                      <div className="variant-row" key={i}>
+                        <div className="variant-field variant-field--label">
+                          <input
+                            value={v.label || ''}
+                            onChange={(e) => updateVariantField(i, 'label', e.target.value)}
+                            placeholder="Nombre (ej: Lote de 50)"
+                          />
+                        </div>
+                        <div className="variant-field">
+                          <input
+                            type="number"
+                            min={0}
+                            value={v.unit_price ?? ''}
+                            onChange={(e) => updateVariantField(i, 'unit_price', Number(e.target.value))}
+                            placeholder="Precio unitario"
+                          />
+                        </div>
+                        <div className="variant-field">
+                          <input
+                            type="number"
+                            min={0}
+                            value={v.total_price ?? ''}
+                            onChange={(e) => updateVariantField(i, 'total_price', Number(e.target.value))}
+                            placeholder="Precio total"
+                          />
+                        </div>
+                        <div className="variant-field variant-field--desc">
+                          <input
+                            value={v.description || ''}
+                            onChange={(e) => updateVariantField(i, 'description', e.target.value)}
+                            placeholder="Descripción (opcional)"
+                          />
+                        </div>
+                        <button type="button" onClick={() => removeVariant(i)} className="btn-icon-sm danger" title="Quitar variante">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button onClick={closeProductEdit} className="btn-cancel">Cancelar</button>
+              <button onClick={saveProductEdit} className="btn-primary">Guardar</button>
             </div>
           </div>
         </div>
