@@ -53,6 +53,9 @@ interface Servicio {
   image?: string;
   subtitle?: string;
   includes?: string[];
+  whatsapp_link?: string;
+  price_type?: string;
+  is_active?: boolean;
 }
 
 interface Evento {
@@ -194,6 +197,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>(null);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [showEditServiceModal, setShowEditServiceModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createTable, setCreateTable] = useState<'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('productos');
@@ -603,6 +607,65 @@ export default function AdminPage() {
     setProductos(prev => prev.map(item => item.id === p.id ? { ...item, is_active: next } : item));
     toast.success(next ? 'Producto visible en la web' : 'Producto oculto de la web');
     const json = await adminFetch('update', { table: 'productos', id: p.id, data: { is_active: next } });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  // ── Modal de edición de servicio (detalles) ──
+  function openServiceEdit(s: Servicio) {
+    setEditingId(s.id);
+    setEditData({
+      ...s,
+      includes: Array.isArray(s.includes) ? [...s.includes] : [],
+    });
+    setShowEditServiceModal(true);
+  }
+
+  function closeServiceEdit() {
+    setShowEditServiceModal(false);
+    setEditingId(null);
+    setEditData(null);
+  }
+
+  async function saveServiceEdit() {
+    if (!editData) return;
+    if (!editData.title?.trim()) {
+      toast.error('El título es obligatorio');
+      return;
+    }
+    const newId = Number(editData.id) || editingId;
+    if (newId !== editingId && servicios.some(item => item.id === newId)) {
+      toast.error(`Ya existe un servicio con el ID ${newId}`);
+      return;
+    }
+    const includes = Array.isArray(editData.includes)
+      ? editData.includes
+      : String(editData.includes || '').split('\n').map((s: string) => s.trim()).filter(Boolean);
+
+    const updateData: any = {
+      title: editData.title,
+      subtitle: editData.subtitle || '',
+      description: editData.description || '',
+      category: editData.category || 'contabilidad-finanzas',
+      icon: editData.icon || 'box',
+      popular: !!editData.popular,
+      is_active: !!editData.is_active,
+      whatsapp_link: editData.whatsapp_link || '',
+      includes,
+      // Campos que la web no muestra: se preservan sin exponerse en el modal
+      price: editData.price ?? '',
+      price_num: editData.price_num ?? 0,
+      image: editData.image || '',
+      price_type: editData.price_type || 'fijo',
+    };
+    if (newId !== editingId) updateData.id = newId;
+
+    // Optimistic update
+    setServicios(prev => prev.map(item => item.id === editingId ? { ...item, ...updateData, id: newId } : item));
+    closeServiceEdit();
+    toast.success('Servicio guardado');
+
+    const json = await adminFetch('update', { table: 'servicios', id: editingId, data: updateData });
     if (json.error) toast.error('Error: ' + json.error);
     queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
@@ -1350,10 +1413,8 @@ export default function AdminPage() {
                         <col style={{ width: getColWidth('serv-id', colWidths) }} />
                         <col style={{ width: getColWidth('serv-titulo', colWidths) }} />
                         <col style={{ width: getColWidth('serv-subtitle', colWidths) }} />
-                        <col style={{ width: 60 }} />
                         <col style={{ width: getColWidth('serv-desc', colWidths) }} />
                         <col style={{ width: getColWidth('serv-includes', colWidths) }} />
-                        <col style={{ width: getColWidth('serv-precio', colWidths) }} />
                         <col style={{ width: getColWidth('serv-acciones', colWidths) }} />
                       </colgroup>
                       <thead>
@@ -1361,10 +1422,8 @@ export default function AdminPage() {
                           <th style={{position:'relative'}}>ID<ColResizeHandle col="serv-id" /></th>
                           <th style={{position:'relative'}}>Servicio<ColResizeHandle col="serv-titulo" /></th>
                           <th style={{position:'relative'}}>Subtítulo</th>
-                          <th style={{position:'relative'}}>Imagen</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="serv-desc" /></th>
                           <th style={{position:'relative'}}>Incluye</th>
-                          <th style={{position:'relative'}}>Precio<ColResizeHandle col="serv-precio" /></th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="serv-acciones" /></th>
                         </tr>
                       </thead>
@@ -1372,107 +1431,22 @@ export default function AdminPage() {
                         {filteredData.servicios.map(s => (
                           <tr key={s.id}>
                             <td className="id-cell">{formatId(s.id)}</td>
-                            <td>
-                              {editingId === s.id ? (
-                                <input 
-                                  value={editData.title} 
-                                  onChange={(e) => setEditData({...editData, title: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : s.title}
-                            </td>
-                            <td>
-                              {editingId === s.id ? (
-                                <input 
-                                  value={editData.subtitle || ''} 
-                                  onChange={(e) => setEditData({...editData, subtitle: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : (
-                                s.subtitle || '-'
-                              )}
-                            </td>
-                            <td>
-                              {editingId === s.id ? (
-                                <label className="upload-btn-sm" title="Subir imagen">
-                                  <ImageUp size={16} />
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    onChange={async (e) => {
-                                      const file = e.target.files?.[0];
-                                      if (!file) return;
-                                      const url = await handleImageUpload(file);
-                                      if (url) setEditData({...editData, image: url});
-                                    }}
-                                  />
-                                </label>
-                              ) : (
-                                s.image ? (
-                                  <img src={s.image} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
-                                ) : (
-                                  <span className="no-image-placeholder"><ImageUp size={16} /></span>
-                                )
-                              )}
+                            <td>{s.title}</td>
+                            <td>{s.subtitle || '-'}</td>
+                            <td className="desc-cell">
+                              <TruncatedCell text={s.description} cellKey={`desc-s-${s.id}`} />
                             </td>
                             <td className="desc-cell">
-                              {editingId === s.id ? (
-                                <textarea 
-                                  value={editData.description} 
-                                  onChange={(e) => setEditData({...editData, description: e.target.value})}
-                                  className="edit-textarea"
-                                  rows={2}
-                                />
-                              ) : (
-                                <TruncatedCell text={s.description} cellKey={`desc-s-${s.id}`} />
-                              )}
-                            </td>
-                            <td className="desc-cell">
-                              {editingId === s.id ? (
-                                <textarea 
-                                  value={Array.isArray(editData.includes) ? editData.includes.join('\n') : (editData.includes || '')}
-                                  onChange={(e) => setEditData({...editData, includes: e.target.value})}
-                                  className="edit-textarea"
-                                  rows={3}
-                                  placeholder="Un ítem por línea"
-                                />
-                              ) : (
-                                <TruncatedCell text={(s.includes || []).join(' • ')} cellKey={`inc-s-${s.id}`} />
-                              )}
-                            </td>
-                            <td>
-                              {editingId === s.id ? (
-                                <input 
-                                  value={editData.price} 
-                                  onChange={(e) => setEditData({...editData, price: e.target.value})}
-                                  className="edit-input price-input"
-                                />
-                              ) : (
-                                <span className="price-display">{s.price}</span>
-                              )}
+                              <TruncatedCell text={(s.includes || []).join(' • ')} cellKey={`inc-s-${s.id}`} />
                             </td>
                             <td>
                               <div className="actions-cell">
-                                {editingId === s.id ? (
-                                  <>
-                                    <button onClick={() => saveEdit('servicios')} className="btn-icon-sm success" title="Guardar">
-                                      <Save size={14} />
-                                    </button>
-                                    <button onClick={cancelEdit} className="btn-icon-sm danger" title="Cancelar">
-                                      <X size={14} />
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <button onClick={() => startEdit(s, 'servicios')} className="btn-icon-sm" title="Editar">
-                                      <Edit2 size={14} />
-                                    </button>
-                                    <button onClick={() => handleDeleteClick('servicios', s.id)} className="btn-icon-sm danger" title="Eliminar">
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </>
-                                )}
+                                <button onClick={() => openServiceEdit(s)} className="btn-icon-sm" title="Editar detalles">
+                                  <Edit2 size={14} />
+                                </button>
+                                <button onClick={() => handleDeleteClick('servicios', s.id)} className="btn-icon-sm danger" title="Eliminar">
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -2165,6 +2139,116 @@ export default function AdminPage() {
             <div className="modal-footer">
               <button onClick={closeProductEdit} className="btn-cancel">Cancelar</button>
               <button onClick={saveProductEdit} className="btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditServiceModal && editData && (
+        <div className="modal-overlay" onClick={closeServiceEdit}>
+          <div className="modal-content modal-content--wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar Servicio</h2>
+              <button onClick={closeServiceEdit} className="btn-close">&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-row">
+                <div className="form-col">
+                  <label>ID</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.id ?? ''}
+                    onChange={(e) => setEditData({ ...editData, id: parseInt(e.target.value, 10) || 0 })}
+                    placeholder="Número de ID"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Título *</label>
+                  <input
+                    value={editData.title || ''}
+                    onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                    placeholder="Nombre del servicio"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Categoría</label>
+                  <select
+                    value={editData.category || 'contabilidad-finanzas'}
+                    onChange={(e) => setEditData({ ...editData, category: e.target.value })}
+                  >
+                    {SERVICE_CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{SERVICE_CATEGORY_LABELS[cat] || cat}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-col">
+                  <label>Subtítulo</label>
+                  <input
+                    value={editData.subtitle || ''}
+                    onChange={(e) => setEditData({ ...editData, subtitle: e.target.value })}
+                    placeholder="Subtítulo breve"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Icono</label>
+                  <input
+                    value={editData.icon || ''}
+                    onChange={(e) => setEditData({ ...editData, icon: e.target.value })}
+                    placeholder="Ej: briefcase, megaphone, chart"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>WhatsApp Link</label>
+                  <input
+                    value={editData.whatsapp_link || ''}
+                    onChange={(e) => setEditData({ ...editData, whatsapp_link: e.target.value })}
+                    placeholder="https://wa.me/5355609099?text=..."
+                  />
+                </div>
+              </div>
+
+              <div className="form-row form-row--checks">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={!!editData.popular}
+                    onChange={(e) => setEditData({ ...editData, popular: e.target.checked })}
+                  />
+                  Popular (destacado)
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={editData.is_active !== false}
+                    onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                  />
+                  Visible en la web
+                </label>
+              </div>
+
+              <label>Descripción</label>
+              <textarea
+                value={editData.description || ''}
+                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                placeholder="Descripción del servicio"
+                rows={3}
+              />
+
+              <label>Incluye</label>
+              <textarea
+                value={Array.isArray(editData.includes) ? editData.includes.join('\n') : (editData.includes || '')}
+                onChange={(e) => setEditData({ ...editData, includes: e.target.value })}
+                placeholder="Un ítem por línea"
+                rows={4}
+              />
+            </div>
+            <div className="modal-footer">
+              <button onClick={closeServiceEdit} className="btn-cancel">Cancelar</button>
+              <button onClick={saveServiceEdit} className="btn-primary">Guardar</button>
             </div>
           </div>
         </div>
