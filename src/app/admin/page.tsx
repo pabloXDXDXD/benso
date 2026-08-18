@@ -67,6 +67,12 @@ interface Evento {
   image?: string;
   categoria?: string;
   icon?: string;
+  duracion?: string;
+  modalidad?: string;
+  modulos?: { title: string; description?: string }[];
+  disclaimer?: string;
+  is_active?: boolean;
+  whatsapp_link?: string;
 }
 
 interface Pedido {
@@ -204,6 +210,7 @@ export default function AdminPage() {
   const [editData, setEditData] = useState<any>(null);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
   const [showEditServiceModal, setShowEditServiceModal] = useState(false);
+  const [showEditEventModal, setShowEditEventModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createTable, setCreateTable] = useState<'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('productos');
@@ -622,6 +629,83 @@ export default function AdminPage() {
     setServicios(prev => prev.map(item => item.id === s.id ? { ...item, is_active: next } : item));
     toast.success(next ? 'Servicio visible en la web' : 'Servicio oculto de la web');
     const json = await adminFetch('update', { table: 'servicios', id: s.id, data: { is_active: next } });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  async function toggleEventActive(e: Evento) {
+    const next = !e.is_active;
+    setEventos(prev => prev.map(item => item.id === e.id ? { ...item, is_active: next } : item));
+    toast.success(next ? 'Formación visible en la web' : 'Formación oculta de la web');
+    const json = await adminFetch('update', { table: 'eventos', id: e.id, data: { is_active: next } });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  // ── Modal de edición de formación (detalles) ──
+  function openEventEdit(e: Evento) {
+    setEditingId(e.id);
+    setEditData({
+      ...e,
+      modulos: Array.isArray(e.modulos) ? [...e.modulos] : [],
+    });
+    setShowEditEventModal(true);
+  }
+
+  function closeEventEdit() {
+    setShowEditEventModal(false);
+    setEditingId(null);
+    setEditData(null);
+  }
+
+  async function saveEventEdit() {
+    if (!editData) return;
+    if (!editData.title?.trim()) {
+      toast.error('El título es obligatorio');
+      return;
+    }
+    const newId = Number(editData.id) || editingId;
+    if (newId !== editingId && eventos.some(item => item.id === newId)) {
+      toast.error(`Ya existe una formación con el ID ${newId}`);
+      return;
+    }
+
+    // Módulos: una línea por módulo, formato "Título — descripción"
+    const modulos = Array.isArray(editData.modulos)
+      ? editData.modulos
+      : String(editData.modulos || '').split('\n').map((line: string) => line.trim()).filter(Boolean)
+          .map((line: string) => {
+            const sep = line.indexOf('—');
+            if (sep > -1) {
+              return { title: line.slice(0, sep).trim(), description: line.slice(sep + 1).trim() };
+            }
+            return { title: line, description: '' };
+          });
+
+    const updateData: any = {
+      title: editData.title,
+      description: editData.description || '',
+      date: editData.date || '',
+      status: editData.status || 'Proximamente',
+      categoria: editData.categoria || 'taller',
+      icon: editData.icon || 'graduation-cap',
+      duracion: editData.duracion || '',
+      modalidad: editData.modalidad || '',
+      modulos,
+      disclaimer: editData.disclaimer || '',
+      is_active: !!editData.is_active,
+      // Campos que no se exponen en el modal: se preservan
+      image: editData.image || '',
+      whatsapp_link: editData.whatsapp_link || '',
+    };
+    if (newId !== editingId) updateData.id = newId;
+
+    // Optimistic update
+    setEventos(prev => prev.map(item => item.id === editingId ? { ...item, ...updateData, id: newId } : item));
+    closeEventEdit();
+    toast.success('Formación guardada');
+
+    const json = await adminFetch('update', { table: 'eventos', id: editingId, data: updateData });
     if (json.error) toast.error('Error: ' + json.error);
     queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
@@ -1495,22 +1579,22 @@ export default function AdminPage() {
                       <colgroup>
                         <col style={{ width: getColWidth('ev-id', colWidths) }} />
                         <col style={{ width: getColWidth('ev-titulo', colWidths) }} />
-                        <col style={{ width: 60 }} />
                         <col style={{ width: getColWidth('ev-desc', colWidths) }} />
                         <col style={{ width: getColWidth('ev-fecha', colWidths) }} />
                         <col style={{ width: getColWidth('ev-estado', colWidths) }} />
                         <col style={{ width: getColWidth('ev-cat', colWidths) }} />
+                        <col style={{ width: getColWidth('ev-visible', colWidths) }} />
                         <col style={{ width: getColWidth('ev-acciones', colWidths) }} />
                       </colgroup>
                       <thead>
                         <tr>
                           <th style={{position:'relative'}}>ID<ColResizeHandle col="ev-id" /></th>
                           <th style={{position:'relative'}}>Formación<ColResizeHandle col="ev-titulo" /></th>
-                          <th style={{position:'relative'}}>Imagen</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="ev-desc" /></th>
                           <th style={{position:'relative'}}>Fecha<ColResizeHandle col="ev-fecha" /></th>
                           <th style={{position:'relative'}}>Estado<ColResizeHandle col="ev-estado" /></th>
                           <th style={{position:'relative'}}>Categoría<ColResizeHandle col="ev-cat" /></th>
+                          <th style={{position:'relative'}}>Visible</th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="ev-acciones" /></th>
                         </tr>
                       </thead>
@@ -1518,123 +1602,40 @@ export default function AdminPage() {
                         {filteredData.eventos.map(e => (
                           <tr key={e.id}>
                             <td className="id-cell">{formatId(e.id)}</td>
-                            <td>
-                              {editingId === e.id ? (
-                                <input 
-                                  value={editData.title} 
-                                  onChange={(e) => setEditData({...editData, title: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : e.title}
-                            </td>
-                            <td>
-                              {editingId === e.id ? (
-                                <label className="upload-btn-sm" title="Subir imagen">
-                                  <ImageUp size={16} />
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    onChange={async (e) => {
-                                      const file = e.target.files?.[0];
-                                      if (!file) return;
-                                      const url = await handleImageUpload(file);
-                                      if (url) setEditData({...editData, image: url});
-                                    }}
-                                  />
-                                </label>
-                              ) : (
-                                e.image ? (
-                                  <img src={e.image} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
-                                ) : (
-                                  <span className="no-image-placeholder"><ImageUp size={16} /></span>
-                                )
-                              )}
-                            </td>
+                            <td>{e.title}</td>
                             <td className="desc-cell">
-                              {editingId === e.id ? (
-                                <textarea 
-                                  value={editData.description} 
-                                  onChange={(e) => setEditData({...editData, description: e.target.value})}
-                                  className="edit-textarea"
-                                  rows={2}
-                                />
-                              ) : (
-                                <TruncatedCell text={e.description} cellKey={`desc-e-${e.id}`} />
-                              )}
+                              <TruncatedCell text={e.description} cellKey={`desc-e-${e.id}`} />
+                            </td>
+                            <td>{e.date || '-'}</td>
+                            <td>
+                              <span className={`status-badge ${e.status}`}>
+                                {e.status === 'En Curso' ? <CalendarCheck size={12} /> : <Clock size={12} />}
+                                {e.status}
+                              </span>
                             </td>
                             <td>
-                              {editingId === e.id ? (
-                                <input 
-                                  value={editData.date} 
-                                  onChange={(e) => setEditData({...editData, date: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : e.date}
+                              <span className="status-badge">
+                                {e.categoria ? e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1) : 'Evento'}
+                              </span>
                             </td>
                             <td>
-                              {editingId === e.id ? (
-                                <select 
-                                  value={editData.status} 
-                                  onChange={(e) => setEditData({...editData, status: e.target.value})}
-                                  className="edit-select"
-                                >
-                                  <option value="En Curso">En Curso</option>
-                                  <option value="Proximamente">Próximamente</option>
-                                </select>
-                              ) : (
-                                <span className={`status-badge ${e.status}`}>
-                                  {e.status === 'En Curso' ? <CalendarCheck size={12} /> : <Clock size={12} />}
-                                  {e.status}
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              {editingId === e.id ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                  <select
-                                    value={editData.categoria || 'evento'}
-                                    onChange={(ev) => setEditData({...editData, categoria: ev.target.value})}
-                                    className="edit-select"
-                                  >
-                                    <option value="taller">Taller</option>
-                                    <option value="curso">Curso</option>
-                                    <option value="evento">Evento</option>
-                                  </select>
-                                  <input
-                                    value={editData.icon || ''}
-                                    onChange={(ev) => setEditData({...editData, icon: ev.target.value})}
-                                    className="edit-input"
-                                    placeholder="icono"
-                                  />
-                                </div>
-                              ) : (
-                                <span className="status-badge">
-                                  {e.categoria ? e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1) : 'Evento'}
-                                </span>
-                              )}
+                              <button
+                                onClick={() => toggleEventActive(e)}
+                                className={`btn-icon-sm ${e.is_active ? 'success' : 'warning'}`}
+                                title={e.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                                aria-label={e.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                              >
+                                {e.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                              </button>
                             </td>
                             <td>
                               <div className="actions-cell">
-                                {editingId === e.id ? (
-                                  <>
-                                    <button onClick={() => saveEdit('eventos')} className="btn-icon-sm success" title="Guardar">
-                                      <Save size={14} />
-                                    </button>
-                                    <button onClick={cancelEdit} className="btn-icon-sm danger" title="Cancelar">
-                                      <X size={14} />
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <button onClick={() => startEdit(e, 'eventos')} className="btn-icon-sm" title="Editar">
-                                      <Edit2 size={14} />
-                                    </button>
-                                    <button onClick={() => handleDeleteClick('eventos', e.id)} className="btn-icon-sm danger" title="Eliminar">
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </>
-                                )}
+                                <button onClick={() => openEventEdit(e)} className="btn-icon-sm" title="Editar detalles">
+                                  <Edit2 size={14} />
+                                </button>
+                                <button onClick={() => handleDeleteClick('eventos', e.id)} className="btn-icon-sm danger" title="Eliminar">
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -2282,6 +2283,140 @@ export default function AdminPage() {
             <div className="modal-footer">
               <button onClick={closeServiceEdit} className="btn-cancel">Cancelar</button>
               <button onClick={saveServiceEdit} className="btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditEventModal && editData && (
+        <div className="modal-overlay" onClick={closeEventEdit}>
+          <div className="modal-content modal-content--wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar Formación</h2>
+              <button onClick={closeEventEdit} className="btn-close">&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-row">
+                <div className="form-col">
+                  <label>ID</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.id ?? ''}
+                    onChange={(e) => setEditData({ ...editData, id: parseInt(e.target.value, 10) || 0 })}
+                    placeholder="Número de ID"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Título *</label>
+                  <input
+                    value={editData.title || ''}
+                    onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                    placeholder="Nombre de la formación"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Categoría</label>
+                  <select
+                    value={editData.categoria || 'taller'}
+                    onChange={(e) => setEditData({ ...editData, categoria: e.target.value })}
+                  >
+                    {EVENT_CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{EVENT_CATEGORY_LABELS[cat] || cat}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-col">
+                  <label>Estado</label>
+                  <select
+                    value={editData.status || 'Proximamente'}
+                    onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                  >
+                    <option value="En Curso">En Curso</option>
+                    <option value="Proximamente">Próximamente</option>
+                    <option value="En desarrollo">En desarrollo</option>
+                  </select>
+                </div>
+                <div className="form-col">
+                  <label>Fecha</label>
+                  <input
+                    value={editData.date || ''}
+                    onChange={(e) => setEditData({ ...editData, date: e.target.value })}
+                    placeholder="Ej: Septiembre 2026"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Icono</label>
+                  <input
+                    value={editData.icon || ''}
+                    onChange={(e) => setEditData({ ...editData, icon: e.target.value })}
+                    placeholder="Ej: graduation-cap, briefcase"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-col">
+                  <label>Duración</label>
+                  <input
+                    value={editData.duracion || ''}
+                    onChange={(e) => setEditData({ ...editData, duracion: e.target.value })}
+                    placeholder="Ej: 6 semanas"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Modalidad</label>
+                  <input
+                    value={editData.modalidad || ''}
+                    onChange={(e) => setEditData({ ...editData, modalidad: e.target.value })}
+                    placeholder="Ej: Presencial / Online"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row form-row--checks">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={editData.is_active !== false}
+                    onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                  />
+                  Visible en la web
+                </label>
+              </div>
+
+              <label>Descripción</label>
+              <textarea
+                value={editData.description || ''}
+                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                placeholder="Descripción de la formación"
+                rows={3}
+              />
+
+              <label>Módulos (plan temático)</label>
+              <textarea
+                value={Array.isArray(editData.modulos)
+                  ? editData.modulos.map((m: any) => m.title + (m.description ? ` — ${m.description}` : '')).join('\n')
+                  : (editData.modulos || '')}
+                onChange={(e) => setEditData({ ...editData, modulos: e.target.value })}
+                placeholder={'Un módulo por línea.\nFormato: Título — descripción (el separador es "—")'}
+                rows={4}
+              />
+
+              <label>Disclaimer</label>
+              <textarea
+                value={editData.disclaimer || ''}
+                onChange={(e) => setEditData({ ...editData, disclaimer: e.target.value })}
+                placeholder="Nota legal o aclaración (opcional)"
+                rows={2}
+              />
+            </div>
+            <div className="modal-footer">
+              <button onClick={closeEventEdit} className="btn-cancel">Cancelar</button>
+              <button onClick={saveEventEdit} className="btn-primary">Guardar</button>
             </div>
           </div>
         </div>
