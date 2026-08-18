@@ -1608,10 +1608,16 @@ export default function AdminPage() {
                             </td>
                             <td>{e.date || '-'}</td>
                             <td>
-                              <span className={`status-badge ${e.status}`}>
-                                {e.status === 'En Curso' ? <CalendarCheck size={12} /> : <Clock size={12} />}
-                                {e.status}
-                              </span>
+                              {typeof colWidths['ev-estado'] === 'number' && colWidths['ev-estado'] < 90 ? (
+                                <span className={`status-badge ${e.status}`} title={e.status}>
+                                  {e.status === 'En Curso' ? <CalendarCheck size={14} /> : <Clock size={14} />}
+                                </span>
+                              ) : (
+                                <span className={`status-badge ${e.status}`}>
+                                  {e.status === 'En Curso' ? <CalendarCheck size={12} /> : <Clock size={12} />}
+                                  {e.status}
+                                </span>
+                              )}
                             </td>
                             <td>
                               <span className="status-badge">
