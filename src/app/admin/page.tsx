@@ -10,8 +10,8 @@ import { BensoLogo } from '@/components/BensoLogo';
 
 const FN_URL = 'https://irhbkkfvcawklbahivii.supabase.co/functions/v1';
 import { 
-  Search, Plus, CheckCheck, X,
-  Edit2, Save, Trash2, Copy, Loader,
+  Search, Plus, CheckCheck,
+  Edit2, Trash2, Copy, Loader,
   Clock, Mail, Phone,
   Eye, EyeOff, ShoppingCart, DollarSign, CheckCircle, CalendarCheck,
   MessageSquare, HelpCircle, ImageUp, Upload
@@ -211,6 +211,8 @@ export default function AdminPage() {
   const [showEditProductModal, setShowEditProductModal] = useState(false);
   const [showEditServiceModal, setShowEditServiceModal] = useState(false);
   const [showEditEventModal, setShowEditEventModal] = useState(false);
+  const [showEditTestimonialModal, setShowEditTestimonialModal] = useState(false);
+  const [showEditFaqModal, setShowEditFaqModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createTable, setCreateTable] = useState<'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('productos');
@@ -488,48 +490,6 @@ export default function AdminPage() {
     queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
 
-  async function saveEdit(table: string) {
-    if (!editData) return;
-    let updateData: any;
-    if (table === 'testimonials' || table === 'faqs') {
-      updateData = { ...editData };
-      delete updateData.id;
-    } else {
-      const priceNum = extractNumberFromPrice(editData.price);
-      const { popular: _, ...rest } = editData;
-      updateData = { ...rest, price_num: priceNum };
-    }
-
-    // Servicios: includes is edited as one-per-line textarea → convert to text[]
-    if (table === 'servicios' && typeof updateData.includes === 'string') {
-      updateData.includes = updateData.includes.split('\n').map((s: string) => s.trim()).filter(Boolean);
-    }
-
-    // Optimistic: update local state immediately
-    const setter = table === 'productos' ? setProductos : table === 'servicios' ? setServicios : table === 'eventos' ? setEventos : table === 'testimonials' ? setTestimonials : setFaqs;
-    setter((prev: any[]) => prev.map(item => item.id === editingId ? { ...item, ...updateData } : item));
-    setEditingId(null);
-    setEditData(null);
-    toast.success('Guardado');
-
-    // Background sync
-    const json = await adminFetch('update', { table, id: editingId, data: updateData });
-    if (json.error) {
-      toast.error('Error: ' + json.error);
-    }
-    queryClient.invalidateQueries({ queryKey: ['admin'] });
-  }
-
-  function startEdit(item: any, table: string) {
-    setEditingId(item.id);
-    setEditData({ ...item });
-  }
-
-  function cancelEdit() {
-    setEditingId(null);
-    setEditData(null);
-  }
-
   // ── Modal de edición de producto (detalles + variantes) ──
   function openProductEdit(p: Producto) {
     setEditingId(p.id);
@@ -765,6 +725,112 @@ export default function AdminPage() {
     toast.success('Servicio guardado');
 
     const json = await adminFetch('update', { table: 'servicios', id: editingId, data: updateData });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  // ── Modal de edición de testimonio (detalles) ──
+  function openTestimonialEdit(t: Testimonial) {
+    setEditingId(t.id);
+    setEditData({ ...t });
+    setShowEditTestimonialModal(true);
+  }
+
+  function closeTestimonialEdit() {
+    setShowEditTestimonialModal(false);
+    setEditingId(null);
+    setEditData(null);
+  }
+
+  async function saveTestimonialEdit() {
+    if (!editData) return;
+    if (!editData.author?.trim()) {
+      toast.error('El autor es obligatorio');
+      return;
+    }
+    const newId = Number(editData.id) || editingId;
+    if (newId !== editingId && testimonials.some(item => item.id === newId)) {
+      toast.error(`Ya existe un testimonio con el ID ${newId}`);
+      return;
+    }
+
+    const updateData: any = {
+      quote: editData.quote || '',
+      author: editData.author,
+      position: editData.position || '',
+      image: editData.image || '',
+      is_active: !!editData.is_active,
+      sort_order: editData.sort_order ?? 0,
+    };
+    if (newId !== editingId) updateData.id = newId;
+
+    // Optimistic update
+    setTestimonials(prev => prev.map(item => item.id === editingId ? { ...item, ...updateData, id: newId } : item));
+    closeTestimonialEdit();
+    toast.success('Testimonio guardado');
+
+    const json = await adminFetch('update', { table: 'testimonials', id: editingId, data: updateData });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  async function toggleTestimonialActive(t: Testimonial) {
+    const next = !t.is_active;
+    setTestimonials(prev => prev.map(item => item.id === t.id ? { ...item, is_active: next } : item));
+    toast.success(next ? 'Testimonio visible en la web' : 'Testimonio oculto de la web');
+    const json = await adminFetch('update', { table: 'testimonials', id: t.id, data: { is_active: next } });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  // ── Modal de edición de FAQ (detalles) ──
+  function openFaqEdit(f: Faq) {
+    setEditingId(f.id);
+    setEditData({ ...f });
+    setShowEditFaqModal(true);
+  }
+
+  function closeFaqEdit() {
+    setShowEditFaqModal(false);
+    setEditingId(null);
+    setEditData(null);
+  }
+
+  async function saveFaqEdit() {
+    if (!editData) return;
+    if (!editData.question?.trim() || !editData.answer?.trim()) {
+      toast.error('La pregunta y la respuesta son obligatorias');
+      return;
+    }
+    const newId = Number(editData.id) || editingId;
+    if (newId !== editingId && faqs.some(item => item.id === newId)) {
+      toast.error(`Ya existe una FAQ con el ID ${newId}`);
+      return;
+    }
+
+    const updateData: any = {
+      question: editData.question,
+      answer: editData.answer,
+      is_active: !!editData.is_active,
+      sort_order: editData.sort_order ?? 0,
+    };
+    if (newId !== editingId) updateData.id = newId;
+
+    // Optimistic update
+    setFaqs(prev => prev.map(item => item.id === editingId ? { ...item, ...updateData, id: newId } : item));
+    closeFaqEdit();
+    toast.success('FAQ guardada');
+
+    const json = await adminFetch('update', { table: 'faqs', id: editingId, data: updateData });
+    if (json.error) toast.error('Error: ' + json.error);
+    queryClient.invalidateQueries({ queryKey: ['admin'] });
+  }
+
+  async function toggleFaqActive(f: Faq) {
+    const next = !f.is_active;
+    setFaqs(prev => prev.map(item => item.id === f.id ? { ...item, is_active: next } : item));
+    toast.success(next ? 'FAQ visible en la web' : 'FAQ oculta de la web');
+    const json = await adminFetch('update', { table: 'faqs', id: f.id, data: { is_active: next } });
     if (json.error) toast.error('Error: ' + json.error);
     queryClient.invalidateQueries({ queryKey: ['admin'] });
   }
@@ -1670,7 +1736,7 @@ export default function AdminPage() {
                           <th style={{position:'relative'}}>Cita<ColResizeHandle col="test-quote" /></th>
                           <th style={{position:'relative'}}>Posición<ColResizeHandle col="test-position" /></th>
                           <th style={{position:'relative'}}>Imagen</th>
-                          <th style={{position:'relative'}}>Activo<ColResizeHandle col="test-active" /></th>
+                          <th style={{position:'relative'}}>Visible<ColResizeHandle col="test-active" /></th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="test-acciones" /></th>
                         </tr>
                       </thead>
@@ -1678,97 +1744,36 @@ export default function AdminPage() {
                         {filteredData.testimonials.map(t => (
                           <tr key={t.id}>
                             <td className="id-cell">{formatId(t.id)}</td>
-                            <td>
-                              {editingId === t.id ? (
-                                <input 
-                                  value={editData.author} 
-                                  onChange={(e) => setEditData({...editData, author: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : t.author}
-                            </td>
+                            <td>{t.author}</td>
                             <td className="desc-cell">
-                              {editingId === t.id ? (
-                                <textarea 
-                                  value={editData.quote} 
-                                  onChange={(e) => setEditData({...editData, quote: e.target.value})}
-                                  className="edit-textarea"
-                                  rows={2}
-                                />
+                              <TruncatedCell text={t.quote} cellKey={`quote-${t.id}`} />
+                            </td>
+                            <td>{t.position || '-'}</td>
+                            <td>
+                              {t.image ? (
+                                <img src={t.image} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
                               ) : (
-                                <TruncatedCell text={t.quote} cellKey={`quote-${t.id}`} />
+                                <span className="no-image-placeholder"><ImageUp size={16} /></span>
                               )}
                             </td>
                             <td>
-                              {editingId === t.id ? (
-                                <input 
-                                  value={editData.position} 
-                                  onChange={(e) => setEditData({...editData, position: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : t.position}
-                            </td>
-                            <td>
-                              {editingId === t.id ? (
-                                <label className="upload-btn-sm" title="Subir imagen">
-                                  <ImageUp size={16} />
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    onChange={async (e) => {
-                                      const file = e.target.files?.[0];
-                                      if (!file) return;
-                                      const url = await handleImageUpload(file);
-                                      if (url) setEditData({...editData, image: url});
-                                    }}
-                                  />
-                                </label>
-                              ) : (
-                                t.image ? (
-                                  <img src={t.image} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
-                                ) : (
-                                  <span className="no-image-placeholder"><ImageUp size={16} /></span>
-                                )
-                              )}
-                            </td>
-                            <td>
-                              {editingId === t.id ? (
-                                <select 
-                                  value={editData.is_active ? 'true' : 'false'} 
-                                  onChange={(e) => setEditData({...editData, is_active: e.target.value === 'true'})}
-                                  className="edit-select"
-                                >
-                                  <option value="true">Sí</option>
-                                  <option value="false">No</option>
-                                </select>
-                              ) : (
-                                <span className={`status-badge ${t.is_active ? 'completado' : 'pendiente'}`}>
-                                  {t.is_active ? 'Sí' : 'No'}
-                                </span>
-                              )}
+                              <button
+                                onClick={() => toggleTestimonialActive(t)}
+                                className={`btn-icon-sm ${t.is_active ? 'success' : 'warning'}`}
+                                title={t.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                                aria-label={t.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                              >
+                                {t.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                              </button>
                             </td>
                             <td>
                               <div className="actions-cell">
-                                {editingId === t.id ? (
-                                  <>
-                                    <button onClick={() => saveEdit('testimonials')} className="btn-icon-sm success" title="Guardar">
-                                      <Save size={14} />
-                                    </button>
-                                    <button onClick={cancelEdit} className="btn-icon-sm danger" title="Cancelar">
-                                      <X size={14} />
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <button onClick={() => startEdit(t, 'testimonials')} className="btn-icon-sm" title="Editar">
-                                      <Edit2 size={14} />
-                                    </button>
-                                    <button onClick={() => handleDeleteClick('testimonials', t.id)} className="btn-icon-sm danger" title="Eliminar">
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </>
-                                )}
+                                <button onClick={() => openTestimonialEdit(t)} className="btn-icon-sm" title="Editar detalles">
+                                  <Edit2 size={14} />
+                                </button>
+                                <button onClick={() => handleDeleteClick('testimonials', t.id)} className="btn-icon-sm danger" title="Eliminar">
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -1794,7 +1799,7 @@ export default function AdminPage() {
                           <th style={{position:'relative'}}>ID<ColResizeHandle col="faq-id" /></th>
                           <th style={{position:'relative'}}>Pregunta<ColResizeHandle col="faq-question" /></th>
                           <th style={{position:'relative'}}>Respuesta<ColResizeHandle col="faq-answer" /></th>
-                          <th style={{position:'relative'}}>Activo<ColResizeHandle col="faq-active" /></th>
+                          <th style={{position:'relative'}}>Visible<ColResizeHandle col="faq-active" /></th>
                           <th style={{position:'relative'}}>Orden<ColResizeHandle col="faq-order" /></th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="faq-acciones" /></th>
                         </tr>
@@ -1804,76 +1809,30 @@ export default function AdminPage() {
                           <tr key={f.id}>
                             <td className="id-cell">{formatId(f.id)}</td>
                             <td>
-                              {editingId === f.id ? (
-                                <input 
-                                  value={editData.question} 
-                                  onChange={(e) => setEditData({...editData, question: e.target.value})}
-                                  className="edit-input"
-                                />
-                              ) : (
-                                <TruncatedCell text={f.question} cellKey={`faq-q-${f.id}`} />
-                              )}
+                              <TruncatedCell text={f.question} cellKey={`faq-q-${f.id}`} />
                             </td>
                             <td className="desc-cell">
-                              {editingId === f.id ? (
-                                <textarea 
-                                  value={editData.answer} 
-                                  onChange={(e) => setEditData({...editData, answer: e.target.value})}
-                                  className="edit-textarea"
-                                  rows={2}
-                                />
-                              ) : (
-                                <TruncatedCell text={f.answer} cellKey={`faq-a-${f.id}`} />
-                              )}
+                              <TruncatedCell text={f.answer} cellKey={`faq-a-${f.id}`} />
                             </td>
                             <td>
-                              {editingId === f.id ? (
-                                <select 
-                                  value={editData.is_active ? 'true' : 'false'} 
-                                  onChange={(e) => setEditData({...editData, is_active: e.target.value === 'true'})}
-                                  className="edit-select"
-                                >
-                                  <option value="true">Sí</option>
-                                  <option value="false">No</option>
-                                </select>
-                              ) : (
-                                <span className={`status-badge ${f.is_active ? 'completado' : 'pendiente'}`}>
-                                  {f.is_active ? 'Sí' : 'No'}
-                                </span>
-                              )}
+                              <button
+                                onClick={() => toggleFaqActive(f)}
+                                className={`btn-icon-sm ${f.is_active ? 'success' : 'warning'}`}
+                                title={f.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                                aria-label={f.is_active ? 'Ocultar de la web' : 'Mostrar en la web'}
+                              >
+                                {f.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                              </button>
                             </td>
-                            <td>
-                              {editingId === f.id ? (
-                                <input 
-                                  type="number"
-                                  value={editData.sort_order} 
-                                  onChange={(e) => setEditData({...editData, sort_order: parseInt(e.target.value) || 0})}
-                                  className="edit-input"
-                                  style={{ width: 60 }}
-                                />
-                              ) : f.sort_order}
-                            </td>
+                            <td>{f.sort_order}</td>
                             <td>
                               <div className="actions-cell">
-                                {editingId === f.id ? (
-                                  <>
-                                    <button onClick={() => saveEdit('faqs')} className="btn-icon-sm success" title="Guardar">
-                                      <Save size={14} />
-                                    </button>
-                                    <button onClick={cancelEdit} className="btn-icon-sm danger" title="Cancelar">
-                                      <X size={14} />
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <button onClick={() => startEdit(f, 'faqs')} className="btn-icon-sm" title="Editar">
-                                      <Edit2 size={14} />
-                                    </button>
-                                    <button onClick={() => handleDeleteClick('faqs', f.id)} className="btn-icon-sm danger" title="Eliminar">
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </>
-                                )}
+                                <button onClick={() => openFaqEdit(f)} className="btn-icon-sm" title="Editar detalles">
+                                  <Edit2 size={14} />
+                                </button>
+                                <button onClick={() => handleDeleteClick('faqs', f.id)} className="btn-icon-sm danger" title="Eliminar">
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -2423,6 +2382,158 @@ export default function AdminPage() {
             <div className="modal-footer">
               <button onClick={closeEventEdit} className="btn-cancel">Cancelar</button>
               <button onClick={saveEventEdit} className="btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditTestimonialModal && editData && (
+        <div className="modal-overlay" onClick={closeTestimonialEdit}>
+          <div className="modal-content modal-content--wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar Testimonio</h2>
+              <button onClick={closeTestimonialEdit} className="btn-close">&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-row">
+                <div className="form-col">
+                  <label>ID</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.id ?? ''}
+                    onChange={(e) => setEditData({ ...editData, id: parseInt(e.target.value, 10) || 0 })}
+                    placeholder="Número de ID"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Autor *</label>
+                  <input
+                    value={editData.author || ''}
+                    onChange={(e) => setEditData({ ...editData, author: e.target.value })}
+                    placeholder="Nombre del autor"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Posición</label>
+                  <input
+                    value={editData.position || ''}
+                    onChange={(e) => setEditData({ ...editData, position: e.target.value })}
+                    placeholder="Ej: CEO de Benso"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row form-row--checks">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={editData.is_active !== false}
+                    onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                  />
+                  Visible en la web
+                </label>
+              </div>
+
+              <label>Cita *</label>
+              <textarea
+                value={editData.quote || ''}
+                onChange={(e) => setEditData({ ...editData, quote: e.target.value })}
+                placeholder="Texto del testimonio"
+                rows={3}
+              />
+
+              <label>Imagen (avatar opcional)</label>
+              <div className="actions-cell" style={{ justifyContent: 'flex-start' }}>
+                {editData.image ? (
+                  <img src={editData.image} alt="" style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4 }} />
+                ) : (
+                  <span className="no-image-placeholder"><ImageUp size={18} /></span>
+                )}
+                <label className="upload-btn-sm" title="Subir imagen">
+                  <ImageUp size={16} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const url = await handleImageUpload(file);
+                      if (url) setEditData({ ...editData, image: url });
+                    }}
+                  />
+                </label>
+                {editData.image && (
+                  <button
+                    type="button"
+                    onClick={() => setEditData({ ...editData, image: '' })}
+                    className="btn-icon-sm danger"
+                    title="Quitar imagen"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button onClick={closeTestimonialEdit} className="btn-cancel">Cancelar</button>
+              <button onClick={saveTestimonialEdit} className="btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditFaqModal && editData && (
+        <div className="modal-overlay" onClick={closeFaqEdit}>
+          <div className="modal-content modal-content--wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar FAQ</h2>
+              <button onClick={closeFaqEdit} className="btn-close">&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-row">
+                <div className="form-col">
+                  <label>ID</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.id ?? ''}
+                    onChange={(e) => setEditData({ ...editData, id: parseInt(e.target.value, 10) || 0 })}
+                    placeholder="Número de ID"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Visible en la web</label>
+                  <div className="checkbox-label" style={{ marginTop: '0.5rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={editData.is_active !== false}
+                      onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                    />
+                    Visible en la web
+                  </div>
+                </div>
+              </div>
+
+              <label>Pregunta *</label>
+              <input
+                value={editData.question || ''}
+                onChange={(e) => setEditData({ ...editData, question: e.target.value })}
+                placeholder="Pregunta frecuente"
+              />
+
+              <label>Respuesta *</label>
+              <textarea
+                value={editData.answer || ''}
+                onChange={(e) => setEditData({ ...editData, answer: e.target.value })}
+                placeholder="Respuesta"
+                rows={4}
+              />
+            </div>
+            <div className="modal-footer">
+              <button onClick={closeFaqEdit} className="btn-cancel">Cancelar</button>
+              <button onClick={saveFaqEdit} className="btn-primary">Guardar</button>
             </div>
           </div>
         </div>
