@@ -1,4 +1,5 @@
 import type { Viewport, Metadata } from 'next';
+import Script from 'next/script';
 import { cocogoose, ttCommons } from './fonts';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
@@ -73,18 +74,23 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        {/* Fallback OG tags — Next.js metadata API may not render all OG properties */}
+        {/* Fallback OG tags — pages defining their own openGraph lose the layout's
+            og:image because Next.js shallow-merges metadata objects */}
         <meta property="og:image" content="https://www.bensofcg.com/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:url" content="https://www.bensofcg.com" />
         <meta property="og:locale" content="es_ES" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
       </head>
       <body>
+        {/* next/script dedupes by id; a raw <script> here gets re-inserted by
+            hydration when the document is still streaming (duplicate JSON-LD + #418) */}
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <CurrencyProvider>
           <CartProvider>
             <SWRProvider>

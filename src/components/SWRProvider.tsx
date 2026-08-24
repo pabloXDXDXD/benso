@@ -3,8 +3,9 @@
 import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
 
-// Bump version to invalidate browser cache after product restructure
-const CACHE_KEY = 'swr-cache-v2';
+// Bump version to invalidate browser caches. Stale entries from previous deploys
+// hydrate synchronously and can differ from the prerendered HTML (React error #418).
+const CACHE_KEY = 'swr-cache-v3';
 
 function localStorageProvider() {
   const map = new Map<string, unknown>();

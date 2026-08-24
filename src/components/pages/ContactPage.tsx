@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, type FormEvent } from 'react';
+import { useState, useMemo, useEffect, type FormEvent } from 'react';
 import { BentoCard, FAQAccordion, ScrollReveal } from '@/components';
 import { supabase } from '@/lib/supabase';
 import { useFaqs } from '@/hooks/useData';
@@ -19,6 +19,12 @@ export function ContactPage({ servicesData = { featured: [], all: [] } }: { serv
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  // Computed after mount: a server-rendered date could mismatch the client's timezone
+  const [minDate, setMinDate] = useState('');
+
+  useEffect(() => {
+    setMinDate(new Date().toISOString().split('T')[0]);
+  }, []);
 
   const validateField = (field: string, value: string): string => {
     switch (field) {
@@ -141,7 +147,7 @@ export function ContactPage({ servicesData = { featured: [], all: [] } }: { serv
       <ScrollReveal>
         <div className="container">
           <div className="section-title-center page-intro-title">
-            <h2>Agenda tu cita</h2>
+            <h1>Agenda tu cita</h1>
           </div>
           
           <div className="text-center">
@@ -207,6 +213,7 @@ export function ContactPage({ servicesData = { featured: [], all: [] } }: { serv
                     type="date" 
                     id="fecha" 
                     name="fecha" 
+                    min={minDate || undefined} 
                     required 
                     aria-required="true"
                     aria-invalid={!!errors.fecha}

@@ -42,7 +42,7 @@ export function ProductsPage({ initialProductos }: { initialProductos?: Producto
       <div className="container">
         <div className="section-title-row page-intro-title">
           <div className="section-title">
-            <h2>Nuestros productos</h2>
+            <h1>Nuestros productos</h1>
           </div>
 
           <div className="filter-controls">

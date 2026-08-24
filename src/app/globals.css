@@ -1354,7 +1354,7 @@ section.alt-border {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.section-title h2 {
+.section-title :is(h1, h2) {
     font-family: var(--font-heading);
     font-size: 2.5rem;
     font-weight: 700;
@@ -1390,7 +1390,7 @@ section.alt-border {
     margin-top: 3rem;
 }
 
-.section-title-center h2 {
+.section-title-center :is(h1, h2) {
     font-family: var(--font-heading);
     font-size: 2.5rem;
     font-weight: 700;
@@ -3991,7 +3991,7 @@ footer {
         margin-bottom: 1.5rem;
     }
 
-    .section-title h2 {
+    .section-title :is(h1, h2) {
         font-size: 2.6rem;
         font-weight: 700;
         margin-bottom: 1.25rem;
@@ -4027,7 +4027,7 @@ footer {
         width: 80px;
     }
 
-    .section-title-center h2 {
+    .section-title-center :is(h1, h2) {
         font-size: 2.6rem;
         font-weight: 700;
         margin-bottom: 1.25rem;
@@ -4182,7 +4182,7 @@ footer {
         height: 100%;
     }
 
-    .section-title-center h2 {
+    .section-title-center :is(h1, h2) {
         font-size: 1.5rem;
     }
 
@@ -4259,7 +4259,7 @@ footer {
         padding: 0;
     }
 
-    .section-title h2 {
+    .section-title :is(h1, h2) {
         font-size: 1.6rem;
         line-height: 1.25;
     }
@@ -4375,7 +4375,7 @@ footer {
         padding: 3rem 0;
     }
 
-    .section-title h2 {
+    .section-title :is(h1, h2) {
         font-size: 1.4rem;
     }
 
@@ -4771,7 +4771,7 @@ footer {
 }
 
 .home-content .section-title-home h2,
-.home-content .section-title-center h2 {
+.home-content .section-title-center :is(h1, h2) {
     color: var(--primary);
 }
 
