@@ -9,7 +9,7 @@ import type { Producto } from '@/hooks/useData';
 
 export function ProductPurchasePanel({ product }: { product: Producto }) {
   const { addItem } = useCart();
-  const { currency } = useCurrency();
+  const { currency, rates } = useCurrency();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -41,7 +41,7 @@ export function ProductPurchasePanel({ product }: { product: Producto }) {
                   <span className="pdp-variant-name">{v.label}</span>
                   {v.description && <span className="pdp-variant-desc">{v.description}</span>}
                 </div>
-                <span className="pdp-variant-price">{formatPriceInCurrency(v.totalPrice, currency)}</span>
+                <span className="pdp-variant-price">{formatPriceInCurrency(v.totalPrice, currency, rates)}</span>
               </button>
             ))}
           </div>
@@ -66,7 +66,7 @@ export function ProductPurchasePanel({ product }: { product: Producto }) {
       <div className="pdp-totals">
         <div className="pdp-row pdp-row--final">
           <span>Subtotal</span>
-          <span className="pdp-final">{formatPriceInCurrency(subtotal, currency)}</span>
+          <span className="pdp-final">{formatPriceInCurrency(subtotal, currency, rates)}</span>
         </div>
       </div>
 

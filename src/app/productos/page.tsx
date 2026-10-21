@@ -51,7 +51,7 @@ export default async function Page() {
           offers: {
             '@type': 'Offer',
             price: item.price_num,
-            priceCurrency: 'CUP',
+            priceCurrency: 'USD',
             availability: 'https://schema.org/InStock',
             hasMerchantReturnPolicy: {
               '@type': 'MerchantReturnPolicy',

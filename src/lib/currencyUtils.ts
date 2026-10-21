@@ -1,45 +1,95 @@
 export type Currency = 'CUP' | 'USD' | 'EUR';
 
 /**
- * Static exchange rates (1 CUP = X target currency).
- * Source: https://eltoque.com/tasas-de-cambio-cuba
- * Rates shown in CUP per 1 USD/EUR, inverted to 1 CUP = target.
+ * Base currency of the catalog. Every stored price (productos, servicios,
+ * variants, pedidos) is expressed in this currency.
  */
-export const RATES: Record<Currency, { symbol: string; code: string; rate: number }> = {
-  CUP: { symbol: '$', code: 'CUP', rate: 1 },
-  // 1 USD ≈ 675 CUP → 1 CUP ≈ 0.00148 USD
-  USD: { symbol: '$', code: 'USD', rate: 1 / 675 },
-  // 1 EUR ≈ 790 CUP → 1 CUP ≈ 0.00127 EUR
-  EUR: { symbol: '€', code: 'EUR', rate: 1 / 790 },
-};
+export const BASE_CURRENCY: Currency = 'USD';
 
-export function convertPrice(priceNum: number, from: Currency, to: Currency): number {
-  if (from === to) return priceNum;
-  const cupValue = from === 'CUP' ? priceNum : priceNum / RATES[from].rate;
-  return to === 'CUP' ? cupValue : cupValue * RATES[to].rate;
+/**
+ * Exchange rates, editable from the admin panel ("Moneda" tab).
+ * - cupPerUsd: how many CUP one USD is worth
+ * - cupPerEur: how many CUP one EUR is worth
+ */
+export interface ExchangeRates {
+  cupPerUsd: number;
+  cupPerEur: number;
 }
 
-export function formatPriceInCurrency(price: number, currency: Currency): string {
+/**
+ * Fallback rates used when the settings table is unavailable.
+ * 1 USD = 820 CUP, 1 EUR = 960 CUP (same EUR/USD ratio as 790/675).
+ */
+export const DEFAULT_RATES: ExchangeRates = { cupPerUsd: 820, cupPerEur: 960 };
+
+const SYMBOLS: Record<Currency, string> = { CUP: '$', USD: '$', EUR: '€' };
+
+export const CURRENCIES: Currency[] = ['CUP', 'USD', 'EUR'];
+
+/**
+ * Guards against a missing or corrupted settings row: an unusable rate would
+ * silently turn every price into 0 or Infinity.
+ */
+export function normalizeRates(rates?: Partial<ExchangeRates> | null): ExchangeRates {
+  const cupPerUsd = Number(rates?.cupPerUsd);
+  const cupPerEur = Number(rates?.cupPerEur);
+  return {
+    cupPerUsd: Number.isFinite(cupPerUsd) && cupPerUsd > 0 ? cupPerUsd : DEFAULT_RATES.cupPerUsd,
+    cupPerEur: Number.isFinite(cupPerEur) && cupPerEur > 0 ? cupPerEur : DEFAULT_RATES.cupPerEur,
+  };
+}
+
+/** How many CUP one unit of each currency is worth. */
+function cupPerUnit(currency: Currency, rates: ExchangeRates): number {
+  switch (currency) {
+    case 'USD':
+      return rates.cupPerUsd;
+    case 'EUR':
+      return rates.cupPerEur;
+    default:
+      return 1;
+  }
+}
+
+/**
+ * Converts an amount between currencies through the CUP pivot.
+ * The catalog stores USD; CUP and EUR are derived from the admin rates.
+ */
+export function convertPrice(
+  priceNum: number,
+  from: Currency,
+  to: Currency,
+  rates: Partial<ExchangeRates> | null = DEFAULT_RATES
+): number {
+  if (from === to) return priceNum;
+  const safe = normalizeRates(rates);
+  const inCup = priceNum * cupPerUnit(from, safe);
+  return inCup / cupPerUnit(to, safe);
+}
+
+/**
+ * Formats a base-currency (USD) amount in the given currency.
+ * CUP is rendered as a whole number, USD/EUR with 2 decimals.
+ */
+export function formatPriceInCurrency(
+  price: number,
+  currency: Currency,
+  rates: Partial<ExchangeRates> | null = DEFAULT_RATES
+): string {
   if (price === 0 || isNaN(price)) return 'Gratis';
 
-  const cfg = RATES[currency];
-  const converted = currency === 'CUP' ? price : price * cfg.rate;
+  const safe = normalizeRates(rates);
+  const converted = convertPrice(price, BASE_CURRENCY, currency, safe);
 
   if (currency === 'CUP') {
-    const fmt = converted.toLocaleString('en-US', {
-      minimumFractionDigits: converted % 1 === 0 ? 0 : 2,
-      maximumFractionDigits: 2,
-    });
-    return `${cfg.symbol}${fmt} ${cfg.code}`;
+    const fmt = Math.round(converted).toLocaleString('en-US');
+    return `${SYMBOLS.CUP}${fmt} CUP`;
   }
 
-  // USD / EUR — always 2 decimals, cents rounded to nearest 10
-  const rounded = Math.round(converted * 10) / 10;
+  const rounded = Math.round(converted * 100) / 100;
   const fmt = rounded.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return `${cfg.symbol}${fmt} ${cfg.code}`;
+  return `${SYMBOLS[currency]}${fmt} ${currency}`;
 }
-
-export const CURRENCIES: Currency[] = ['CUP', 'USD', 'EUR'];

@@ -45,7 +45,7 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
 
   if (!isOpen) return null;
 
-  const { currency } = useCurrency();
+  const { currency, rates } = useCurrency();
   const selectedVariant = product.variants[selectedIndex];
   const subtotal = selectedVariant.totalPrice * quantity;
 
@@ -92,7 +92,7 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
                       <span className="vsel-option-name">{v.label}</span>
                       {v.description && <span className="vsel-option-desc">{v.description}</span>}
                     </div>
-                    <span className="vsel-option-price">{formatPriceInCurrency(v.totalPrice, currency)}</span>
+                    <span className="vsel-option-price">{formatPriceInCurrency(v.totalPrice, currency, rates)}</span>
                   </button>
                 ))}
               </div>
@@ -120,12 +120,12 @@ export function VariantSelectionDialog({ product, isOpen, onClose }: VariantSele
             {isSingleVariant && (
               <div className="vsel-row">
                 <span>Precio unitario</span>
-                <span>{formatPriceInCurrency(selectedVariant.unitPrice, currency)}</span>
+                <span>{formatPriceInCurrency(selectedVariant.unitPrice, currency, rates)}</span>
               </div>
             )}
             <div className="vsel-row vsel-row--final">
               <span>Subtotal</span>
-              <span className="vsel-final">{formatPriceInCurrency(subtotal, currency)}</span>
+              <span className="vsel-final">{formatPriceInCurrency(subtotal, currency, rates)}</span>
             </div>
           </div>
 

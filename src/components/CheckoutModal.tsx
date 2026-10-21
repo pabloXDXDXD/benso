@@ -8,7 +8,7 @@ import { formatPriceInCurrency } from '@/lib/currencyUtils';
 
 export function CheckoutModal() {
   const { items, totalPrice, isCheckoutOpen, setIsCheckoutOpen, saveOrder } = useCart();
-  const { currency } = useCurrency();
+  const { currency, rates } = useCurrency();
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -163,13 +163,13 @@ Copiar
                           <span className="item-name">{item.productTitle} — {item.variant}</span>
                           <span className="item-qty">x{item.quantity}</span>
                         </div>
-                        <span className="item-price">{formatPriceInCurrency(item.priceNum * item.quantity, currency)}</span>
+                        <span className="item-price">{formatPriceInCurrency(item.priceNum * item.quantity, currency, rates)}</span>
                       </div>
                     ))}
                   </div>
                   <div className="order-total">
                     <span>Total:</span>
-                    <span className="total-amount">{formatPriceInCurrency(totalPrice, currency)}</span>
+                    <span className="total-amount">{formatPriceInCurrency(totalPrice, currency, rates)}</span>
                   </div>
                 </div>
 

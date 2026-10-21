@@ -37,7 +37,7 @@ export default async function Page() {
         name: item.title,
         description: item.description,
         provider: { '@type': 'Organization', name: 'BENSO' },
-        offers: { '@type': 'Offer', price: item.price_num, priceCurrency: 'CUP' },
+        offers: { '@type': 'Offer', price: item.price_num, priceCurrency: 'USD' },
         category: item.category,
       },
     })),
