@@ -1,0 +1,18 @@
+.job-modal-form select {
+  width: 100%;
+  border: 2px solid var(--card-border, #e6e6e6);
+  border-radius: 8px;
+  padding: 0.85rem 0.9rem;
+  font-size: 0.95rem;
+  font-family: var(--font-main);
+  color: #333;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.job-modal-form select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 86, 208, 0.15);
+}

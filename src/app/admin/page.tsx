@@ -105,6 +105,16 @@ interface Solicitud {
   created_at: string;
 }
 
+interface EmpleoSolicitud {
+  id: number;
+  nombre: string;
+  email: string;
+  telefono?: string | null;
+  area: string;
+  experiencia?: string | null;
+  created_at: string;
+}
+
 interface Inscripcion {
   id: number;
   evento_id: number | null;
@@ -196,7 +206,7 @@ export default function AdminPage() {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs' | 'moneda'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'empleo' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs' | 'moneda'>('dashboard');
   // ── Tasas de conversión (los precios base se guardan en USD) ──
   const [ratesForm, setRatesForm] = useState({ cup_per_usd: '', cup_per_eur: '' });
   const [savingRates, setSavingRates] = useState(false);
@@ -331,6 +341,12 @@ export default function AdminPage() {
   const inscripcionesQuery = useQuery({
     queryKey: ['admin', 'inscripciones'],
     queryFn: () => adminFetch('select', { table: 'evento_inscripciones', orderBy: 'created_at', ascending: false }),
+    enabled: authEnabled,
+  });
+
+  const empleoQuery = useQuery({
+    queryKey: ['admin', 'empleo_solicitudes'],
+    queryFn: () => adminFetch('select', { table: 'empleo_solicitudes', orderBy: 'created_at', ascending: false }),
     enabled: authEnabled,
   });
 
@@ -997,6 +1013,7 @@ export default function AdminPage() {
 
   const solicitudesData = (solicitudesQuery.data?.data || []) as Solicitud[];
   const inscripcionesData = (inscripcionesQuery.data?.data || []) as Inscripcion[];
+  const empleoData = (empleoQuery.data?.data || []) as EmpleoSolicitud[];
 
   // Mapa evento_id → categoria para distinguir el tipo de formación (taller/curso/evento/...)
   const eventoCategoriaMap = useMemo(() => {
@@ -1030,6 +1047,12 @@ export default function AdminPage() {
       i.correo_electronico?.toLowerCase().includes(searchTerm.toLowerCase())
       || i.evento_titulo?.toLowerCase().includes(searchTerm.toLowerCase())
       || i.telefono?.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    empleo: empleoData.filter(e =>
+      e.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
+      || e.area?.toLowerCase().includes(searchTerm.toLowerCase())
+      || e.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      || e.telefono?.toLowerCase().includes(searchTerm.toLowerCase())
     ),
     productos: productos.filter(p => {
       const matchesSearch = p.title?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1176,6 +1199,26 @@ export default function AdminPage() {
     { key: 'fecha', label: 'Fecha', sortValue: s => new Date(s.created_at).getTime(), filterValue: s => new Date(s.created_at).toLocaleString('es-ES'), render: s => <td className="date-cell">{new Date(s.created_at).toLocaleString('es-ES')}</td> },
   ];
 
+  const empleoColumns: AdminTableColumn<EmpleoSolicitud>[] = [
+    { key: 'id', label: 'ID', sortValue: e => e.id, filterValue: e => String(e.id), render: e => <td className="id-cell">{formatId(e.id)}</td> },
+    { key: 'nombre', label: 'Nombre', sortValue: e => e.nombre || '', filterValue: e => e.nombre || '', render: e => <td className="name-cell">{e.nombre}</td> },
+    { key: 'area', label: 'Área', sortValue: e => e.area || '', filterValue: e => e.area || '', render: e => <td><span className="cat-badge">{e.area}</span></td> },
+    {
+      key: 'contactos', label: 'Contactos',
+      filterValue: e => `${e.email || ''} ${e.telefono || ''}`,
+      render: e => (
+        <td>
+          <div className="contact-cell">
+            {e.email && <span><Mail size={14} /> {e.email}</span>}
+            {e.telefono && <span><Phone size={14} /> {e.telefono}</span>}
+          </div>
+        </td>
+      ),
+    },
+    { key: 'experiencia', label: 'Experiencia', filterValue: e => e.experiencia || '', render: e => <td className="messaje-cell"><TruncatedCell text={e.experiencia || ''} cellKey={`exp-emp-${e.id}`} /></td> },
+    { key: 'fecha', label: 'Fecha', sortValue: e => new Date(e.created_at).getTime(), filterValue: e => new Date(e.created_at).toLocaleString('es-ES'), render: e => <td className="date-cell">{new Date(e.created_at).toLocaleString('es-ES')}</td> },
+  ];
+
   const inscripcionesColumns: AdminTableColumn<Inscripcion>[] = [
     { key: 'id', label: 'ID', sortValue: i => i.id, filterValue: i => String(i.id), render: i => <td className="id-cell">{formatId(i.id)}</td> },
     { key: 'evento', label: 'Evento', sortValue: i => i.evento_titulo || '', filterValue: i => i.evento_titulo || '', render: i => <td className="name-cell">{i.evento_titulo}</td> },
@@ -1266,6 +1309,7 @@ export default function AdminPage() {
     pedidos: pedidos.length,
     citas: citas.length,
     servicio_solicitudes: solicitudesData.length,
+    empleo_solicitudes: empleoData.length,
     evento_inscripciones: inscripcionesData.length,
     productos: productos.length,
     servicios: servicios.length,
@@ -1362,19 +1406,20 @@ export default function AdminPage() {
               </span>
             </div>
             <div className="toolbar-right">
-              {(activeTab === 'pedidos' || activeTab === 'citas' || activeTab === 'solicitudes' || activeTab === 'inscripciones') && (
+              {(activeTab === 'pedidos' || activeTab === 'citas' || activeTab === 'solicitudes' || activeTab === 'inscripciones' || activeTab === 'empleo') && (
                 <AdminTableCustomizer
                   columns={
                     activeTab === 'pedidos' ? pedidosColumns
                     : activeTab === 'citas' ? citasColumns
                     : activeTab === 'solicitudes' ? solicitudesColumns
+                    : activeTab === 'empleo' ? empleoColumns
                     : inscripcionesColumns
                   }
                   pref={getTablePref(activeTab)}
                   onPrefChange={p => updateTablePref(activeTab, p)}
                 />
               )}
-              {activeTab !== 'pedidos' && activeTab !== 'citas' && activeTab !== 'solicitudes' && activeTab !== 'inscripciones' && (
+              {activeTab !== 'pedidos' && activeTab !== 'citas' && activeTab !== 'solicitudes' && activeTab !== 'inscripciones' && activeTab !== 'empleo' && (
                 <button onClick={() => { setShowCreateModal(true); setCreateTable(activeTab as 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'); }} className="btn-add">
                   <Plus size={18} /> Añadir
                 </button>
@@ -1587,6 +1632,19 @@ export default function AdminPage() {
                     colWidths={colWidths}
                     getColWidth={getColWidth}
                     renderResizeHandle={col => <ColResizeHandle col={`insc-${col}`} />}
+                  />
+                )}
+
+                {activeTab === 'empleo' && (
+                  <AdminDataTable
+                    prefix="emp"
+                    columns={empleoColumns}
+                    rows={filteredData.empleo}
+                    pref={getTablePref('empleo')}
+                    onPrefChange={p => updateTablePref('empleo', p)}
+                    colWidths={colWidths}
+                    getColWidth={getColWidth}
+                    renderResizeHandle={col => <ColResizeHandle col={`emp-${col}`} />}
                   />
                 )}
 
