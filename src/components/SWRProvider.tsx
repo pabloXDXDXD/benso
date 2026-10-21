@@ -5,7 +5,9 @@ import { ReactNode } from 'react';
 
 // Bump version to invalidate browser caches. Stale entries from previous deploys
 // hydrate synchronously and can differ from the prerendered HTML (React error #418).
-const CACHE_KEY = 'swr-cache-v3';
+// v4: the price base changed from CUP to USD, so a cached `price_num` from
+// before the migration would be read as USD and show the wrong price.
+const CACHE_KEY = 'swr-cache-v4';
 
 function localStorageProvider() {
   const map = new Map<string, unknown>();
