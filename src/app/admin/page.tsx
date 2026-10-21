@@ -196,7 +196,10 @@ export default function AdminPage() {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs' | 'moneda'>('dashboard');
+  // ── Tasas de conversión (los precios base se guardan en USD) ──
+  const [ratesForm, setRatesForm] = useState({ cup_per_usd: '', cup_per_eur: '' });
+  const [savingRates, setSavingRates] = useState(false);
   const [productos, setProductos] = useState<Producto[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -342,6 +345,54 @@ export default function AdminPage() {
     queryFn: () => adminFetch('select', { table: 'faqs', orderBy: 'sort_order', ascending: true }),
     enabled: authEnabled,
   });
+
+  const currencyQuery = useQuery({
+    queryKey: ['admin', 'currency_settings'],
+    queryFn: () => adminFetch('select', { table: 'currency_settings' }),
+    enabled: authEnabled,
+  });
+
+  // ── Tasas de cambio: 1 USD = X CUP, 1 EUR = Y CUP ──
+  useEffect(() => {
+    const row = currencyQuery.data?.data?.[0];
+    if (row) {
+      setRatesForm({
+        cup_per_usd: String(row.cup_per_usd ?? ''),
+        cup_per_eur: String(row.cup_per_eur ?? ''),
+      });
+    }
+  }, [currencyQuery.data]);
+
+  async function handleSaveRates() {
+    const cupPerUsd = Number(ratesForm.cup_per_usd);
+    const cupPerEur = Number(ratesForm.cup_per_eur);
+
+    if (!Number.isFinite(cupPerUsd) || cupPerUsd <= 0) {
+      toast.error('La tasa de USD debe ser un número mayor que 0');
+      return;
+    }
+    if (!Number.isFinite(cupPerEur) || cupPerEur <= 0) {
+      toast.error('La tasa de EUR debe ser un número mayor que 0');
+      return;
+    }
+
+    setSavingRates(true);
+    try {
+      const json = await adminFetch('update', {
+        table: 'currency_settings',
+        id: 1,
+        data: { cup_per_usd: cupPerUsd, cup_per_eur: cupPerEur },
+      });
+      if (json.error) {
+        toast.error('Error: ' + json.error);
+        return;
+      }
+      toast.success('Tasas actualizadas');
+      queryClient.invalidateQueries({ queryKey: ['admin', 'currency_settings'] });
+    } finally {
+      setSavingRates(false);
+    }
+  }
 
   // Sync React Query → local state
   useEffect(() => {
@@ -711,9 +762,9 @@ export default function AdminPage() {
       is_active: !!editData.is_active,
       whatsapp_link: editData.whatsapp_link || '',
       includes,
-      // Campos que la web no muestra: se preservan sin exponerse en el modal
+      // Precio base en USD — editable desde este modal
       price: editData.price ?? '',
-      price_num: editData.price_num ?? 0,
+      price_num: extractNumberFromPrice(editData.price || ''),
       image: editData.image || '',
       price_type: editData.price_type || 'fijo',
     };
@@ -1035,7 +1086,7 @@ export default function AdminPage() {
         </td>
       ),
     },
-    { key: 'total', label: 'Total', sortValue: p => Number(p.total_price || 0), filterValue: p => String(p.total_price ?? ''), render: p => <td className="price-cell">{p.total_price?.toLocaleString()} CUP</td> },
+    { key: 'total', label: 'Total', sortValue: p => Number(p.total_price || 0), filterValue: p => String(p.total_price ?? ''), render: p => <td className="price-cell">{p.total_price?.toLocaleString()} USD</td> },
     {
       key: 'estado', label: 'Estado',
       sortValue: p => p.status || '',
@@ -1061,8 +1112,8 @@ export default function AdminPage() {
         <td>
           <div className="actions-cell">
             <button onClick={() => {
-              const items = (p.items || []).map((i: any) => `  • ${i.title || i.productTitle || i.name} x${i.quantity} — ${i.price} CUP`).join('\n');
-              copyToClipboard('Pedido', `Pedido #${p.id} — ${p.customer_name}\nEmail: ${p.customer_email}\nItems:\n${items}\nTotal: ${p.total_price?.toLocaleString()} CUP\nEstado: ${p.status}\nFecha: ${new Date(p.created_at).toLocaleDateString('es-ES')}`);
+              const items = (p.items || []).map((i: any) => `  • ${i.title || i.productTitle || i.name} x${i.quantity} — ${i.price} USD`).join('\n');
+              copyToClipboard('Pedido', `Pedido #${p.id} — ${p.customer_name}\nEmail: ${p.customer_email}\nItems:\n${items}\nTotal: ${p.total_price?.toLocaleString()} USD\nEstado: ${p.status}\nFecha: ${new Date(p.created_at).toLocaleDateString('es-ES')}`);
             }} className="btn-icon-sm" title="Copiar info del pedido">
               <Copy size={14} />
             </button>
@@ -1275,7 +1326,7 @@ export default function AdminPage() {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
 
-          {activeTab !== 'dashboard' && (
+          {activeTab !== 'dashboard' && activeTab !== 'moneda' && (
           <div className="admin-toolbar">
             <div className="toolbar-left">
               <div className="search-input-wrapper">
@@ -1337,6 +1388,48 @@ export default function AdminPage() {
               <div className="loading"><Loader className="spin" size={32} /></div>
             ) : (
               <>
+                {activeTab === 'moneda' && (
+                  <div className="currency-panel">
+                    <h3>Tasas de conversión</h3>
+                    <p className="currency-panel__hint">
+                      Los precios del catálogo se guardan en <strong>USD</strong> y se editan
+                      en esa moneda. Estas tasas son las que convierten ese precio base a CUP y a
+                      EUR en la web: por ejemplo, con 1 USD = 820 CUP, un producto de 10 USD se
+                      muestra como 8.200 CUP.
+                    </p>
+                    <div className="form-row">
+                      <div className="form-col">
+                        <label htmlFor="cup-per-usd">1 USD = ? CUP</label>
+                        <input
+                          id="cup-per-usd"
+                          type="number"
+                          min={1}
+                          step="any"
+                          value={ratesForm.cup_per_usd}
+                          onChange={(e) => setRatesForm({ ...ratesForm, cup_per_usd: e.target.value })}
+                          placeholder="820"
+                        />
+                      </div>
+                      <div className="form-col">
+                        <label htmlFor="cup-per-eur">1 EUR = ? CUP</label>
+                        <input
+                          id="cup-per-eur"
+                          type="number"
+                          min={1}
+                          step="any"
+                          value={ratesForm.cup_per_eur}
+                          onChange={(e) => setRatesForm({ ...ratesForm, cup_per_eur: e.target.value })}
+                          placeholder="960"
+                        />
+                      </div>
+                    </div>
+                    <div className="currency-panel__actions">
+                      <button onClick={handleSaveRates} className="btn-primary" disabled={savingRates}>
+                        {savingRates ? 'Guardando...' : 'Guardar tasas'}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {activeTab === 'dashboard' && (
                   <div className="dashboard-container">
                     <div className="dashboard-grid">
@@ -1352,7 +1445,7 @@ export default function AdminPage() {
                         <div className="card-icon"><DollarSign size={24} /></div>
                         <div className="card-body">
                           <span className="card-label">Ingresos Totales</span>
-                          <span className="card-value">${Number(totalIngresos).toLocaleString('es-CU')}</span>
+                          <span className="card-value">${Number(totalIngresos).toLocaleString('es-CU')} USD</span>
                           <span className="card-sub">{pedidosPendientes} pendientes</span>
                         </div>
                       </div>
@@ -1543,7 +1636,10 @@ export default function AdminPage() {
                               <TruncatedCell text={p.description} cellKey={`desc-p-${p.id}`} />
                             </td>
                             <td>
-                              <span className="price-display">{p.price}</span>
+                              <span className="price-display">
+                                {p.price_type === 'desde' ? 'Desde ' : ''}
+                                {Number(p.price_num || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                              </span>
                             </td>
                             <td>
                               <span className={`variants-count${p.variants?.length ? '' : ' empty'}`}>
@@ -1586,6 +1682,7 @@ export default function AdminPage() {
                         <col style={{ width: getColWidth('serv-subtitle', colWidths) }} />
                         <col style={{ width: getColWidth('serv-desc', colWidths) }} />
                         <col style={{ width: getColWidth('serv-includes', colWidths) }} />
+                        <col style={{ width: getColWidth('serv-precio', colWidths) }} />
                         <col style={{ width: getColWidth('serv-estado', colWidths) }} />
                         <col style={{ width: getColWidth('serv-acciones', colWidths) }} />
                       </colgroup>
@@ -1596,6 +1693,7 @@ export default function AdminPage() {
                           <th style={{position:'relative'}}>Subtítulo</th>
                           <th style={{position:'relative'}}>Descripción<ColResizeHandle col="serv-desc" /></th>
                           <th style={{position:'relative'}}>Incluye</th>
+                          <th style={{position:'relative'}}>Precio<ColResizeHandle col="serv-precio" /></th>
                           <th style={{position:'relative'}}>Estado</th>
                           <th style={{position:'relative'}}>Acciones<ColResizeHandle col="serv-acciones" /></th>
                         </tr>
@@ -1611,6 +1709,12 @@ export default function AdminPage() {
                             </td>
                             <td className="desc-cell">
                               <TruncatedCell text={(s.includes || []).join(' • ')} cellKey={`inc-s-${s.id}`} />
+                            </td>
+                            <td>
+                              <span className="price-display">
+                                {s.price_type === 'desde' ? 'Desde ' : ''}
+                                {Number(s.price_num || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                              </span>
                             </td>
                             <td>
                               <button
@@ -1864,8 +1968,8 @@ export default function AdminPage() {
                   <label>Descripción</label>
                   <textarea value={createData.description} onChange={(e) => setCreateData({...createData, description: e.target.value})} placeholder="Descripción" rows={3} />
                   
-                  <label>Precio *</label>
-                  <input value={createData.price} onChange={(e) => setCreateData({...createData, price: e.target.value})} placeholder="Ej: $500.00 CUP" />
+                  <label>Precio (USD) *</label>
+                  <input value={createData.price} onChange={(e) => setCreateData({...createData, price: e.target.value})} placeholder="Ej: $50.00 USD" />
                 </>
               )}
 
@@ -1988,11 +2092,11 @@ export default function AdminPage() {
 
               <div className="form-row">
                 <div className="form-col">
-                  <label>Precio</label>
+                  <label>Precio (USD)</label>
                   <input
                     value={editData.price || ''}
                     onChange={(e) => setEditData({ ...editData, price: e.target.value })}
-                    placeholder="Ej: $500.00 CUP"
+                    placeholder="Ej: $50.00 USD"
                   />
                 </div>
                 <div className="form-col">
@@ -2107,7 +2211,7 @@ export default function AdminPage() {
                             min={0}
                             value={v.unit_price ?? ''}
                             onChange={(e) => updateVariantField(i, 'unit_price', Number(e.target.value))}
-                            placeholder="Precio unitario"
+                            placeholder="Precio unitario (USD)"
                           />
                         </div>
                         <div className="variant-field">
@@ -2116,7 +2220,7 @@ export default function AdminPage() {
                             min={0}
                             value={v.total_price ?? ''}
                             onChange={(e) => updateVariantField(i, 'total_price', Number(e.target.value))}
-                            placeholder="Precio total"
+                            placeholder="Precio total (USD)"
                           />
                         </div>
                         <div className="variant-field variant-field--desc">
@@ -2244,6 +2348,27 @@ export default function AdminPage() {
                 placeholder="Un ítem por línea"
                 rows={4}
               />
+
+              <div className="form-row">
+                <div className="form-col">
+                  <label>Precio (USD)</label>
+                  <input
+                    value={editData.price || ''}
+                    onChange={(e) => setEditData({ ...editData, price: e.target.value })}
+                    placeholder="Ej: $50.00 USD"
+                  />
+                </div>
+                <div className="form-col">
+                  <label>Tipo de precio</label>
+                  <select
+                    value={editData.price_type || 'fijo'}
+                    onChange={(e) => setEditData({ ...editData, price_type: e.target.value })}
+                  >
+                    <option value="fijo">Fijo</option>
+                    <option value="desde">Desde</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div className="modal-footer">
               <button onClick={closeServiceEdit} className="btn-cancel">Cancelar</button>

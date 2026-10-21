@@ -1474,6 +1474,56 @@
   background: #e0e7ff;
 }
 
+/* ---------- Moneda (tasas de conversión) ---------- */
+.currency-panel {
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: #fff;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.currency-panel__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #555;
+  font-family: var(--font-main);
+}
+
+.currency-panel label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #333;
+  font-family: var(--font-main);
+}
+
+.currency-panel input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: var(--font-main);
+  transition: border-color 0.2s;
+}
+
+.currency-panel input:focus {
+  outline: none;
+  border-color: var(--dark);
+}
+
+.currency-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 @media (max-width: 640px) {
   .form-row {
     flex-direction: column;

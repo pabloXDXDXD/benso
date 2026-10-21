@@ -16,9 +16,10 @@ import {
   UserPlus,
   RefreshCw,
   LogOut,
+  Coins,
 } from 'lucide-react';
 
-export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs';
+export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs' | 'moneda';
 
 export interface AppSidebarProps {
   activeTab: AdminTab;
@@ -72,6 +73,12 @@ const navSections: NavSection[] = [
     items: [
       { tab: 'testimonials', label: 'Testimonios', icon: MessageSquare, countKey: 'testimonials' },
       { tab: 'faqs', label: 'FAQs', icon: HelpCircle, countKey: 'faqs' },
+    ],
+  },
+  {
+    title: 'CONFIGURACIÓN',
+    items: [
+      { tab: 'moneda', label: 'Moneda', icon: Coins },
     ],
   },
 ];

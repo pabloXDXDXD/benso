@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs', 'servicio_solicitudes'];
+const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs', 'servicio_solicitudes', 'currency_settings'];
 
 // Tables that can only be read (no insert/update/delete via this route)
 const READ_ONLY_TABLES = ['servicio_solicitudes'];
