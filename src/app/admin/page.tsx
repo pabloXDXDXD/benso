@@ -112,6 +112,7 @@ interface EmpleoSolicitud {
   telefono?: string | null;
   area: string;
   experiencia?: string | null;
+  mensaje?: string | null;
   created_at: string;
 }
 
@@ -1216,6 +1217,7 @@ export default function AdminPage() {
       ),
     },
     { key: 'experiencia', label: 'Experiencia', filterValue: e => e.experiencia || '', render: e => <td className="messaje-cell"><TruncatedCell text={e.experiencia || ''} cellKey={`exp-emp-${e.id}`} /></td> },
+    { key: 'mensaje', label: 'Mensaje', filterValue: e => e.mensaje || '', render: e => <td className="messaje-cell"><TruncatedCell text={e.mensaje || ''} cellKey={`msg-emp-${e.id}`} /></td> },
     { key: 'fecha', label: 'Fecha', sortValue: e => new Date(e.created_at).getTime(), filterValue: e => new Date(e.created_at).toLocaleString('es-ES'), render: e => <td className="date-cell">{new Date(e.created_at).toLocaleString('es-ES')}</td> },
   ];
 

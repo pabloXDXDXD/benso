@@ -32,6 +32,7 @@ export function JobApplicationModal({ open, onClose }: JobApplicationModalProps)
   const [telefono, setTelefono] = useState('');
   const [area, setArea] = useState<string>(JOB_AREAS[0]);
   const [experiencia, setExperiencia] = useState('');
+  const [mensaje, setMensaje] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,6 +58,7 @@ export function JobApplicationModal({ open, onClose }: JobApplicationModalProps)
     setTelefono('');
     setArea(JOB_AREAS[0]);
     setExperiencia('');
+    setMensaje('');
     setError(null);
     setSaving(false);
   };
@@ -88,6 +90,7 @@ export function JobApplicationModal({ open, onClose }: JobApplicationModalProps)
         telefono: telefono.trim() || null,
         area,
         experiencia: experiencia.trim() || null,
+        mensaje: mensaje.trim() || null,
       });
 
     if (dbError) {
@@ -165,6 +168,15 @@ export function JobApplicationModal({ open, onClose }: JobApplicationModalProps)
                   value={experiencia}
                   onChange={(e) => setExperiencia(e.target.value)}
                   placeholder="Cuéntanos tu experiencia, tus habilidades o lo que te gustaría aportar al equipo…"
+                />
+
+                <label htmlFor="job-mensaje">Mensaje (opcional)</label>
+                <textarea
+                  id="job-mensaje"
+                  rows={3}
+                  value={mensaje}
+                  onChange={(e) => setMensaje(e.target.value)}
+                  placeholder="Disponibilidad, enlaces a tu portafolio o cualquier otra cosa que quieras contarnos…"
                 />
 
                 {error && (

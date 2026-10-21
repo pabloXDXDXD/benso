@@ -15,9 +15,24 @@
 -- (converted_at) y solo convierte lo que todavía no se convirtió. Volver a
 -- ejecutarlo no vuelve a dividir los precios.
 --
+-- además hay una guardia que ABORTA si la migración ya se aplicó: sin ella,
+-- un producto creado después (con precio ya en USD) se volvería a dividir.
+--
 -- ANTES de ejecutar, revisa la sección ROLLBACK del final: este cambio es
 -- reversible con la tabla price_backup_cup_to_usd (restauración exacta).
 -- ============================================
+
+-- ── Guardia: esta migración se aplica UNA sola vez ──
+CREATE TABLE IF NOT EXISTS public.price_migration_usd_v1 (
+  applied_at timestamptz NOT NULL DEFAULT now()
+);
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.price_migration_usd_v1) THEN
+    RAISE EXCEPTION 'La migración de precios a USD ya se aplicó. No la ejecutes otra vez: los precios creados después se convertirían de nuevo.';
+  END IF;
+END $$;
 
 -- ── Respaldo de los valores originales (necesario para el rollback) ──
 CREATE TABLE IF NOT EXISTS public.price_backup_cup_to_usd (
@@ -28,6 +43,11 @@ CREATE TABLE IF NOT EXISTS public.price_backup_cup_to_usd (
   payload      jsonb NOT NULL,
   PRIMARY KEY (tbl, row_id)
 );
+
+-- Si la tabla del respaldo ya existía de una versión anterior del archivo,
+-- le falta la columna del marcador de idempotencia
+ALTER TABLE public.price_backup_cup_to_usd
+  ADD COLUMN IF NOT EXISTS converted_at timestamptz;
 
 INSERT INTO public.price_backup_cup_to_usd (tbl, row_id, payload)
 SELECT 'productos', p.id::text,
@@ -173,6 +193,9 @@ SELECT 'servicios', COUNT(*), SUM(price_num) FROM public.servicios
 UNION ALL
 SELECT 'pedidos', COUNT(*), SUM(total_price) FROM public.pedidos;
 
+-- ── Marca de "ya aplicada" (la guardia del inicio aborta si se repite) ──
+INSERT INTO public.price_migration_usd_v1 (applied_at) VALUES (now());
+
 -- ============================================
 -- ROLLBACK (ejecutar solo si hay que revertir a la base CUP)
 -- Restaura exactamente los valores guardados en el respaldo.
@@ -199,3 +222,6 @@ SELECT 'pedidos', COUNT(*), SUM(total_price) FROM public.pedidos;
 -- WHERE b.tbl = 'pedidos' AND b.row_id = o.id::text;
 --
 -- UPDATE public.price_backup_cup_to_usd SET converted_at = NULL;
+--
+-- Libera la guardia para permitir una nueva ejecución tras el rollback:
+-- DELETE FROM public.price_migration_usd_v1;

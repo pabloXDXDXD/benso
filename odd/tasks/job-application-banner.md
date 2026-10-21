@@ -38,11 +38,11 @@ Criterios de aceptación:
 
 | ID | Task | Specs | Route | Riesgo | Status |
 |----|------|-------|-------|--------|--------|
-| T1 | Migración `empleo_solicitudes` + RLS (INSERT público, SELECT solo admin/service role) | S2, S3 | inline | item 1 (datos) | pendiente |
-| T2 | `JobApplicationModal` (formulario público) + estilos del `select` | S2 | inline | item 2 (PII/spam) | pendiente |
-| T3 | `PromoBanner`: copy de contratación y apertura del modal | S1 | inline | item 3 (contrato) | pendiente |
-| T4 | Admin: allow-list, pestaña Empleo, columnas, contador y buscador | S3 | inline | item 3 (contrato) | pendiente |
-| T5 | Verificación: `npm run test:unit`, `npm run build`, revisión manual del flujo | S1–S3 | inline | item 2 | pendiente |
+| T1 | Migración `empleo_solicitudes` + RLS (INSERT público, SELECT solo admin/service role) | S2, S3 | inline | item 1 (datos) | completada |
+| T2 | `JobApplicationModal` (formulario público) + estilos del `select` | S2 | inline | item 2 (PII/spam) | completada |
+| T3 | `PromoBanner`: copy de contratación y apertura del modal | S1 | inline | item 3 (contrato) | completada |
+| T4 | Admin: allow-list, pestaña Empleo, columnas, contador y buscador | S3 | inline | item 3 (contrato) | completada |
+| T5 | Verificación: `npm run test:unit` (43 tests), `npm run build`, revisión del flujo | S1–S3 | inline + verificador | item 2 | completada |
 
 ## Log
 
@@ -57,3 +57,4 @@ Notas de análisis:
 - El texto del banner sigue en el código (como hoy). Si quieres editarlo desde el admin, hace falta una tabla de contenido para el banner — queda fuera de esta fase.
 - La tabla de postulaciones expone PII (nombre, correo, teléfono): el INSERT es público pero el SELECT solo lo permite `authenticated`/`service_role`, igual que `servicio_solicitudes`. Sin CAPTCHA: el sitio no lo usa en ningún otro formulario.
 - El `select` de "área de interés" no está cubierto por el CSS global de `.svc-modal-form` (solo `input` y `textarea`), y `src/app/globals.css` tiene cambios sin commitear de otra feature: los estilos nuevos van en un CSS propio del componente para no tocar ese archivo.
+- El verificador independiente marcó que faltaba el campo `mensaje` que la propia spec pedía: se añadió al formulario, al insert y a la tabla del admin. Los tests de regresión que dejó el verificador se commitean como `tests/unit/jobApplicationForm.test.mjs` y `tests/unit/usd_migration_variants.test.mjs` (43 tests en total).

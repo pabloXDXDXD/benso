@@ -75,7 +75,7 @@ Checks: test unitario (RED→GREEN).
 | T4 | `layout.tsx` lee `currency_settings` en servidor y lo pasa a `CurrencyProvider` (refresco SWR en cliente) | S3, S4 | inline | item 3 (contrato) | completada |
 | T5 | Storefront: `PriceDisplay`, carrito, checkout, panel de compra, diálogo de variantes y JSON-LD (`priceCurrency`) | S1, S4 | inline | item 3 (contrato) | completada |
 | T6 | Admin: allow-list `currency_settings` (edge function + route Next), pestaña Moneda, etiquetas USD en precios y pedidos, campo de precio en servicios | S2, S3, S5 | inline | item 3 (contrato) | completada |
-| T7 | Verificación: tests unitarios de la aritmética, `npm run build`, revisión de regresión de precios, verificador independiente | S1–S5 | inline + verificador | item 1 (datos) | en curso |
+| T7 | Verificación: tests unitarios de la aritmética, `npm run build`, revisión de regresión de precios, verificador independiente | S1–S5 | inline + verificador | item 1 (datos) | completada |
 
 ## Log
 
@@ -104,3 +104,5 @@ Notas de análisis:
 - El redondeo en pantalla (CUP entero, USD/EUR 2 decimales) es al más cercano; el redondeo hacia arriba es solo de la migración.
 - `src/data/products.json` es una semilla no importada por la app: se convierte también para no reintroducir CUP en un reseed futuro.
 - Cambios preexistentes en el worktree (`src/app/globals.css`, `src/components/pages/ProductsPage.tsx`, `benso-launch-reel.html`) pertenecen a otra feature ("kits") y NO se commitean aquí.
+- El verificador independiente encontró un bloqueante en la primera versión de la migración: `(v - 'description')` borraba las 20 descripciones de variante que no llevan precio incrustado. Corregido en `3b15b5a` (la descripción se conserva y solo se reescribe cuando matchea `$N por unidad`), junto con el total de pedidos (precio x cantidad) y la idempotencia (marcador `converted_at` + guardia que aborta si la migración ya corrió).
+- Los tests de regresión del verificador quedaron commiteados (`tests/unit/usd_migration_variants.test.mjs`, `tests/unit/jobApplicationForm.test.mjs`): 43 tests en total.
