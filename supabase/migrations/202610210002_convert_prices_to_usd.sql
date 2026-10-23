@@ -3,18 +3,20 @@
 -- ============================================
 -- Los precios se guardaban en CUP. Con la base USD (ver 202610210001), cada
 -- precio se convierte a USD con la tasa actual de
--- currency_settings.cup_per_usd (820 por defecto) y se REDONDEA HACIA ARRIBA
--- a dólares enteros:
+-- currency_settings.cup_per_usd (820 por defecto) y se redondea a DOS
+-- DECIMALES (centavos):
 --
---     usd = CEIL(cup / cup_per_usd)
+--     usd = ROUND(cup / cup_per_usd, 2)
 --
--- Ejemplo: un producto que valía 12,500 CUP (15.24 USD) pasa a 16 USD, y el
--- cliente lo vuelve a ver en CUP a la tasa actual (16 * 820 = 13,120 CUP).
--- Así el precio en CUP que paga el cliente solo cambia por el redondeo, y el
--- valor en USD queda consolidado como base editable desde el admin.
+-- Ejemplo: un producto que valía 12,500 CUP (15.24 USD) pasa a 15.24 USD, y el
+-- cliente lo vuelve a ver en CUP a la tasa actual (15.24 * 820 = 12,496.8 CUP,
+-- que se muestra como 12,497 CUP). Así el precio en CUP que paga el cliente
+-- solo cambia por el redondeo, y el valor en USD queda consolidado como base
+-- editable desde el admin.
 --
--- OJO con los artículos baratos: al redondear a dólares enteros, todo lo que
--- valga menos de una unidad de la tasa (820 CUP) queda en 1 USD = 820 CUP.
+-- Redondear a dólares enteros disparaba los artículos baratos: 65 CUP pasaba a
+-- 1 USD (= 820 CUP). Con centavos, 65 CUP queda en 0.08 USD (≈ 66 CUP) y 35 CUP
+-- en 0.04 USD (≈ 33 CUP).
 --
 -- Es idempotente: cada bloque marca sus filas en price_backup_cup_to_usd
 -- (converted_at) y solo convierte lo que todavía no se convirtió. Volver a
@@ -76,17 +78,17 @@ ON CONFLICT (tbl, row_id) DO NOTHING;
 -- Una sola sentencia: si se dividiera en dos, el marcador de idempotencia
 -- de la primera dejaría la segunda sin filas que convertir.
 -- La descripción de cada variante se conserva tal cual; solo se reescribe
--- cuando lleva un precio incrustado ("$65 por unidad" -> "$1 por unidad"). El
--- `||` de jsonb reemplaza la clave, así que el CASE gana cuando aplica y la
+-- cuando lleva un precio incrustado ("$65 por unidad" -> "$0.08 por unidad"). El
+-- El operador || de jsonb reemplaza la clave, así que el CASE gana cuando aplica y la
 -- descripción original sobrevive cuando no.
 WITH rate AS (
   SELECT COALESCE((SELECT cup_per_usd FROM public.currency_settings WHERE id = 1), 820) AS r
 )
 UPDATE public.productos p
-SET price_num = CEIL(p.price_num::numeric / rate.r),
+SET price_num = ROUND(p.price_num::numeric / rate.r, 2),
     price     = CASE WHEN p.price_type = 'desde'
-                     THEN 'Desde ' || (CEIL(p.price_num::numeric / rate.r))::text
-                     ELSE (CEIL(p.price_num::numeric / rate.r))::text
+                     THEN 'Desde ' || (ROUND(p.price_num::numeric / rate.r, 2))::float8::text
+                     ELSE (ROUND(p.price_num::numeric / rate.r, 2))::float8::text
                 END,
     variants  = CASE WHEN p.variants IS NULL OR jsonb_typeof(p.variants) <> 'array'
                      THEN p.variants
@@ -95,11 +97,11 @@ SET price_num = CEIL(p.price_num::numeric / rate.r),
                          (v - 'unit_price' - 'total_price')
                          ||
                          (CASE WHEN v ? 'unit_price'
-                               THEN jsonb_build_object('unit_price', CEIL((v->>'unit_price')::numeric / rate.r))
+                               THEN jsonb_build_object('unit_price', ROUND((v->>'unit_price')::numeric / rate.r, 2))
                                ELSE '{}'::jsonb END)
                          ||
                          (CASE WHEN v ? 'total_price'
-                               THEN jsonb_build_object('total_price', CEIL((v->>'total_price')::numeric / rate.r))
+                               THEN jsonb_build_object('total_price', ROUND((v->>'total_price')::numeric / rate.r, 2))
                                ELSE '{}'::jsonb END)
                          ||
                          (CASE WHEN (v->>'description') ~ '^\$[0-9]+([.][0-9]+)?[[:space:]]*por unidad$'
@@ -108,7 +110,7 @@ SET price_num = CEIL(p.price_num::numeric / rate.r),
                                       regexp_replace(
                                         v->>'description',
                                         '^\$[0-9]+([.][0-9]+)?',
-                                        '$' || CEIL(substring(v->>'description' from '^\$([0-9]+([.][0-9]+)?)')::numeric / rate.r)::text
+                                        '$' || (ROUND(substring(v->>'description' from '^\$([0-9]+([.][0-9]+)?)')::numeric / rate.r, 2))::float8::text
                                       )
                                     )
                                ELSE '{}'::jsonb END)
@@ -132,10 +134,10 @@ WITH rate AS (
   SELECT COALESCE((SELECT cup_per_usd FROM public.currency_settings WHERE id = 1), 820) AS r
 )
 UPDATE public.servicios s
-SET price_num = CEIL(s.price_num::numeric / rate.r),
+SET price_num = ROUND(s.price_num::numeric / rate.r, 2),
     price     = CASE WHEN s.price_type = 'desde'
-                     THEN 'Desde ' || (CEIL(s.price_num::numeric / rate.r))::text
-                     ELSE (CEIL(s.price_num::numeric / rate.r))::text
+                     THEN 'Desde ' || (ROUND(s.price_num::numeric / rate.r, 2))::float8::text
+                     ELSE (ROUND(s.price_num::numeric / rate.r, 2))::float8::text
                 END
 FROM rate,
      public.price_backup_cup_to_usd b
@@ -160,19 +162,19 @@ WITH rate AS (
              (i - 'priceNum' - 'price')
              ||
              (CASE WHEN i ? 'priceNum'
-                   THEN jsonb_build_object('priceNum', CEIL((i->>'priceNum')::numeric / rate.r))
+                   THEN jsonb_build_object('priceNum', ROUND((i->>'priceNum')::numeric / rate.r, 2))
                    ELSE '{}'::jsonb END)
              ||
              (CASE WHEN i ? 'priceNum'
-                   THEN jsonb_build_object('price', '$' || CEIL((i->>'priceNum')::numeric / rate.r)::text)
+                   THEN jsonb_build_object('price', '$' || (ROUND((i->>'priceNum')::numeric / rate.r, 2))::float8::text)
                    ELSE '{}'::jsonb END)
            ), '[]'::jsonb)
            FROM jsonb_array_elements(o.items) AS i
          ) END AS items,
          (
            SELECT COALESCE(
-                    SUM(CEIL((i->>'priceNum')::numeric / rate.r) * COALESCE(NULLIF((i->>'quantity')::numeric, 0), 1)),
-                    CEIL(o.total_price::numeric / rate.r)
+                    SUM(ROUND((i->>'priceNum')::numeric / rate.r, 2) * COALESCE(NULLIF((i->>'quantity')::numeric, 0), 1)),
+                    ROUND(o.total_price::numeric / rate.r, 2)
                   )
            FROM jsonb_array_elements(COALESCE(o.items, '[]'::jsonb)) AS i
          ) AS total

@@ -13,7 +13,7 @@ Alcance: `productos.price_num`, `productos.price`, `productos.variants[].unit_pr
 Criterios de aceptación:
 - Un precio base de `10` USD se muestra `$10.00 USD` en USD, `8,200 CUP` en CUP (tasa 820) y `€8.54 EUR` en EUR (tasa 960: 1 USD = 820/960 EUR).
 - La conversión solo depende de las tasas de `currency_settings`; no queda ninguna constante de tasa en el código.
-- Los precios ya guardados (en CUP) se convierten a **dólares enteros, redondeados hacia arriba** (`CEIL(cup / 820)`): el precio en USD nunca queda por debajo del valor que tenía el producto.
+- Los precios ya guardados (en CUP) se convierten a **USD con 2 decimales** (`ROUND(cup / 820, 2)`, al centavo más cercano): el importe en CUP que ve el cliente se mantiene prácticamente igual y los artículos baratos no se disparan (65 CUP → 0.08 USD ≈ 66 CUP, no 1 USD = 820 CUP).
 
 Checks: test unitario de `currencyUtils` (RED→GREEN), `npm run build`.
 
@@ -70,7 +70,7 @@ Checks: test unitario (RED→GREEN).
 | ID | Task | Specs | Route | Riesgo | Status |
 |----|------|-------|-------|--------|--------|
 | T1 | Migración `currency_settings`: tabla, RLS, fila semilla 820/960 | S3, S5 | inline | item 1 (datos) | completada |
-| T2 | Migración de datos CUP→USD (`CEIL(cup/820)`, dólares enteros) en productos, servicios, variantes y pedidos + tabla de respaldo + SQL de restauración | S1 | inline | item 1 (datos) | completada |
+| T2 | Migración de datos CUP→USD (`ROUND(cup/820, 2)`, 2 decimales) en productos, servicios, variantes y pedidos + tabla de respaldo + SQL de restauración | S1 | inline | item 1 (datos) | completada |
 | T3 | `currencyUtils`: pivote USD, tasas en runtime, default 820/960 | S1, S4, S5 | inline | item 3 (contrato) | completada |
 | T4 | `layout.tsx` lee `currency_settings` en servidor y lo pasa a `CurrencyProvider` (refresco SWR en cliente) | S3, S4 | inline | item 3 (contrato) | completada |
 | T5 | Storefront: `PriceDisplay`, carrito, checkout, panel de compra, diálogo de variantes y JSON-LD (`priceCurrency`) | S1, S4 | inline | item 3 (contrato) | completada |
@@ -115,3 +115,12 @@ Notas de análisis:
 > bueno 820
 
 Decisión final: la migración divide entre **820** (la tasa actual de `currency_settings.cup_per_usd`), no entre 675 ni 750. El encabezado de la migración se reescribió para explicar que así el precio en CUP del cliente solo cambia por el redondeo, y para advertir el suelo de 1 USD (= 820 CUP) en los artículos baratos.
+
+### L7 — 2026-10-23 — Redondeo a 2 decimales (verbatim)
+> bueno mejor no redondees al natural mas proximo, usa los decimales XD en USD sino los precios de las cosas que cuestan poco se disparan
+
+Decisión final: la migración redondea a **2 decimales** (`ROUND(cup / 820, 2)`, al centavo más cercano) en vez de a dólares enteros. Motivo: con `CEIL` a entero, todo lo que valía menos de 820 CUP quedaba en 1 USD (65 CUP → 1 USD = 820 CUP, 12.6× el precio real). Con centavos: 65 CUP → 0.08 USD (≈ 66 CUP), 35 CUP → 0.04 USD (≈ 33 CUP), 850 CUP → 1.04 USD, 12,500 CUP → 15.24 USD.
+
+- La conversión con la regla vieja se revirtió con `price_backup_cup_to_usd` (restauración exacta de los valores CUP) y se volvió a aplicar con la regla nueva; el respaldo original queda intacto.
+- Los campos de texto (`price` de productos/servicios, `price` de los items del pedido y las descripciones de variante) usan `ROUND(...)::float8::text` para no mostrar "1.00" donde antes se veía "1".
+- `tests/unit/usd_migration_variants.test.mjs` se actualizó a aritmética exacta en centavos (sin drift de float en los totales de pedido): 850 → 1.04, 65 → 0.08, 3250 → 3.96, 1000×3 → 3.66, 1650 → 2.01.
