@@ -2,14 +2,19 @@
 -- MIGRATION: precios CUP -> USD (base USD)
 -- ============================================
 -- Los precios se guardaban en CUP. Con la base USD (ver 202610210001), cada
--- precio se convierte a USD con la tasa configurada en
+-- precio se convierte a USD con la tasa actual de
 -- currency_settings.cup_per_usd (820 por defecto) y se REDONDEA HACIA ARRIBA
 -- a dólares enteros:
 --
 --     usd = CEIL(cup / cup_per_usd)
 --
--- Ejemplo: un producto que valía 4669 CUP (5,69 USD) pasa a 6 USD.
--- El importe nunca baja: el precio en USD queda en el entero superior.
+-- Ejemplo: un producto que valía 12,500 CUP (15.24 USD) pasa a 16 USD, y el
+-- cliente lo vuelve a ver en CUP a la tasa actual (16 * 820 = 13,120 CUP).
+-- Así el precio en CUP que paga el cliente solo cambia por el redondeo, y el
+-- valor en USD queda consolidado como base editable desde el admin.
+--
+-- OJO con los artículos baratos: al redondear a dólares enteros, todo lo que
+-- valga menos de una unidad de la tasa (820 CUP) queda en 1 USD = 820 CUP.
 --
 -- Es idempotente: cada bloque marca sus filas en price_backup_cup_to_usd
 -- (converted_at) y solo convierte lo que todavía no se convirtió. Volver a

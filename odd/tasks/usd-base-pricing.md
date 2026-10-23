@@ -106,3 +106,12 @@ Notas de análisis:
 - Cambios preexistentes en el worktree (`src/app/globals.css`, `src/components/pages/ProductsPage.tsx`, `benso-launch-reel.html`) pertenecen a otra feature ("kits") y NO se commitean aquí.
 - El verificador independiente encontró un bloqueante en la primera versión de la migración: `(v - 'description')` borraba las 20 descripciones de variante que no llevan precio incrustado. Corregido en `3b15b5a` (la descripción se conserva y solo se reescribe cuando matchea `$N por unidad`), junto con el total de pedidos (precio x cantidad) y la idempotencia (marcador `converted_at` + guardia que aborta si la migración ya corrió).
 - Los tests de regresión del verificador quedaron commiteados (`tests/unit/usd_migration_variants.test.mjs`, `tests/unit/jobApplicationForm.test.mjs`): 43 tests en total.
+
+### L6 — 2026-10-23 — Divisor confirmado (verbatim)
+> nono es entre 820
+
+> tipo 750 cup eran 1 usd, ahora 1 usd son 830
+
+> bueno 820
+
+Decisión final: la migración divide entre **820** (la tasa actual de `currency_settings.cup_per_usd`), no entre 675 ni 750. El encabezado de la migración se reescribió para explicar que así el precio en CUP del cliente solo cambia por el redondeo, y para advertir el suelo de 1 USD (= 820 CUP) en los artículos baratos.
