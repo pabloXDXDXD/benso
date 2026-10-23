@@ -16,9 +16,11 @@ import {
   UserPlus,
   RefreshCw,
   LogOut,
+  Coins,
+  Briefcase,
 } from 'lucide-react';
 
-export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs';
+export type AdminTab = 'dashboard' | 'pedidos' | 'citas' | 'solicitudes' | 'inscripciones' | 'empleo' | 'productos' | 'servicios' | 'eventos' | 'testimonials' | 'faqs' | 'moneda';
 
 export interface AppSidebarProps {
   activeTab: AdminTab;
@@ -57,6 +59,7 @@ const navSections: NavSection[] = [
       { tab: 'citas', label: 'Citas', icon: Calendar, countKey: 'citas' },
       { tab: 'solicitudes', label: 'Solicitudes', icon: Inbox, countKey: 'servicio_solicitudes' },
       { tab: 'inscripciones', label: 'Inscripciones', icon: UserPlus, countKey: 'evento_inscripciones' },
+      { tab: 'empleo', label: 'Empleo', icon: Briefcase, countKey: 'empleo_solicitudes' },
     ],
   },
   {
@@ -72,6 +75,12 @@ const navSections: NavSection[] = [
     items: [
       { tab: 'testimonials', label: 'Testimonios', icon: MessageSquare, countKey: 'testimonials' },
       { tab: 'faqs', label: 'FAQs', icon: HelpCircle, countKey: 'faqs' },
+    ],
+  },
+  {
+    title: 'CONFIGURACIÓN',
+    items: [
+      { tab: 'moneda', label: 'Moneda', icon: Coins },
     ],
   },
 ];

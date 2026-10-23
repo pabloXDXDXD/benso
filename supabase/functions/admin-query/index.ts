@@ -3,10 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const encoder = new TextEncoder();
 
-const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs', 'servicio_solicitudes', 'evento_inscripciones'];
+const ALLOWED_TABLES = ['productos', 'servicios', 'eventos', 'pedidos', 'citas', 'testimonials', 'faqs', 'servicio_solicitudes', 'evento_inscripciones', 'currency_settings', 'empleo_solicitudes'];
 
 // Tables that can only be read (no insert/update/delete via this function)
-const READ_ONLY_TABLES = ['servicio_solicitudes', 'evento_inscripciones'];
+const READ_ONLY_TABLES = ['servicio_solicitudes', 'evento_inscripciones', 'empleo_solicitudes'];
 
 async function verifyJWT(token: string, secret: string): Promise<Record<string, unknown>> {
   const parts = token.split('.');

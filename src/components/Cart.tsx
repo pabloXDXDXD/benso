@@ -10,7 +10,7 @@ import { formatPriceInCurrency } from '@/lib/currencyUtils';
 
 export function Cart() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice, isOpen, setIsOpen, setIsCheckoutOpen } = useCart();
-  const { currency } = useCurrency();
+  const { currency, rates } = useCurrency();
   const prevItemsRef = useRef(items.length);
   const prevTotalRef = useRef(totalItems);
   const lastAddedRef = useRef<string | null>(null);
@@ -106,7 +106,7 @@ export function Cart() {
               <div key={item.id} className="cart-item">
                 <div className="cart-item-info">
                   <h4>{item.productTitle} — {item.variant}</h4>
-                  <span className="cart-item-price">{formatPriceInCurrency(item.priceNum * item.quantity, currency)}</span>
+                  <span className="cart-item-price">{formatPriceInCurrency(item.priceNum * item.quantity, currency, rates)}</span>
                 </div>
                 <div className="cart-item-actions">
                   <div className="cart-item-qty">
@@ -142,7 +142,7 @@ export function Cart() {
           <div className="cart-panel-footer">
             <div className="cart-total">
               <span>Total</span>
-               <span className="cart-total-amount">{formatPriceInCurrency(totalPrice, currency)}</span>
+               <span className="cart-total-amount">{formatPriceInCurrency(totalPrice, currency, rates)}</span>
             </div>
             <button
               className="cart-checkout-btn"

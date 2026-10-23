@@ -6,6 +6,33 @@ import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { SWRProvider } from '@/components/SWRProvider';
 import { SiteChrome } from '@/components/SiteChrome';
+import { supabase } from '@/lib/supabase';
+import { DEFAULT_RATES, normalizeRates, type ExchangeRates } from '@/lib/currencyUtils';
+
+// Exchange rates are read on the server so the rendered HTML and the client
+// convert with the same rates. The client also refreshes them via SWR.
+export const revalidate = 300;
+
+async function getExchangeRates(): Promise<ExchangeRates> {
+  try {
+    const { data, error } = await supabase
+      .from('currency_settings')
+      .select('cup_per_usd, cup_per_eur')
+      .eq('id', 1)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) return DEFAULT_RATES;
+
+    return normalizeRates({
+      cupPerUsd: Number(data.cup_per_usd),
+      cupPerEur: Number(data.cup_per_eur),
+    });
+  } catch {
+    // Settings table missing or unreachable: keep the site working.
+    return DEFAULT_RATES;
+  }
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -46,11 +73,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const rates = await getExchangeRates();
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -91,7 +120,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <CurrencyProvider>
+        <CurrencyProvider initialRates={rates}>
           <CartProvider>
             <SWRProvider>
               <a href="#main-content" className="skip-link">Saltar al contenido principal</a>

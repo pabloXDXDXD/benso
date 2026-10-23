@@ -88,7 +88,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           '@type': 'Offer',
           url: canonicalUrl,
           price: product.price_num,
-          priceCurrency: 'CUP',
+          priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
         },
       },

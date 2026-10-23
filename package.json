@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
     "test:e2e": "cross-env PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 playwright test --config e2e/playwright.config.ts",
     "test:e2e:ui": "cross-env PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 playwright test --config e2e/playwright.config.ts --ui"
   },
