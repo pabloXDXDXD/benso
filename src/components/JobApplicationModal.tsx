@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CheckCircle2, AlertCircle, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import './JobApplicationModal.css';
@@ -103,7 +104,10 @@ export function JobApplicationModal({ open, onClose }: JobApplicationModalProps)
     setView('success');
   };
 
-  return (
+  // Portal to <body>: the banner subtree has a transformed ancestor, which would
+  // otherwise make `position: fixed` resolve against that ancestor instead of
+  // the viewport and break the modal centering.
+  return createPortal(
     <>
       <div className="svc-modal-overlay" onClick={handleClose} />
       <div className="svc-modal-panel" role="dialog" aria-modal="true" aria-labelledby="job-modal-title">
@@ -211,6 +215,7 @@ export function JobApplicationModal({ open, onClose }: JobApplicationModalProps)
           </div>
         )}
       </div>
-    </>
+    </>,
+    document.body
   );
 }
